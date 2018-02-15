@@ -1,3 +1,7 @@
+# function to translate the RFID file to the blocks
+def translateRFID(RFIDfile):
+    return 0;
+
 # main function that receives the string of inputCode to output minibot movement
 def runCode(inputCode):
     # split the code by lines
