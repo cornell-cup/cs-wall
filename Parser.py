@@ -1,5 +1,32 @@
 # function to translate the RFID file to the blocks
 def translateRFID(RFIDfile):
+    # String inputCode = "";
+    # File codeFile = new File("rfid.txt");
+    # File codeBlockFile = new
+    # File("codeBlock.txt");
+    # BufferedReader
+    # br = null, br2 = null;
+    # try {
+    # br = new BufferedReader(new FileReader(codeFile));
+    # br2 = new BufferedReader(new FileReader(codeBlockFile));
+    # } catch (FileNotFoundException e1) {
+    # e1.printStackTrace();
+    # }
+    #
+    # // connect rfid code to actual for while code block
+    # HashMap < String, String > codeBlock = new HashMap < String, String > ();
+    #
+    # String
+    # st;
+    # try {
+    # while ((st = br2.readLine()) != null){
+    # codeBlock.put(st.split(" ")[0], st.split(" ")[1]);
+    # }
+    # } catch(IOException
+    # e1) {
+    # e1.printStackTrace();
+
+}
     return 0;
 
 # main function that receives the string of inputCode to output minibot movement
