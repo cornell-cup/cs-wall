@@ -20,14 +20,12 @@ def translateRFID(rfidfile):
     return result
 
 
-print(translateRFID("rfid.txt"))
-
 
 # Note: the field variablemap should be changed to whatever the field is named in parser
 VariableMap = {}
 
 # function that receives the string of value to output value based on the variable map
-def parsevalue(s):
+def parseValue(s):
     left, right = 0;
     if "+" in s:
         temp = s.split("\\+")
@@ -93,7 +91,6 @@ def runCode(inputCode):
 
     while len(codeLines) > 0:
         code = codeLines.pop(0)
-        print code
         if code in movement:
             moveRobot(code)
             continue
@@ -108,17 +105,18 @@ def runCode(inputCode):
                 runCode(ForCode)
             continue
         if code.split(" ")[0] == "SET":
-            VariableMap.put(code.substring(4, code.length()).split("=")[0].replace(" ", ""),
-                            parseValue(code.split("=")[1].replace(" ", "")));
+            # TODO
+            VariableMap[code.substring(4, code.length()).split("=")[0].replace(" ", "")].append(
+                            parseValue(code.split("=")[1].replace(" ", "")))
             continue
         if code.split(" ")[0] == "IF":
             logic = code.substring(3, code.length()).replace(" ", "");
             IfCode = ""
             temp = codeLines.remove(0)
-            while temp != "END" :
+            while temp != "END":
                 IfCode += temp + "\n";
                 temp = codeLines.remove(0);
-            if parseLogic(logic) :
+            if parseLogic(logic):
                 runCode(IfCode);
             continue;
         if code.split(" ")[0] == "WHILE":
@@ -132,7 +130,7 @@ def runCode(inputCode):
                 runCode(WhileCode);
             continue;
 
-
+# function that receives the string s and output value it corresponding to
 def parseLogic(s):
     robotX = 0
     robotY = 0
@@ -152,80 +150,10 @@ def parseLogic(s):
         return False
 
 
-# function that receives the string of value to output value based on the variable map
-def parseValue(s):
-#     int left, right;
-#     if (s.contains("+")) {
-#     String[] temp = s.split("\\+");
-#     if (VariableMap.containsKey(temp[0])) {
-#     left = VariableMap.get(temp[0]);
-#     } else {
-#     left = Integer.parseInt(temp[0]);
-#     }
-#     if (VariableMap.containsKey(temp[1])) {
-#     right = VariableMap.get(temp[1]);
-#     } else {
-#     right = Integer.parseInt(temp[1]);
-#     }
-#     return left + right;
-#     } else if (s.contains("-")) {
-#     String[]
-#     temp = s.split("\\-");
-#     if (VariableMap.containsKey(temp[0])) {
-#     left = VariableMap.get(temp[0]);
-#     } else {
-#     left = Integer.parseInt(temp[0]);
-#     }
-#     if (VariableMap.containsKey(temp[1])) {
-#     right = VariableMap.get(temp[1]);
-#     } else {
-#     right = Integer.parseInt(temp[1]);
-#     }
-#     return left - right;
-#
-# } else if (s.contains("*")) {
-# String[]
-# temp = s.split("\\*");
-# if (VariableMap.containsKey(temp[0])) {
-# left = VariableMap.get(temp[0]);
-# } else {
-# left = Integer.parseInt(temp[0]);
-# }
-# if (VariableMap.containsKey(temp[1])) {
-# right = VariableMap.get(temp[1]);
-# } else {
-# right = Integer.parseInt(temp[1]);
-# }
-# return left * right;
-# } else if (s.contains("/")) {
-# String[]
-# temp = s.split("\\/");
-# if (VariableMap.containsKey(temp[0])) {
-# left = VariableMap.get(temp[0]);
-# } else {
-# left = Integer.parseInt(temp[0]);
-# }
-# if (VariableMap.containsKey(temp[1])) {
-# right = VariableMap.get(temp[1]);
-# } else {
-# right = Integer.parseInt(temp[1]);
-# }
-# return left / right;
-# }
-# // only
-# one
-# symbol or value
-# if (VariableMap.containsKey(s))
-# {
-# return VariableMap.get(s);
-# } else {
-# return Integer.parseInt(s);
-# }
-    return 0;
-
 # function that receives the string of code to output minibot movement
 # the input in the code contains Forward, Backward, TurnLeft, TurnRight
 def moveRobot(code):
-    return 0;
+    print code
+    return 0
 
-runCode("Forward\nForward\nForward")
+runCode(translateRFID("rfid.txt"))
