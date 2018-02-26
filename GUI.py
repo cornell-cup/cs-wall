@@ -17,7 +17,13 @@ class Gui:
     index = 0
 
     def __init__(self):
-        print("hi")
+        array = self.make_array()
+        result = self.gallery(array)
+        # hanging the target
+        result[680:720, 880:920, :] = Image.open('target.png').convert('RGB')
+        result = self.hang_robot(result)
+        plt.imshow(result)
+        plt.show()
 
     def gallery(self, array, ncols=5):
         nindex, height, width, intensity = array.shape
@@ -98,9 +104,6 @@ class Gui:
         plt.pause(0.1)
         plt.show()
 
-    def hello(self):
-        print "hello, world"
-
     def update(self, code):
         list = code.split("\n")
         length = len(list)
@@ -110,18 +113,7 @@ class Gui:
             self.hang(self.update_once(code))
 
 
-
-
-
-
 g = Gui()
-array = g.make_array()
-result = g.gallery(array)
-# hanging the target
-result[680:720, 880:920, :] = Image.open('target.png').convert('RGB')
-result = g.hang_robot(result)
-plt.imshow(result)
-plt.show()
 p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
 g.update(codeblock)
