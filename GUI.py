@@ -105,12 +105,17 @@ class Gui:
         plt.show()
 
     def update(self, code):
+        global robot_x
+        global robot_y
         list = code.split("\n")
         length = len(list)
         # self.update_once(code[1])
         for i in range(0, length):
             code = list[i]
             self.hang(self.update_once(code))
+        if robot_x == 3:
+            if robot_y == 4:
+                print "Goal is reached"
 
 
 g = Gui()
