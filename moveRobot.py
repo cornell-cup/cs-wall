@@ -1,3 +1,6 @@
+# this function is designed to receive movement blocks of Forward, Backward
+# TurnLeft, TurnRight and prints corresponding Minibot API
+# <<<<SCRIPT,(code)>>>>
 def moveRobot(code):
     direction = 0
     robotX = 0
