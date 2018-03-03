@@ -4,8 +4,7 @@
 # Also note, I don't think that there are parentheses around the code according to their parser
 # TODO change "dummy" to actual power level
 # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
-# TODO figure out minibot's power level and whether we need to use the wait(time) function, also think about connecting
-# TODO robotX robotY to an imaginary gui
+# TODO check out of bounds exceptions
 
 
 class moveRobot:
@@ -18,7 +17,6 @@ class moveRobot:
     robotY = 3
     global index
     index = 0
-
     global GoalX
     GoalX = 5
     global GoalY
@@ -32,11 +30,15 @@ class moveRobot:
     def __init__(self):
         print "hi"
 
+    # returns the SCRIPT string to send to minibot and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
+        goal_reached = False
         s = "<<<<SCRIPT,"
         global direction
         global robotX
         global robotY
+        global GoalX
+        global GoalY
         MOVE_POWER = 50
         TURN_POWER = 50
         TURN_TIME = 3 # TODO Figure out how long it takes to turn 90 degrees
@@ -50,7 +52,7 @@ class moveRobot:
             elif direction == WEST:
                 robotX -= 1
             s += "move_forward({})\n".format(MOVE_POWER)
-            time = calcTravelTime(1)
+            time = self.calcTravelTime(1)
             s += "wait({})\n".format(time)
         if code == "Backward":
             if direction == SOUTH:
@@ -62,7 +64,7 @@ class moveRobot:
             elif direction == WEST:
                 robotX += 1
             s += "move_backward({})\n".format(MOVE_POWER)
-            time = calcTravelTime(1)
+            time = self.calcTravelTime(1)
             s += "wait({})\n".format(time)
         if code == "TurnLeft":
             direction = (direction + 1) % 4
@@ -72,14 +74,15 @@ class moveRobot:
             direction = (direction + 3) % 4
             s += "move_clockwise({})\n".format(TURN_POWER)
             s += "wait({})\n".format(TURN_TIME)
-
         s += ">>>>"
-        return s
+        if robotX == GoalX:
+            if robotY == GoalY:
+                goal_reached = True
+        return s, goal_reached
 
-    def calcTravelTime(distance):
+    def calcTravelTime(self,distance):
         """Returns the amount of [time] Minibot needs to move to go one unit of [distance]"""
         time = 2
 
-        #TODO Calculate travel time based off wheels of Minibot
-
+        # TODO Calculate travel time based off wheels of Minibot
         return time
