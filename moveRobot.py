@@ -1,10 +1,8 @@
+from Parser import Parser
 # this function is designed to receive movement blocks of Forward, Backward
 # TurnLeft, TurnRight and prints corresponding Minibot API
 # returns: <<<<SCRIPT,(code)>>>>, a String
 # Also note, I don't think that there are parentheses around the code according to their parser
-# TODO change "dummy" to actual power level
-# TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
-# TODO check out of bounds exceptions
 
 
 class moveRobot:
@@ -18,9 +16,12 @@ class moveRobot:
     global index
     index = 0
     global GoalX
-    GoalX = 5
+    GoalX = 3
     global GoalY
-    GoalY = 5
+    GoalY = 3
+    global dimX, dimY
+    dimX = 5
+    dimY = 5
 
     SOUTH = 0
     EAST = 1
@@ -28,20 +29,23 @@ class moveRobot:
     WEST = 3
 
     def __init__(self):
-        print "hi"
+        print "TODO: initialization of dimensions of the map\n"
 
-    # returns the SCRIPT string to send to minibot and a boolean representing whether the target goal is reached
+    # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
         goal_reached = False
-        s = "<<<<SCRIPT,"
+        s = ""
         global direction
         global robotX
         global robotY
         global GoalX
         global GoalY
+        # TODO change "dummy" to actual power level
+        # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
         MOVE_POWER = 50
         TURN_POWER = 50
-        TURN_TIME = 3 # TODO Figure out how long it takes to turn 90 degrees
+        # TODO Figure out how long it takes to turn 90 degrees
+        TURN_TIME = 3
         if code == "Forward":
             if direction == self.SOUTH:
                 robotY += 1
@@ -51,8 +55,9 @@ class moveRobot:
                 robotY -= 1;
             elif direction == self.WEST:
                 robotX -= 1
+
             s += "move_forward({})\n".format(MOVE_POWER)
-            time = self.calcTravelTime(1)
+            time = self.calcTravelTime(1, MOVE_POWER)
             s += "wait({})\n".format(time)
         if code == "Backward":
             if direction == self.SOUTH:
@@ -64,7 +69,7 @@ class moveRobot:
             elif direction == self.WEST:
                 robotX += 1
             s += "move_backward({})\n".format(MOVE_POWER)
-            time = self.calcTravelTime(1)
+            time = self.calcTravelTime(1, MOVE_POWER)
             s += "wait({})\n".format(time)
         if code == "TurnLeft":
             direction = (direction + 1) % 4
@@ -74,15 +79,49 @@ class moveRobot:
             direction = (direction + 3) % 4
             s += "move_clockwise({})\n".format(TURN_POWER)
             s += "wait({})\n".format(TURN_TIME)
-        s += ">>>>"
-        if robotX == GoalX:
-            if robotY == GoalY:
-                goal_reached = True
+        if robotX == GoalX and robotY == GoalY:
+            goal_reached = True
         return s, goal_reached
 
-    def calcTravelTime(self,distance):
+    # checks whether the current position of the robot is out of bounds in the map/maze
+    # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
+    # returns True if the robot is out of bounds, and False if it is not.
+    def checkBounds(self):
+        out_of_bounds = False
+        global robotX, robotY, dimX, dimY
+        if robotX >= dimX:
+            out_of_bounds = True
+            robotX = dimX-1
+        if robotY >= dimY:
+            out_of_bounds = True
+            robotY = dimY-1
+        return out_of_bounds
+
+    # returns the finalized SCRIPT string to send to minibot
+    def send(self, code):
+        global robotX, robotY
+        s = "<<<<SCRIPT,"
+        list = code.split("\n")
+        length = len(list)
+        for i in range(0, length):
+            code = list[i]
+            temp, goal = self.moveRobot(code)
+            if self.checkBounds():
+                break
+            s += temp
+        s += ">>>>"
+        return s
+
+    # calculates the time needed for the robot to travel a certain distance at a certain power
+    def calcTravelTime(self, distance, power):
         """Returns the amount of [time] Minibot needs to move to go one unit of [distance]"""
         time = 2
 
         # TODO Calculate travel time based off wheels of Minibot
         return time
+
+
+p = Parser()
+codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+mr = moveRobot()
+print mr.send(codeblock)

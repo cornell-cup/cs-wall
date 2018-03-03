@@ -163,5 +163,5 @@ class Parser:
         return 0
 
 
-p = Parser()
-print p.runCode(p.translateRFID("rfidFOR.txt"))
+# p = Parser()
+# print p.runCode(p.translateRFID("rfidFOR.txt"))
