@@ -36,7 +36,7 @@ class MapMaker():
     def __init__(self):
         print "hi"
 
-    def parseMap(file_path):
+    def parseMap(self, file_path):
         """Returns a [game_data] from the JSON [file_path]"""
 
         # json_data = {}
@@ -49,72 +49,79 @@ class MapMaker():
 
             ### Create map from boundaries
             # boundary = json_data.get(self.BOUNDARY,{})
-            boundary = accessField(json_data,self.BOUNDARY)
+            boundary = self.accessField(json_data,self.BOUNDARY)
 
-            if not boundary break
+            if not boundary:
+                return game_data
 
             # if not boundary:
             #     print("Boundary of map not defined")
             #     break            
 
-            boundary_x = accessField(boundary,self.BOUNDARY_X)
-            boundary_y = accessField(boundary,self.BOUNDARY_Y)
+            boundary_x = self.accessField(boundary,self.BOUNDARY_X)
+            boundary_y = self.accessField(boundary,self.BOUNDARY_Y)
 
-            if ((not boundary_x) or (not boundary_y)) break
+            if ((not boundary_x) or (not boundary_y)):
+                return game_data
 
             miniMap = []
 
             for unit in range(boundary_y):
-                miniMap.append([FREE_SPACE]*boundary_x)
+                miniMap.append([self.FREE_SPACE]*boundary_x)
 
             ### Add walls to map
-            walls = accessField(json_data,self.WALLS)
+            walls = self.accessField(json_data,self.WALLS)
 
             for wall in walls:
-                wall_x = accessField(wall,self.WALL_X)
-                wall_y = accessField(wall,self.WALL_Y)
-                miniMap[wall_y][wall_x] = WALL_SPACE
+                wall_x = self.accessField(wall,self.WALL_X)
+                wall_y = self.accessField(wall,self.WALL_Y)
+                miniMap[wall_y][wall_x] = self.WALL_SPACE
 
             
             #Add map to game data
-            game_data.update({GAME_MAP:miniMap})
+            game_data.update({self.GAME_MAP:miniMap})
 
 
             ### Establish starting location
-            start = accessField(json_data,self.START)
+            start = self.accessField(json_data,self.START)
 
-            if not start break
+            if not start:
+                return game_data
 
-            start_x = accessField(start,self.START_X)
-            start_y = accessField(start,self.START_Y)
+            start_x = self.accessField(start,self.START_X)
+            start_y = self.accessField(start,self.START_Y)
 
-            if ((not start_x) or (not start_y)) break
+            if ((not start_x) or (not start_y)):
+                return game_data
 
             #Add map to game data
-            game_data.update({GAME_START:(start_x,start_y)})
+            game_data.update({self.GAME_START:(start_x,start_y)})
 
 
             ### Establish goal location
-            goal = accessField(json_data,self.GOAL)
+            goal = self.accessField(json_data,self.GOAL)
 
-            if not goal break
+            if not goal:
+                return game_data
 
-            goal_x = accessField(goal,self.GOAL_X)
-            goal_y = accessField(goal,self.GOAL_Y)
+            goal_x = self.accessField(goal,self.GOAL_X)
+            goal_y = self.accessField(goal,self.GOAL_Y)
 
-            if ((not goal_x) or (not goal_y)) break
+            if ((not goal_x) or (not goal_y)):
+                return game_data
 
             #Add map to game data
-            game_data.update({GAME_GOAL:(goal_x,goal_y)})
+            game_data.update({self.GAME_GOAL:(goal_x,goal_y)})
 
 
             ### Establish unit conversion
-            unit = accessField(json_data,self.SQUARE_UNIT)
+            unit = self.accessField(json_data,self.SQUARE_UNIT)
 
-            if not unit break
+            if not unit:
+                return game_data
 
             #Add map to game data
-            game_data.update({GAME_UNIT:unit})
+            game_data.update({self.GAME_UNIT:unit})
 
 
         if not f:
