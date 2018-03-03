@@ -55,7 +55,6 @@ class moveRobot:
                 robotY -= 1;
             elif direction == self.WEST:
                 robotX -= 1
-
             s += "move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "wait({})\n".format(time)
@@ -88,13 +87,19 @@ class moveRobot:
     # returns True if the robot is out of bounds, and False if it is not.
     def checkBounds(self):
         out_of_bounds = False
-        global robotX, robotY, dimX, dimY
+        global robotX, robotY, dimX, dimY, direction
         if robotX >= dimX:
             out_of_bounds = True
             robotX = dimX-1
+        elif robotX < 0:
+            out_of_bounds = True
+            robotX = 0
         if robotY >= dimY:
             out_of_bounds = True
             robotY = dimY-1
+        elif robotY < 0:
+            out_of_bounds = True
+            robotY = 0
         return out_of_bounds
 
     # returns the finalized SCRIPT string to send to minibot
