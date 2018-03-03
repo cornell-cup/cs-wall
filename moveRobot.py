@@ -12,12 +12,17 @@ class moveRobot:
 
     global direction
     direction = 1
-    global robot_x
-    robot_x = 3
-    global robot_y
-    robot_y = 1
+    global robotX
+    robotX = 1
+    global robotY
+    robotY = 3
     global index
     index = 0
+
+    global GoalX
+    GoalX = 5
+    global GoalY
+    GoalY = 5
 
     def __init__(self):
         print "hi"
@@ -27,8 +32,9 @@ class moveRobot:
         global direction
         global robotX
         global robotY
-        move_lev = 50
-        turn_lev = 50
+        MOVE_POWER = 50
+        TURN_POWER = 50
+        TURN_TIME = 3 # TODO Figure out how long it takes to turn 90 degrees
         if code == "Forward":
             if direction == 0:
                robotY += 1
@@ -38,8 +44,9 @@ class moveRobot:
               robotY -= 1;
             elif direction == 3:
                 robotX -= 1
-            power = str(move_lev)
-            s += "move_forward(" + power + ")\n"
+            s += "move_forward({})\n".format(MOVE_POWER)
+            time = calcTravelTime(1)
+            s += "wait({})\n".format(time)
         if code == "Backward":
             if direction == 0:
                robotY -= 1
@@ -49,16 +56,25 @@ class moveRobot:
               robotY += 1;
             elif direction == 3:
                 robotX += 1
-            power = str(move_lev)
-            s += "move_backward(" + power + ")\n"
+            s += "move_backward({})\n".format(MOVE_POWER)
+            time = calcTravelTime(1)
+            s += "wait({})\n".format(time)
         if code == "TurnLeft":
             direction = (direction + 1) % 4
-            power = str(turn_lev)
-            s += "move_counter_clockwise(" + power + ")\n"
+            s += "move_counter_clockwise({})\n".format(TURN_POWER)
+            s += "wait({})\n".format(TURN_TIME)
         if code == "TurnRight":
             direction = (direction + 3) % 4
-            power = str(turn_lev)
-            s += "move_clockwise(" + power + ")\n"
+            s += "move_clockwise({})\n".format(TURN_POWER)
+            s += "wait({})\n".format(TURN_TIME)
 
         s += ">>>>"
         return s
+
+    def calcTravelTime(distance):
+        """Returns the amount of [time] Minibot needs to move to go one unit of [distance]"""
+        time = 2
+
+        #TODO Calculate travel time based off wheels of Minibot
+
+        return time
