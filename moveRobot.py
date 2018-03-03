@@ -43,25 +43,25 @@ class moveRobot:
         TURN_POWER = 50
         TURN_TIME = 3 # TODO Figure out how long it takes to turn 90 degrees
         if code == "Forward":
-            if direction == SOUTH:
-               robotY += 1
-            elif direction == EAST:
+            if direction == self.SOUTH:
+                robotY += 1
+            elif direction == self.EAST:
                 robotX += 1;
-            elif direction == NORTH:
-              robotY -= 1;
-            elif direction == WEST:
+            elif direction == self.NORTH:
+                robotY -= 1;
+            elif direction == self.WEST:
                 robotX -= 1
             s += "move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1)
             s += "wait({})\n".format(time)
         if code == "Backward":
-            if direction == SOUTH:
-               robotY -= 1
-            elif direction == EAST:
+            if direction == self.SOUTH:
+                robotY -= 1
+            elif direction == self.EAST:
                 robotX -= 1;
-            elif direction == NORTH:
-              robotY += 1;
-            elif direction == WEST:
+            elif direction == self.NORTH:
+                robotY += 1;
+            elif direction == self.WEST:
                 robotX += 1
             s += "move_backward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1)
