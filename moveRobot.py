@@ -7,19 +7,12 @@ from Parser import Parser
 
 class moveRobot:
 
-    global direction
+    global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
     direction = 1
-    global robotX
     robotX = 1
-    global robotY
     robotY = 3
-    global index
-    index = 0
-    global GoalX
     GoalX = 3
-    global GoalY
     GoalY = 3
-    global dimX, dimY
     dimX = 5
     dimY = 5
 
@@ -35,11 +28,7 @@ class moveRobot:
     def moveRobot(self, code):
         goal_reached = False
         s = ""
-        global direction
-        global robotX
-        global robotY
-        global GoalX
-        global GoalY
+        global direction, robotX, robotY, GoalX, GoalY
         # TODO change "dummy" to actual power level
         # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
         MOVE_POWER = 50
