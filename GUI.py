@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
+from SystemControl import SystemControl
 
 # direction 0 is facing south, direction 1 is facing east,
 # direction 2 is facing north, and direction 3 is facing west.
@@ -69,7 +70,7 @@ class Gui:
         result = self.gallery(array)
         # hanging the target
         result[680:720, 880:920, :] = Image.open('target.png').convert('RGB')
-        result = self.hang_robot(result)
+        # result = self.hang_robot(result)
         plt.imshow(result)
         plt.show()
 
@@ -170,4 +171,6 @@ class Gui:
 g = Gui()
 p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-g.update(codeblock)
+# g.update(codeblock)
+sc = SystemControl()
+print sc.run(codeblock)

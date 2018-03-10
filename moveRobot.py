@@ -7,22 +7,20 @@ from Parser import Parser
 
 class moveRobot:
 
-    global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
-    direction = 1
-    robotX = 1
-    robotY = 3
-    GoalX = 3
-    GoalY = 3
-    dimX = 5
-    dimY = 5
-
     SOUTH = 0
     EAST = 1
     NORTH = 2
     WEST = 3
 
     def __init__(self):
-        print "TODO: initialization of dimensions of the map\n"
+        global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
+        direction = 1
+        robotX = 3
+        robotY = 1
+        GoalX = 3
+        GoalY = 4
+        dimX = 5
+        dimY = 5
 
     # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
@@ -37,25 +35,25 @@ class moveRobot:
         TURN_TIME = 3
         if code == "Forward":
             if direction == self.SOUTH:
-                robotY += 1
+                robotX += 1
             elif direction == self.EAST:
-                robotX += 1;
+                robotY += 1;
             elif direction == self.NORTH:
-                robotY -= 1;
+                robotX -= 1;
             elif direction == self.WEST:
-                robotX -= 1
+                robotY -= 1
             s += "bot.move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "bot.wait({})\n".format(time)
         if code == "Backward":
             if direction == self.SOUTH:
-                robotY -= 1
+                robotX -= 1
             elif direction == self.EAST:
-                robotX -= 1;
+                robotY -= 1;
             elif direction == self.NORTH:
-                robotY += 1;
+                robotX += 1;
             elif direction == self.WEST:
-                robotX += 1
+                robotY += 1
             s += "bot.move_backward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "bot.wait({})\n".format(time)
