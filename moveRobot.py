@@ -44,9 +44,9 @@ class moveRobot:
                 robotY -= 1;
             elif direction == self.WEST:
                 robotX -= 1
-            s += "move_forward({})\n".format(MOVE_POWER)
+            s += "bot.move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "wait({})\n".format(time)
+            s += "bot.wait({})\n".format(time)
         if code == "Backward":
             if direction == self.SOUTH:
                 robotY -= 1
@@ -56,17 +56,17 @@ class moveRobot:
                 robotY += 1;
             elif direction == self.WEST:
                 robotX += 1
-            s += "move_backward({})\n".format(MOVE_POWER)
+            s += "bot.move_backward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "wait({})\n".format(time)
+            s += "bot.wait({})\n".format(time)
         if code == "TurnLeft":
             direction = (direction + 1) % 4
-            s += "move_counter_clockwise({})\n".format(TURN_POWER)
-            s += "wait({})\n".format(TURN_TIME)
+            s += "bot.move_counter_clockwise({})\n".format(TURN_POWER)
+            s += "bot.wait({})\n".format(TURN_TIME)
         if code == "TurnRight":
             direction = (direction + 3) % 4
-            s += "move_clockwise({})\n".format(TURN_POWER)
-            s += "wait({})\n".format(TURN_TIME)
+            s += "bot.move_clockwise({})\n".format(TURN_POWER)
+            s += "bot.wait({})\n".format(TURN_TIME)
         if robotX == GoalX and robotY == GoalY:
             goal_reached = True
         return s, goal_reached
