@@ -2,14 +2,6 @@ from Parser import Parser
 
 
 class systemControl():
-    global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
-    direction = 1
-    robotX = 1
-    robotY = 3
-    GoalX = 4
-    GoalY = 3
-    dimX = 5
-    dimY = 5
 
     SOUTH = 0
     EAST = 1
@@ -17,58 +9,57 @@ class systemControl():
     WEST = 3
 
     def __init__(self):
-        print "TODO: initialization of dimensions of the map\n"
+        global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
+        direction = 1
+        robotX = 3
+        robotY = 1
+        GoalX = 3
+        GoalY = 4
+        dimX = 5
+        dimY = 5
 
     # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
         goal_reached = False
         global direction, robotX, robotY, GoalX, GoalY
-        # MOVE_POWER = 50
-        # TURN_POWER = 50
-        # TURN_TIME = 3
+        out = False
         if code == "Forward":
             if direction == self.SOUTH:
-                robotY += 1
+                robotX += 1
             elif direction == self.EAST:
-                robotX += 1;
+                robotY += 1;
             elif direction == self.NORTH:
-                robotY -= 1;
+                robotX -= 1;
             elif direction == self.WEST:
-                robotX -= 1
-        if self.checkBounds():
-            return
-        # TODO method moveForward
-            # s += "bot.move_forward({})\n".format(MOVE_POWER)
-            # time = self.calcTravelTime(1, MOVE_POWER)
-            # s += "bot.wait({})\n".format(time)
+                robotY -= 1
+            if self.checkBounds():
+                out = True
+                goal_reached = False
+                return goal_reached, out
+            # TODO method moveForward
         if code == "Backward":
             if direction == self.SOUTH:
-                robotY -= 1
+                robotX -= 1
             elif direction == self.EAST:
-                robotX -= 1;
+                robotY -= 1;
             elif direction == self.NORTH:
-                robotY += 1;
+                robotX += 1;
             elif direction == self.WEST:
-                robotX += 1
+                robotY += 1
             if self.checkBounds():
-                return
+                out = True
+                goal_reached = False
+                return goal_reached, out
             # TODO method moveBackward
-            # s += "bot.move_backward({})\n".format(MOVE_POWER)
-            # time = self.calcTravelTime(1, MOVE_POWER)
-            # s += "bot.wait({})\n".format(time)
         if code == "TurnLeft":
             direction = (direction + 1) % 4
             # TODO method turnLeft
-            # s += "bot.move_counter_clockwise({})\n".format(TURN_POWER)
-            # s += "bot.wait({})\n".format(TURN_TIME)
         if code == "TurnRight":
             direction = (direction + 3) % 4
             # TODO method turnRight
-            # s += "bot.move_clockwise({})\n".format(TURN_POWER)
-            # s += "bot.wait({})\n".format(TURN_TIME)
         if robotX == GoalX and robotY == GoalY:
             goal_reached = True
-        return goal_reached
+        return goal_reached, out
 
     # checks whether the current position of the robot is out of bounds in the map/maze
     # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
@@ -90,19 +81,23 @@ class systemControl():
             robotY = 0
         return out_of_bounds
 
-    # returns the finalized SCRIPT string to send to minibot
-    def send(self, code):
+    # runs the actions on the 2D system
+    def run(self, code):
         global robotX, robotY
-        list = code.split("\n")
-        length = len(list)
+        action_list = code.split("\n")
+        length = len(action_list)
         goal = False
         for i in range(0, length):
-            code = list[i]
-            goal = self.moveRobot(code)
+            code = action_list[i]
+            goal, out = self.moveRobot(code)
+            if out:
+                print "OUT OF BOUNDS"
+                return False
         return goal
 
 
 p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
 sc = systemControl()
-print sc.send(codeblock)
+if sc.run(codeblock):
+    print "GOAL REACHED!!! CONGRATS!!!"
