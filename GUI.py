@@ -5,32 +5,22 @@ from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
 
+
 # direction 0 is facing south, direction 1 is facing east,
 # direction 2 is facing north, and direction 3 is facing west.
 class Gui:
-    global direction
+    global direction, robot_y, robot_x, index, BOUNDARY_X, BOUNDARY_Y, GOAL_X, GOAL_Y, START_X, START_Y, WALL_X, WALL_Y
     direction = 1
-    global robot_x
     robot_x = 0
-    global robot_y
     robot_y = 0
-    global index
     index = 0
-    global BOUNDARY_X
     BOUNDARY_X = 0
-    global BOUNDARY_Y
     BOUNDARY_Y = 0
-    global GOAL_X
     GOAL_X = 0
-    global GOAL_Y
     GOAL_Y = 0
-    global START_X
     START_X = 0
-    global START_Y
     START_Y = 0
-    global WALL_X
     WALL_X = 0
-    global WALL_Y
     WALL_Y = 0
 
     def __init__(self):
