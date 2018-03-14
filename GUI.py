@@ -4,6 +4,7 @@ from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
+import scipy.misc
 
 
 # direction 0 is facing south, direction 1 is facing east,
@@ -24,6 +25,7 @@ class Gui:
     WALL_Y = 0
 
     def __init__(self):
+        # Assuming that we're only making square grids, then BOUNDARY_Y is useless, and so are WALL_X and WALL_Y.
         global robot_x
         global robot_y
         global BOUNDARY_X
@@ -44,8 +46,8 @@ class Gui:
         WALL_X = map.WALL_X
         WALL_Y = map.WALL_Y
 
-        BOUNDARY_X = 6
-        BOUNDARY_Y = 6
+        BOUNDARY_X = 5
+        BOUNDARY_Y = 5
         START_X = 3
         START_Y = 1
         robot_x = START_X
@@ -56,13 +58,7 @@ class Gui:
         WALL_X = 0
         WALL_Y = 0
 
-        array = self.make_array()
-        result = self.gallery(array)
-        # hanging the target
-        result[680:720, 880:920, :] = Image.open('target.png').convert('RGB')
-        # result = self.hang_robot(result)
-        plt.imshow(result)
-        plt.show()
+        self.make_grid()
 
     def gallery(self, array, ncols=BOUNDARY_X):
         ncols = BOUNDARY_X
@@ -77,6 +73,29 @@ class Gui:
 
     def make_array(self):
         return np.array([np.asarray(Image.open('square.gif').convert('RGB'))]*BOUNDARY_X*BOUNDARY_Y)
+
+    def make_grid(self):
+        # assuming this is a square grid, which is what we will set it as
+        global BOUNDARY_X, GOAL_X, GOAL_Y
+        w, h = 600, 600
+        data = np.zeros((h, w, 3), dtype=np.uint8)
+        temp_im = Image.open('map.png').convert('RGB')
+        data[:600, :600, :] = scipy.misc.imresize(temp_im, (600, 600))
+        block_length = 600 / BOUNDARY_X
+        div_length = 2
+        for i in range(0, BOUNDARY_X - 1):
+            anchor = (i + 1) * block_length
+            data[anchor - div_length:anchor + div_length, :, :] = [256, 0, 0]
+            data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
+        # hanging the target
+        target = Image.open('target.png').convert('RGB')
+        startx = GOAL_X * block_length + (block_length / 4)
+        finx = GOAL_X * block_length + (3 * block_length / 4)
+        starty = GOAL_Y * block_length + (block_length / 4)
+        finy = GOAL_Y * block_length + (3 * block_length / 4)
+        data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
+        img = Image.fromarray(data, 'RGB')
+        img.show()
 
     def hang_robot(self, array):
         global direction
