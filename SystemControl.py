@@ -9,10 +9,12 @@ class SystemControl():
     WEST = 3
 
     def __init__(self):
-        global direction, robotX, robotY, GoalX, GoalY, dimX, dimY
+        global direction, robotX, robotY, GoalX, GoalY, dimX, dimY, startX, startY
         direction = 1
-        robotX = 3
-        robotY = 1
+        startX = 3
+        startY = 1
+        robotX = startX
+        robotY = startY
         GoalX = 3
         GoalY = 4
         dimX = 5
@@ -60,6 +62,47 @@ class SystemControl():
         if robotX == GoalX and robotY == GoalY:
             goal_reached = True
         return goal_reached, out
+
+    # sets the direction to NORTH
+    def check_dir(self):
+        global direction
+        if direction == self.NORTH:
+            return ""
+        elif direction == self.SOUTH:
+            return "TurnRight\nTurnRight\n"
+        elif direction == self.EAST:
+            return "TurnLeft\n"
+        elif direction == self.WEST:
+            return "TurnRight\n"
+
+    def reset(self):
+        global robotX, robotY, startX, startY
+        distX = robotX - startX
+        distY = robotY - startY
+        s = ""
+        if distX == 0 and distY == 0:
+            return
+        if distX > 0:
+            # go north
+            s += self.check_dir()
+            for i in range(0, distX):
+                s += "Forward\n"
+        elif distX < 0:
+            # go south
+            s += self.check_dir()
+            for i in range(0, distX):
+                s += "Backward\n"
+        if distY > 0:
+            # go west
+            s += self.check_dir() + "TurnLeft\n"
+            for i in range(0, distY):
+                s += "Forward\n"
+        elif distY < 0:
+            # go east
+            s += self.check_dir() + "TurnRight\n"
+            for i in range(0, distY):
+                s += "Forward\n"
+        self.run(s)
 
     # checks whether the current position of the robot is out of bounds in the map/maze
     # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
