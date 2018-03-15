@@ -26,14 +26,7 @@ class Gui:
 
     def __init__(self):
         # Assuming that we're only making square grids, then BOUNDARY_Y is useless, and so are WALL_X and WALL_Y.
-        global robot_x
-        global robot_y
-        global BOUNDARY_X
-        global BOUNDARY_Y
-        global GOAL_X
-        global GOAL_Y
-        global START_X
-        global START_Y
+        global robot_x, robot_y, BOUNDARY_X, BOUNDARY_Y, GOAL_X, GOAL_Y, START_X, START_Y
 
         map = MapMaker()
         # map.parseMap("/test.json")
@@ -94,6 +87,8 @@ class Gui:
         starty = GOAL_Y * block_length + (block_length / 4)
         finy = GOAL_Y * block_length + (3 * block_length / 4)
         data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
+        # plt.imshow(data)
+        # plt.show()
         img = Image.fromarray(data, 'RGB')
         img.show()
 
