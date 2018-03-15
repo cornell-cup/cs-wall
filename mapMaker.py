@@ -34,7 +34,7 @@ class MapMaker():
 
 
     def __init__(self):
-        print "hi"
+        print("hi")
 
     def parseMap(self, file_path):
         """Returns a [game_data] from the JSON [file_path]"""
