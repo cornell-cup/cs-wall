@@ -159,7 +159,7 @@ class Parser:
     # function that receives the string of code to output minibot movement
     # the input in the code contains Forward, Backward, TurnLeft, TurnRight
     def moveRobot(self, code):
-        print code
+        print(code)
         return 0
 
 

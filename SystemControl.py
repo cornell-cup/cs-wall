@@ -1,6 +1,7 @@
 from Parser import Parser
 import time
 from pynput.keyboard import Key, Listener
+from pynput import keyboard
 
 global reset_flag
 reset_flag = False
@@ -137,20 +138,23 @@ class SystemControl():
         for i in range(0, length):
             code = action_list[i]
             goal, out = self.moveRobot(code)
-            print "robotX"
-            print robotX
-            print "robotY"
-            print robotY
-            print reset_flag
-            time.sleep(3)
+            print("robotX")
+            print(robotX)
+            print("robotY")
+            print(robotY)
+            print(reset_flag)
+            time.sleep(2)
             if out:
-                print "OUT OF BOUNDS"
+                print("OUT OF BOUNDS")
+                return False
+            if reset_flag:
+                self.reset()
                 return False
         return goal
 
 
-p = Parser()
-codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-sc = SystemControl()
-if sc.run(codeblock):
-    print "GOAL REACHED!!! CONGRATS!!!"
+# p = Parser()
+# codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+# sc = SystemControl()
+# if sc.run(codeblock):
+#     print("GOAL REACHED!!! CONGRATS!!!")
