@@ -3,8 +3,6 @@ import time
 from pynput.keyboard import Key, Listener
 from pynput import keyboard
 
-global reset_flag
-reset_flag = False
 
 class SystemControl():
 
@@ -12,6 +10,9 @@ class SystemControl():
     EAST = 1
     NORTH = 2
     WEST = 3
+
+    # global reset_flag
+    reset_flag = False
 
     def __init__(self):
         global direction, robotX, robotY, GoalX, GoalY, dimX, dimY, startX, startY
@@ -142,12 +143,12 @@ class SystemControl():
             print(robotX)
             print("robotY")
             print(robotY)
-            print(reset_flag)
+            print(self.reset_flag)
             time.sleep(2)
             if out:
                 print("OUT OF BOUNDS")
                 return False
-            if reset_flag:
+            if self.reset_flag:
                 print "HEREEEEEEEEEEEEEE"
                 self.reset()
                 return False

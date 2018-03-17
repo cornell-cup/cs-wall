@@ -6,6 +6,7 @@ from mapMaker import MapMaker
 from SystemControl import SystemControl
 from Tkinter import Entry, Tk, Label, Frame, PhotoImage, Button
 import scipy.misc
+import threading
 
 
 # direction 0 is facing south, direction 1 is facing east,
@@ -70,18 +71,28 @@ class Gui:
         im = PhotoImage(file="outfile.gif")
         button = Button(frame, image=im)
         button.pack()
+
+
         def start():
             codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
             print sc.run(codeblock)
-        def reset():
-            sc.reset()
-            SystemControl.reset_flag = True
 
+        t = threading.Thread(target=start)
 
-        start_button = Button(text="START", command=start)
+        def start_thread():
+            t.start()
+
+        def reset_thread():
+            sc.reset_flag = True
+            # sc.reset()
+            # t.join()
+
+        start_button = Button(text="START", command=start_thread)
         start_button.pack()
-        reset_button = Button(text="RESET", command=reset)
+        reset_button = Button(text="RESET", command=reset_thread)
         reset_button.pack()
+
+
         start_button.grid(row=1, column=0)
         reset_button.grid(row=1, column=1)
         frame.pack()
