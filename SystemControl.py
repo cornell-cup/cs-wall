@@ -1,10 +1,7 @@
-from Parser import Parser
 import time
-from pynput.keyboard import Key, Listener
-from pynput import keyboard
 
 
-class SystemControl():
+class SystemControl:
 
     SOUTH = 0
     EAST = 1
@@ -91,24 +88,24 @@ class SystemControl():
         if distX > 0:
             # go north
             s += self.check_dir()
-            for i in range(0, distX):
+            for i in range(distX):
                 s += "Forward\n"
         elif distX < 0:
             # go south
             s += self.check_dir()
-            for i in range(0, distX):
+            for i in range(distX):
                 s += "Backward\n"
         if distY > 0:
             # go west
             s += self.check_dir() + "TurnLeft\n"
-            for i in range(0, distY):
+            for i in range(distY):
                 s += "Forward\n"
         elif distY < 0:
             # go east
             s += self.check_dir() + "TurnRight\n"
-            for i in range(0, distY):
+            for i in range(distY):
                 s += "Forward\n"
-        self.run(s)
+        self.rerun(s)
 
     # checks whether the current position of the robot is out of bounds in the map/maze
     # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
@@ -130,6 +127,26 @@ class SystemControl():
             robotY = 0
         return out_of_bounds
 
+    # executing specifically reset()
+    def rerun(self, code):
+        global robotX, robotY
+        action_list = code.split("\n")
+        length = len(action_list)
+        goal = False
+        for i in range(0, length):
+            code = action_list[i]
+            goal, out = self.moveRobot(code)
+            print("robotX")
+            print(robotX)
+            print("robotY")
+            print(robotY)
+            print(self.reset_flag)
+            time.sleep(2)
+            if out:
+                print("OUT OF BOUNDS")
+                return False
+        return goal
+
     # runs the actions on the 2D system
     def run(self, code):
         global robotX, robotY
@@ -149,14 +166,6 @@ class SystemControl():
                 print("OUT OF BOUNDS")
                 return False
             if self.reset_flag:
-                print "HEREEEEEEEEEEEEEE"
-                # self.reset()
+                print("RESET")
                 return False
         return goal
-
-
-# p = Parser()
-# codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-# sc = SystemControl()
-# if sc.run(codeblock):
-#     print("GOAL REACHED!!! CONGRATS!!!")

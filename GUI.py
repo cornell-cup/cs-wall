@@ -4,7 +4,7 @@ from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
-from Tkinter import Entry, Tk, Label, Frame, PhotoImage, Button
+from Tkinter import Entry, Tk, Label, Frame, PhotoImage, Button, Spinbox
 import scipy.misc
 import threading
 
@@ -25,18 +25,25 @@ class Gui:
     START_Y = 0
     WALL_X = 0
     WALL_Y = 0
+    level = 1
 
     def __init__(self):
         # Assuming that we're only making square grids, then BOUNDARY_Y is useless, and so are WALL_X and WALL_Y.
         global robot_x, robot_y, BOUNDARY_X, BOUNDARY_Y, GOAL_X, GOAL_Y, START_X, START_Y
         # Tkinter Message Box
         master = Tk()
-        Label(master, text="Choose Level").grid(row=0)
+        master.title("Level Chooser")
+        w = Spinbox(master, from_=1, to=10)
+        w.pack()
+        w.grid(row=0, column=0)
 
-        e1 = Entry(master)
+        def store():
+            self.level = int(w.get())
+            master.destroy()
 
-        e1.grid(row=0, column=1)
-
+        level_button = Button(text="ENTER", command=store)
+        level_button.pack()
+        level_button.grid(row=1, column=0)
         master.mainloop()
 
         map = MapMaker()
@@ -66,16 +73,17 @@ class Gui:
         sc = SystemControl()
         self.make_grid()
         root = Tk()
-        Label(root, text="Level #").grid(row=0)
+        root.title("WALL")
+        Label(root, text="Level " + str(self.level)).grid(row=0, column=1)
         frame = Frame(root)
         im = PhotoImage(file="outfile.gif")
         button = Button(frame, image=im)
         button.pack()
 
-
         def start():
             codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
             print sc.run(codeblock)
+            # TODO maybe pop up a goal reached message
 
         t = threading.Thread(target=start)
 
@@ -85,18 +93,15 @@ class Gui:
         def reset_thread():
             sc.reset_flag = True
             sc.reset()
-            # t.join()
 
         start_button = Button(text="START", command=start_thread)
         start_button.pack()
         reset_button = Button(text="RESET", command=reset_thread)
         reset_button.pack()
-
-
         start_button.grid(row=1, column=0)
-        reset_button.grid(row=1, column=1)
+        reset_button.grid(row=1, column=2)
         frame.pack()
-        frame.grid(row=2, column=0)
+        frame.grid(row=2, columnspan=3)
         root.mainloop()
 
     def gallery(self, array, ncols=BOUNDARY_X):
