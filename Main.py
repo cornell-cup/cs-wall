@@ -6,7 +6,7 @@ from pynput import keyboard
 class Main():
 
     def __init__(self):
-        print "Main Function Initialized"
+        print("Main Function Initialized")
         global reset_flag
         reset_flag = False
 
