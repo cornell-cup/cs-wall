@@ -11,14 +11,21 @@ class Main():
         reset_flag = False
 
     def main_function(self):
+        print("Start main")
+        # Collect events until released
+        with keyboard.Listener(on_press=self.on_press(),
+                               on_release=self.on_release()) as listener:
+            listener.join()
+
+        print("Listener made")
+
         while True:
-            print "anything"
+            print("anything")
             g = Gui()
             p = Parser()
             codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
             sc = SystemControl()
             # print sc.run(codeblock)
-
 
 
     def on_press(key):
@@ -34,10 +41,6 @@ class Main():
         if key == keyboard.Key.esc:
             # Stop listener
             return False
-    # Collect events until released
-    with keyboard.Listener(on_press=on_press,
-                           on_release=on_release) as listener:
-        listener.join()
 
 m = Main()
 m.main_function()

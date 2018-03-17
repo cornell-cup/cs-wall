@@ -182,11 +182,11 @@ class Gui:
             self.hang(self.update_once(code))
         if robot_x == GOAL_X:
             if robot_y == GOAL_Y:
-                print "Goal is reached"
+                print("Goal is reached")
 
 g = Gui()
 p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
 # g.update(codeblock)
 sc = SystemControl()
-print sc.run(codeblock)
+print(sc.run(codeblock))

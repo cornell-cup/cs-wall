@@ -138,14 +138,14 @@ class SystemControl():
         for i in range(0, length):
             code = action_list[i]
             goal, out = self.moveRobot(code)
-            print "robotX"
-            print robotX
-            print "robotY"
-            print robotY
-            print reset_flag
+            print("robotX")
+            print(robotX)
+            print("robotY")
+            print(robotY)
+            print(reset_flag)
             time.sleep(2)
             if out:
-                print "OUT OF BOUNDS"
+                print("OUT OF BOUNDS")
                 return False
         return goal
 
@@ -154,4 +154,4 @@ p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
 sc = SystemControl()
 if sc.run(codeblock):
-    print "GOAL REACHED!!! CONGRATS!!!"
+    print("GOAL REACHED!!! CONGRATS!!!")
