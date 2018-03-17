@@ -1,6 +1,7 @@
 from Parser import Parser
 import time
 from pynput.keyboard import Key, Listener
+from pynput import keyboard
 
 global reset_flag
 reset_flag = False
@@ -142,7 +143,7 @@ class SystemControl():
             print "robotY"
             print robotY
             print reset_flag
-            time.sleep(3)
+            time.sleep(2)
             if out:
                 print "OUT OF BOUNDS"
                 return False
