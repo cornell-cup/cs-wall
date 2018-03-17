@@ -25,6 +25,7 @@ class moveRobot:
         dimY = 5
 
     # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
+    # TODO to pop off 5 commands at a time, we don't need the "<<<<SCRIPT,>>>>" packaging in this method
     def moveRobot(self, code):
         goal_reached = False
         s = ""
@@ -44,9 +45,9 @@ class moveRobot:
                 robotX -= 1;
             elif direction == self.WEST:
                 robotY -= 1
-            s += "bot.move_forward({})\n".format(MOVE_POWER)
+            s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER) + ">>>>\n"
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time)
+            s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "Backward":
             if direction == self.SOUTH:
                 robotX -= 1
@@ -56,17 +57,17 @@ class moveRobot:
                 robotX += 1;
             elif direction == self.WEST:
                 robotY += 1
-            s += "bot.move_backward({})\n".format(MOVE_POWER)
+            s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER) + ">>>>\n"
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time)
+            s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "TurnLeft":
             direction = (direction + 1) % 4
-            s += "bot.move_counter_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME)
+            s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
         if code == "TurnRight":
             direction = (direction + 3) % 4
-            s += "bot.move_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME)
+            s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
         if robotX == GoalX and robotY == GoalY:
             goal_reached = True
         return s, goal_reached
@@ -94,7 +95,8 @@ class moveRobot:
     # returns the finalized SCRIPT string to send to minibot
     def send(self, code):
         global robotX, robotY
-        s = "<<<<SCRIPT,"
+        s = ""
+        # s = "<<<<SCRIPT,"
         list = code.split("\n")
         length = len(list)
         for i in range(0, length):
@@ -102,8 +104,9 @@ class moveRobot:
             temp, goal = self.moveRobot(code)
             if self.checkBounds():
                 break
-            s += temp
-        s += ">>>>"
+            if temp != "":
+                s += temp
+        # s += ">>>>"
         return s
 
     # sets the direction to NORTH
