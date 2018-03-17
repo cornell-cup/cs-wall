@@ -1,4 +1,5 @@
 from Parser import Parser
+import time
 # this function is designed to receive movement blocks of Forward, Backward
 # TurnLeft, TurnRight and prints corresponding Minibot API
 # returns: <<<<SCRIPT,(code)>>>>, a String
@@ -106,6 +107,7 @@ class moveRobot:
                 break
             if temp != "":
                 s += temp
+            # time.sleep(3)
         # s += ">>>>"
         return s
 
@@ -160,7 +162,7 @@ class moveRobot:
         return time
 
 
-p = Parser()
-codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-mr = moveRobot()
-print mr.send(codeblock)
+# p = Parser()
+# codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+# mr = moveRobot()
+# print mr.send(codeblock)

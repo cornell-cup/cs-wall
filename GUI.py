@@ -4,10 +4,8 @@ from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
-from Tkinter import Entry, Tk, Label, mainloop
+from Tkinter import Entry, Tk, Label, Frame, PhotoImage, Button
 import scipy.misc
-
-
 
 
 # direction 0 is facing south, direction 1 is facing east,
@@ -39,7 +37,7 @@ class Gui:
 
         e1.grid(row=0, column=1)
 
-        mainloop()
+        master.mainloop()
 
         map = MapMaker()
         # map.parseMap("/test.json")
@@ -65,6 +63,15 @@ class Gui:
         WALL_Y = 0
 
         self.make_grid()
+        root = Tk()
+        Label(root, text="Level #").grid(row=0)
+        frame = Frame(root)
+        im = PhotoImage(file="outfile.gif")
+        button = Button(frame, image=im)
+        button.pack()
+        frame.pack()
+        frame.grid(row=1, column=0)
+        root.mainloop()
 
     def gallery(self, array, ncols=BOUNDARY_X):
         ncols = BOUNDARY_X
@@ -100,10 +107,9 @@ class Gui:
         starty = GOAL_Y * block_length + (block_length / 4)
         finy = GOAL_Y * block_length + (3 * block_length / 4)
         data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
-        # plt.imshow(data)
-        # plt.show()
-        img = Image.fromarray(data, 'RGB')
-        img.show()
+        # img = Image.fromarray(data, 'RGB')
+        scipy.misc.imsave('outfile.gif', data)
+        # img.show()
 
     def hang_robot(self, array):
         global direction
@@ -184,9 +190,10 @@ class Gui:
             if robot_y == GOAL_Y:
                 print "Goal is reached"
 
-g = Gui()
-p = Parser()
-codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-# g.update(codeblock)
-sc = SystemControl()
-print sc.run(codeblock)
+
+# g = Gui()
+# p = Parser()
+# codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+# # g.update(codeblock)
+# sc = SystemControl()
+# print sc.run(codeblock)
