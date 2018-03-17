@@ -1,5 +1,9 @@
 from Parser import Parser
+import time
+from pynput.keyboard import Key, Listener
 
+global reset_flag
+reset_flag = False
 
 class SystemControl():
 
@@ -133,6 +137,12 @@ class SystemControl():
         for i in range(0, length):
             code = action_list[i]
             goal, out = self.moveRobot(code)
+            print "robotX"
+            print robotX
+            print "robotY"
+            print robotY
+            print reset_flag
+            time.sleep(3)
             if out:
                 print "OUT OF BOUNDS"
                 return False
