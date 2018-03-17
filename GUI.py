@@ -4,7 +4,11 @@ from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
+from Tkinter import Entry, Tk, Label, mainloop
+from pynput.keyboard import Key, Listener
 import scipy.misc
+
+
 
 
 # direction 0 is facing south, direction 1 is facing east,
@@ -27,6 +31,16 @@ class Gui:
     def __init__(self):
         # Assuming that we're only making square grids, then BOUNDARY_Y is useless, and so are WALL_X and WALL_Y.
         global robot_x, robot_y, BOUNDARY_X, BOUNDARY_Y, GOAL_X, GOAL_Y, START_X, START_Y
+
+        # Tkinter Message Box
+        master = Tk()
+        Label(master, text="Choose Level").grid(row=0)
+
+        e1 = Entry(master)
+
+        e1.grid(row=0, column=1)
+
+        mainloop()
 
         map = MapMaker()
         # map.parseMap("/test.json")
@@ -171,6 +185,25 @@ class Gui:
             if robot_y == GOAL_Y:
                 print "Goal is reached"
 
+
+
+
+    # def on_press(key):
+    #     print('{0} pressed'.format(
+    #         key))
+    #
+    # def on_release(key):
+    #     print('{0} release'.format(
+    #         key))
+    #     if key == Key.esc:
+    #         # Stop listener
+    #         return False
+    #
+    # # Collect events until released
+    # with Listener(
+    #         on_press=on_press,
+    #         on_release=on_release) as listener:
+    #     listener.join()
 
 g = Gui()
 p = Parser()
