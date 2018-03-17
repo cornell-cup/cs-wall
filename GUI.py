@@ -5,7 +5,6 @@ from Parser import Parser
 from mapMaker import MapMaker
 from SystemControl import SystemControl
 from Tkinter import Entry, Tk, Label, mainloop
-from pynput.keyboard import Key, Listener
 import scipy.misc
 
 
@@ -183,31 +182,11 @@ class Gui:
             self.hang(self.update_once(code))
         if robot_x == GOAL_X:
             if robot_y == GOAL_Y:
-                print "Goal is reached"
-
-
-
-
-    # def on_press(key):
-    #     print('{0} pressed'.format(
-    #         key))
-    #
-    # def on_release(key):
-    #     print('{0} release'.format(
-    #         key))
-    #     if key == Key.esc:
-    #         # Stop listener
-    #         return False
-    #
-    # # Collect events until released
-    # with Listener(
-    #         on_press=on_press,
-    #         on_release=on_release) as listener:
-    #     listener.join()
+                print("Goal is reached")
 
 g = Gui()
 p = Parser()
 codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
 # g.update(codeblock)
 sc = SystemControl()
-print sc.run(codeblock)
+print(sc.run(codeblock))
