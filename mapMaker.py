@@ -176,11 +176,11 @@ class MapMaker():
 
     def accessField(self, dictionary,key):
         """ Accesses the [dictionary] safely with the given [key] and
-            returns the corressponding value if found. If not found, 
+            returns the corresponding value if found. If not found,
             the key is printed to the console and a None value is returned.
 
             This is used instead of the dictionary's get() function in order 
-            to have a more controlled way to notify what is imporoperly defined
+            to have a more controlled way to notify what is improperly defined
             in the level's JSON file. """
         
         try:
