@@ -150,7 +150,7 @@ class SystemControl():
                 return False
             if self.reset_flag:
                 print "HEREEEEEEEEEEEEEE"
-                self.reset()
+                # self.reset()
                 return False
         return goal
 

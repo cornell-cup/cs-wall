@@ -84,7 +84,7 @@ class Gui:
 
         def reset_thread():
             sc.reset_flag = True
-            # sc.reset()
+            sc.reset()
             # t.join()
 
         start_button = Button(text="START", command=start_thread)
