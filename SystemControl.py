@@ -147,6 +147,9 @@ class SystemControl():
             if out:
                 print("OUT OF BOUNDS")
                 return False
+            if reset_flag:
+                self.reset()
+                return False
         return goal
 
 
