@@ -150,8 +150,8 @@ class SystemControl():
         return goal
 
 
-p = Parser()
-codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
-sc = SystemControl()
-if sc.run(codeblock):
-    print("GOAL REACHED!!! CONGRATS!!!")
+# p = Parser()
+# codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+# sc = SystemControl()
+# if sc.run(codeblock):
+#     print("GOAL REACHED!!! CONGRATS!!!")

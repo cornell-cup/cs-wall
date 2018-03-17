@@ -12,12 +12,6 @@ class Main():
 
     def main_function(self):
         print("Start main")
-        # Collect events until released
-        with keyboard.Listener(on_press=self.on_press(),
-                               on_release=self.on_release()) as listener:
-            listener.join()
-
-        print("Listener made")
 
         while True:
             print("anything")
@@ -25,23 +19,20 @@ class Main():
             p = Parser()
             codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
             sc = SystemControl()
-            # print sc.run(codeblock)
+            print sc.run(codeblock)
 
-
-    def on_press(key):
-        try:
-            print('alphanumeric key {0} pressed'.format(key.char))
-        except AttributeError:
-            print('special key {0} pressed'.format(
-                key))
-
-    def on_release(key):
-        print('{0} released'.format(key))
-
-        if key == keyboard.Key.esc:
-            # Stop listener
-            return False
 
 m = Main()
+print("Listener made")
+#
+# def on_press(key):
+#     print("pressed!!")
+#
+# def on_release(key):
+#     print("released!!")
+#
+# with keyboard.Listener(on_press=on_press,
+#                        on_release=on_release) as listener:
+#     listener.join()
 m.main_function()
 
