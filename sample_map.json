@@ -1,18 +1,19 @@
 {
-	"SQUARE_UNIT":  1, //The length of one square in feet(?)
+	"BACKGROUND":  "map.png",
+	"SQUARE_UNIT":  1,
 	"BOUNDARY":{
-		"MAX_X" : 10,
-		"MAX_Y" : 10,
+		"BOUNDARY_X" : 10,
+		"BOUNDARY_Y" : 10
 	},
-	"START":{ //Starting position of bot
+	"START":{
 		"START_X" : 0,
-		"START_Y" : 0,
+		"START_Y" : 0
 	},
-	"GOAL":{ //Goal position of bot
+	"GOAL":{
 		"GOAL_X" : 0,
-		"GOAL_Y" : 0,
+		"GOAL_Y" : 0
 	},
-	"WALLS":[ //Impassable spot on the map
+	"WALLS":[
 		{
 			"WALL_X": 1,
 			"WALL_Y": 1
