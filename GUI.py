@@ -14,6 +14,12 @@ from moveRobot import moveRobot
 # direction 0 is facing south, direction 1 is facing east,
 # direction 2 is facing north, and direction 3 is facing west.
 class Gui:
+
+    SOUTH = 0
+    EAST = 1
+    NORTH = 2
+    WEST = 3
+
     direction = 1
     robot_x = 0
     robot_y = 0
@@ -169,19 +175,19 @@ class Gui:
     #     global direction
     #     global robot_x
     #     global robot_y
-    #     if direction == 0:
+    #     if direction == SOUTH:
     #         x = 75 + 200 * robot_x
     #         y = 82.5 + 200 * robot_y
     #         array[x:(x + 50), y:(y + 35), :] = Image.open('robot0.png').convert('RGB')
-    #     elif direction == 1:
+    #     elif direction == EAST:
     #         y = 75 + 200 * robot_y
     #         x = 82.5 + 200 * robot_x
     #         array[x:(x + 35), y:(y + 50), :] = Image.open('robot1.png').convert('RGB')
-    #     elif direction == 2:
+    #     elif direction == NORTH:
     #         x = 75 + 200 * robot_x
     #         y = 82.5 + 200 * robot_y
     #         array[x:(x + 50), y:(y + 35), :] = Image.open('robot2.png').convert('RGB')
-    #     elif direction == 3:
+    #     elif direction == WEST:
     #         y = 75 + 200 * robot_y
     #         x = 82.5 + 200 * robot_x
     #         array[x:(x + 35), y:(y + 50), :] = Image.open('robot3.png').convert('RGB')
@@ -189,22 +195,22 @@ class Gui:
 
     def move_robot(self, code):
         if code == "Forward":
-            if self.direction == 0:
+            if self.direction == SOUTH:
                 self.robot_x += 1
-            elif self.direction == 1:
+            elif self.direction == EAST:
                 self.robot_y += 1
-            elif self.direction == 2:
+            elif self.direction == NORTH:
                 self.robot_x -= 1
-            elif self.direction == 3:
+            elif self.direction == WEST:
                 self.robot_y -= 1
         elif code == "Backward":
-            if self.direction == 0:
+            if self.direction == SOUTH:
                 self.robot_x -= 1
-            elif self.direction == 1:
+            elif self.direction == EAST:
                 self.robot_y -= 1
-            elif self.direction == 2:
+            elif self.direction == NORTH:
                 self.robot_x += 1
-            elif self.direction == 3:
+            elif self.direction == WEST:
                 self.robot_y += 1
         elif code == "TurnLeft":
             self.direction = (self.direction + 1) % 4

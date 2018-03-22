@@ -3,6 +3,7 @@ from SystemControl import SystemControl
 from GUI import Gui
 from pynput.keyboard import Key, Listener
 from pynput import keyboard
+
 class Main():
 
     def __init__(self):
