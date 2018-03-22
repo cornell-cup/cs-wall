@@ -14,7 +14,6 @@ from moveRobot import moveRobot
 # direction 0 is facing south, direction 1 is facing east,
 # direction 2 is facing north, and direction 3 is facing west.
 class Gui:
-    global direction, robot_y, robot_x, index, BOUNDARY_X, GOAL_X, GOAL_Y, START_X, START_Y, WALL_X, WALL_Y
     direction = 1
     robot_x = 0
     robot_y = 0
@@ -32,7 +31,6 @@ class Gui:
     MINIBOT = 1
 
     def __init__(self):
-        global robot_x, robot_y, BOUNDARY_X, GOAL_X, GOAL_Y, START_X, START_Y
         master = Tk()
         master.title("Level Chooser")
         w = Spinbox(master, from_=1, to=10)
@@ -48,22 +46,20 @@ class Gui:
         level_button.grid(row=1, column=0)
         master.mainloop()
 
-        # TODO for MapMaker, we need to add background file name in the json file, and parser, while getting rid of
-        # TODO BOUNDARY_Y, WALL_X, WALL_Y.
         map = MapMaker()
         # map.parseMap("/test.json")
-        BOUNDARY_X = map.BOUNDARY_X
-        GOAL_X = map.GOAL_X
-        GOAL_Y = map.GOAL_Y
-        START_X = map.START_X
-        START_Y = map.START_Y
-        BOUNDARY_X = 5
-        START_X = 3
-        START_Y = 1
-        robot_x = START_X
-        robot_y = START_Y
-        GOAL_X = 3
-        GOAL_Y = 4
+        self.BOUNDARY_X = map.BOUNDARY_X
+        self.GOAL_X = map.GOAL_X
+        self.GOAL_Y = map.GOAL_Y
+        self.START_X = map.START_X
+        self.START_Y = map.START_Y
+        self.BOUNDARY_X = 5
+        self.START_X = 3
+        self.START_Y = 1
+        self.robot_x = self.START_X
+        self.robot_y = self.START_Y
+        self.GOAL_X = 3
+        self.GOAL_Y = 4
 
         p = Parser()
         # a choice box here to choose system (2D or minibot)
@@ -150,23 +146,22 @@ class Gui:
 
     def make_grid(self):
         # assuming this is a square grid, which is what we will set it as
-        global BOUNDARY_X, GOAL_X, GOAL_Y
         w, h = 600, 600
         data = np.zeros((h, w, 3), dtype=np.uint8)
         temp_im = Image.open('map.png').convert('RGB')
         data[:600, :600, :] = scipy.misc.imresize(temp_im, (600, 600))
-        block_length = 600 / BOUNDARY_X
+        block_length = 600 / self.BOUNDARY_X
         div_length = 2
-        for i in range(0, BOUNDARY_X - 1):
+        for i in range(0, self.BOUNDARY_X - 1):
             anchor = (i + 1) * block_length
             data[anchor - div_length:anchor + div_length, :, :] = [256, 0, 0]
             data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
         # hanging the target
         target = Image.open('target.png').convert('RGB')
-        startx = GOAL_X * block_length + (block_length / 4)
-        finx = GOAL_X * block_length + (3 * block_length / 4)
-        starty = GOAL_Y * block_length + (block_length / 4)
-        finy = GOAL_Y * block_length + (3 * block_length / 4)
+        startx = self.GOAL_X * block_length + (block_length / 4)
+        finx = self.GOAL_X * block_length + (3 * block_length / 4)
+        starty = self.GOAL_Y * block_length + (block_length / 4)
+        finy = self.GOAL_Y * block_length + (3 * block_length / 4)
         data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
         scipy.misc.imsave('outfile.gif', data)
 
@@ -193,32 +188,28 @@ class Gui:
     #     return array
 
     def move_robot(self, code):
-        global direction
-        global robot_x
-        global robot_y
-
         if code == "Forward":
-            if direction == 0:
-                robot_x += 1
-            elif direction == 1:
-                robot_y += 1
-            elif direction == 2:
-                robot_x -= 1
-            elif direction == 3:
-                robot_y -= 1
+            if self.direction == 0:
+                self.robot_x += 1
+            elif self.direction == 1:
+                self.robot_y += 1
+            elif self.direction == 2:
+                self.robot_x -= 1
+            elif self.direction == 3:
+                self.robot_y -= 1
         elif code == "Backward":
-            if direction == 0:
-                robot_x -= 1
-            elif direction == 1:
-                robot_y -= 1
-            elif direction == 2:
-                robot_x += 1
-            elif direction == 3:
-                robot_y += 1
+            if self.direction == 0:
+                self.robot_x -= 1
+            elif self.direction == 1:
+                self.robot_y -= 1
+            elif self.direction == 2:
+                self.robot_x += 1
+            elif self.direction == 3:
+                self.robot_y += 1
         elif code == "TurnLeft":
-            direction = (direction + 1) % 4
+            self.direction = (self.direction + 1) % 4
         elif code == "TurnRight":
-            direction = (direction + 3) % 4
+            self.direction = (self.direction + 3) % 4
 
     # # assuming code is a one-line command
     # def update_once(self, code):

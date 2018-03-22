@@ -7,81 +7,84 @@ class SystemControl:
     EAST = 1
     NORTH = 2
     WEST = 3
-
-    # global reset_flag
     reset_flag = False
+    direction = 1
+    startX = 3
+    startY = 1
+    robotX = startX
+    robotY = startY
+    GoalX = 3
+    GoalY = 4
+    dimX = 5
+    dimY = 5
 
     def __init__(self):
-        global direction, robotX, robotY, GoalX, GoalY, dimX, dimY, startX, startY
-        direction = 1
-        startX = 3
-        startY = 1
-        robotX = startX
-        robotY = startY
-        GoalX = 3
-        GoalY = 4
-        dimX = 5
-        dimY = 5
+        self.direction = 1
+        self.startX = 3
+        self.startY = 1
+        self.robotX = self.startX
+        self.robotY = self.startY
+        self.GoalX = 3
+        self.GoalY = 4
+        self.dimX = 5
+        self.dimY = 5
 
     # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
         goal_reached = False
-        global direction, robotX, robotY, GoalX, GoalY
         out = False
         if code == "Forward":
-            if direction == self.SOUTH:
-                robotX += 1
-            elif direction == self.EAST:
-                robotY += 1;
-            elif direction == self.NORTH:
-                robotX -= 1;
-            elif direction == self.WEST:
-                robotY -= 1
+            if self.direction == self.SOUTH:
+                self.robotX += 1
+            elif self.direction == self.EAST:
+                self.robotY += 1;
+            elif self.direction == self.NORTH:
+                self.robotX -= 1;
+            elif self.direction == self.WEST:
+                self.robotY -= 1
             if self.checkBounds():
                 out = True
                 goal_reached = False
                 return goal_reached, out
             # TODO method moveForward
         if code == "Backward":
-            if direction == self.SOUTH:
-                robotX -= 1
-            elif direction == self.EAST:
-                robotY -= 1;
-            elif direction == self.NORTH:
-                robotX += 1;
-            elif direction == self.WEST:
-                robotY += 1
+            if self.direction == self.SOUTH:
+                self.robotX -= 1
+            elif self.direction == self.EAST:
+                self.robotY -= 1;
+            elif self.direction == self.NORTH:
+                self.robotX += 1;
+            elif self.direction == self.WEST:
+                self.robotY += 1
             if self.checkBounds():
                 out = True
                 goal_reached = False
                 return goal_reached, out
             # TODO method moveBackward
         if code == "TurnLeft":
-            direction = (direction + 1) % 4
+            self.direction = (self.direction + 1) % 4
             # TODO method turnLeft
         if code == "TurnRight":
-            direction = (direction + 3) % 4
+            self.direction = (self.direction + 3) % 4
             # TODO method turnRight
-        if robotX == GoalX and robotY == GoalY:
+        if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return goal_reached, out
 
     # sets the direction to NORTH
     def check_dir(self):
-        global direction
-        if direction == self.NORTH:
+        if self.direction == self.NORTH:
             return ""
-        elif direction == self.SOUTH:
+        elif self.direction == self.SOUTH:
             return "TurnRight\nTurnRight\n"
-        elif direction == self.EAST:
+        elif self.direction == self.EAST:
             return "TurnLeft\n"
-        elif direction == self.WEST:
+        elif self.direction == self.WEST:
             return "TurnRight\n"
 
     def reset(self):
-        global robotX, robotY, startX, startY
-        distX = robotX - startX
-        distY = robotY - startY
+        distX = self.robotX - self.startX
+        distY = self.robotY - self.startY
         s = ""
         if distX == 0 and distY == 0:
             return
@@ -112,24 +115,22 @@ class SystemControl:
     # returns True if the robot is out of bounds, and False if it is not.
     def checkBounds(self):
         out_of_bounds = False
-        global robotX, robotY, dimX, dimY, direction
-        if robotX >= dimX:
+        if self.robotX >= self.dimX:
             out_of_bounds = True
-            robotX = dimX - 1
-        elif robotX < 0:
+            self.robotX = self.dimX - 1
+        elif self.robotX < 0:
             out_of_bounds = True
-            robotX = 0
-        if robotY >= dimY:
+            self.robotX = 0
+        if self.robotY >= self.dimY:
             out_of_bounds = True
-            robotY = dimY - 1
-        elif robotY < 0:
+            self.robotY = self.dimY - 1
+        elif self.robotY < 0:
             out_of_bounds = True
-            robotY = 0
+            self.robotY = 0
         return out_of_bounds
 
     # executing specifically reset()
     def rerun(self, code):
-        global robotX, robotY
         action_list = code.split("\n")
         length = len(action_list)
         goal = False
@@ -137,9 +138,9 @@ class SystemControl:
             code = action_list[i]
             goal, out = self.moveRobot(code)
             print("robotX")
-            print(robotX)
+            print(self.robotX)
             print("robotY")
-            print(robotY)
+            print(self.robotY)
             print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
@@ -150,7 +151,6 @@ class SystemControl:
 
     # runs the actions on the 2D system
     def run(self, code):
-        global robotX, robotY
         action_list = code.split("\n")
         length = len(action_list)
         goal = False
@@ -158,9 +158,9 @@ class SystemControl:
             code = action_list[i]
             goal, out = self.moveRobot(code)
             print("robotX")
-            print(robotX)
+            print(self.robotX)
             print("robotY")
-            print(robotY)
+            print(self.robotY)
             print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)

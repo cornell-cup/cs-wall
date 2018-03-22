@@ -8,34 +8,36 @@ import time
 
 class moveRobot:
 
-    # global reset_flag
     reset_flag = False
-
     SOUTH = 0
     EAST = 1
     NORTH = 2
     WEST = 3
     robotX = 0
     robotY = 0
+    direction = 1
+    GoalX = 0
+    GoalY = 0
+    dimX = 0
+    dimY = 0
+    startX = 0
+    startY = 0
 
     def __init__(self):
-        global direction, GoalX, GoalY, dimX, dimY, startX, startY
-        direction = 1
-        startX = 3
-        startY = 1
-        self.robotX = startX
-        self.robotY = startY
-        GoalX = 3
-        GoalY = 4
-        dimX = 5
-        dimY = 5
+        self.startX = 3
+        self.startY = 1
+        self.robotX = self.startX
+        self.robotY = self.startY
+        self.GoalX = 3
+        self.GoalY = 4
+        self.dimX = 5
+        self.dimY = 5
 
     # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     # TODO to pop off 5 commands at a time, we don't need the "<<<<SCRIPT,>>>>" packaging in this method
     def moveRobot(self, code):
         goal_reached = False
         s = ""
-        global direction, GoalX, GoalY
         # TODO change "dummy" to actual power level
         # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
         MOVE_POWER = 50
@@ -43,38 +45,38 @@ class moveRobot:
         # TODO Figure out how long it takes to turn 90 degrees
         TURN_TIME = 3
         if code == "Forward":
-            if direction == self.SOUTH:
+            if self.direction == self.SOUTH:
                 self.robotX += 1
-            elif direction == self.EAST:
+            elif self.direction == self.EAST:
                 self.robotY += 1;
-            elif direction == self.NORTH:
+            elif self.direction == self.NORTH:
                 self.robotX -= 1;
-            elif direction == self.WEST:
+            elif self.direction == self.WEST:
                 self.robotY -= 1
             s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER) + ">>>>\n"
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "Backward":
-            if direction == self.SOUTH:
+            if self.direction == self.SOUTH:
                 self.robotX -= 1
-            elif direction == self.EAST:
+            elif self.direction == self.EAST:
                 self.robotY -= 1;
-            elif direction == self.NORTH:
+            elif self.direction == self.NORTH:
                 self.robotX += 1;
-            elif direction == self.WEST:
+            elif self.direction == self.WEST:
                 self.robotY += 1
             s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER) + ">>>>\n"
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "TurnLeft":
-            direction = (direction + 1) % 4
+            self.direction = (self.direction + 1) % 4
             s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
             s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
         if code == "TurnRight":
-            direction = (direction + 3) % 4
+            self.direction = (self.direction + 3) % 4
             s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
             s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
-        if self.robotX == GoalX and self.robotY == GoalY:
+        if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return s, goal_reached
 
@@ -82,17 +84,15 @@ class moveRobot:
     # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
     # returns True if the robot is out of bounds, and False if it is not.
     def checkBounds(self):
-        out_of_bounds = False
-        global dimX, dimY, direction
-        if self.robotX >= dimX:
+        if self.robotX >= self.dimX:
             out_of_bounds = True
-            self.robotX = dimX-1
+            self.robotX = self.dimX-1
         elif self.robotX < 0:
             out_of_bounds = True
             self.robotX = 0
-        if self.robotY >= dimY:
+        if self.robotY >= self.dimY:
             out_of_bounds = True
-            self.robotY = dimY-1
+            self.robotY = self.dimY-1
         elif self.robotY < 0:
             out_of_bounds = True
             self.robotY = 0
@@ -122,14 +122,13 @@ class moveRobot:
 
     # sets the direction to NORTH
     def check_dir(self):
-        global direction
-        if direction == self.NORTH:
+        if self.direction == self.NORTH:
             return ""
-        elif direction == self.SOUTH:
+        elif self.direction == self.SOUTH:
             return "TurnRight\nTurnRight\n"
-        elif direction == self.EAST:
+        elif self.direction == self.EAST:
             return "TurnLeft\n"
-        elif direction == self.WEST:
+        elif self.direction == self.WEST:
             return "TurnRight\n"
 
     # executing specifically reset()
@@ -152,9 +151,8 @@ class moveRobot:
 
     # returns the string to send to minibot for it to revert to its starting point
     def reset(self):
-        global startX, startY
-        distX = self.robotX - startX
-        distY = self.robotY - startY
+        distX = self.robotX - self.startX
+        distY = self.robotY - self.startY
         s = ""
         if distX == 0 and distY == 0:
             return ""
@@ -181,8 +179,7 @@ class moveRobot:
         return self.rerun(s)
 
     def check_goal(self):
-        global GoalX, GoalY
-        if self.robotX == GoalX and self.robotY == GoalY:
+        if self.robotX == self.GoalX and self.robotY == self.GoalY:
             return True
         return False
 
