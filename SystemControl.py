@@ -141,6 +141,7 @@ class SystemControl:
             print("robotY")
             print(robotY)
             print(self.reset_flag)
+            # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:
                 print("OUT OF BOUNDS")
@@ -161,6 +162,7 @@ class SystemControl:
             print("robotY")
             print(robotY)
             print(self.reset_flag)
+            # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:
                 print("OUT OF BOUNDS")
