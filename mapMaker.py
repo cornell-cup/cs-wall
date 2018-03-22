@@ -4,6 +4,7 @@ import json
 class MapMaker(): 
 
     #Keys to access JSON data
+    BACKGROUND = "BACKGROUND"
     SQUARE_UNIT = "SQUARE_UNIT"
 
     BOUNDARY = "BOUNDARY"
@@ -27,6 +28,7 @@ class MapMaker():
     WALL_SPACE = 1
 
     #game_data constants
+    GAME_BACKGROUND = "GAME_BACKGROUND"
     GAME_UNIT = "GAME_UNIT"
     GAME_START = "GAME_START"
     GAME_GOAL = "GAME_GOAL"
@@ -47,8 +49,13 @@ class MapMaker():
 
             #####Interpret JSON
 
+            ### Specify background image
+
+            background = self.accessField(json_data, self.BACKGROUND)
+
+            game_data.update({self.GAME_BACKGROUND: background})
+
             ### Create map from boundaries
-            # boundary = json_data.get(self.BOUNDARY,{})
             boundary = self.accessField(json_data,self.BOUNDARY)
 
             if not boundary:
