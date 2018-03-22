@@ -82,6 +82,7 @@ class SystemControl:
         elif self.direction == self.WEST:
             return "TurnRight\n"
 
+    # returns the robot from its current location to the starting point
     def reset(self):
         distX = self.robotX - self.startX
         distY = self.robotY - self.startY

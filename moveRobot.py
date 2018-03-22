@@ -84,6 +84,7 @@ class moveRobot:
     # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
     # returns True if the robot is out of bounds, and False if it is not.
     def checkBounds(self):
+        out_of_bounds = False
         if self.robotX >= self.dimX:
             out_of_bounds = True
             self.robotX = self.dimX-1
@@ -101,7 +102,6 @@ class moveRobot:
     # returns the finalized SCRIPT string to send to minibot
     def run(self, code):
         s = ""
-        # s = "<<<<SCRIPT,"
         list = code.split("\n")
         length = len(list)
         for i in range(0, length):
@@ -117,7 +117,6 @@ class moveRobot:
             else:
                 s += self.reset()
                 break
-        # s += ">>>>"
         return s
 
     # sets the direction to NORTH
@@ -134,7 +133,6 @@ class moveRobot:
     # executing specifically reset()
     def rerun(self, code):
         s = ""
-        # s = "<<<<SCRIPT,"
         list = code.split("\n")
         length = len(list)
         for i in range(0, length):
@@ -146,7 +144,6 @@ class moveRobot:
                 s += temp
             print temp
             # time.sleep(1)
-        # s += ">>>>"
         return s
 
     # returns the string to send to minibot for it to revert to its starting point

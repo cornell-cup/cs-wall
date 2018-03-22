@@ -3,15 +3,16 @@ from collections import defaultdict
 
 class Parser:
 
+    VariableMap = defaultdict(list)
+    robotX = 0
+    robotY = 0
+    result = ""
+
     def __init__(self):
-        global VariableMap
-        VariableMap = defaultdict(list)
-        global robotX
-        robotX = 0
-        global robotY
-        robotY = 0
-        global result
-        result = ""
+        self.VariableMap = defaultdict(list)
+        self.robotX = 0
+        self.robotY = 0
+        self.result = ""
 
     # function to translate the RFID file to the blocks
     def translateRFID(self, rfidfile):
@@ -41,53 +42,52 @@ class Parser:
 
     # function that receives the string of value to output value based on the variable map
     def parseValue(self, s):
-        global VariableMap
         if "+" in s:
             temp = s.split("+")
-            if temp[0] in VariableMap:
-                left = VariableMap.get(temp[0])
+            if temp[0] in self.VariableMap:
+                left = self.VariableMap.get(temp[0])
             else:
                 left = int(temp[0])
-            if temp[1] in VariableMap:
-                right = VariableMap.get(temp[1])
+            if temp[1] in self.VariableMap:
+                right = self.VariableMap.get(temp[1])
             else:
                 right = int(temp[1])
             return left+right
         elif "-" in s:
             temp = s.split("-")
-            if temp[0] in VariableMap:
-                left = VariableMap.get(temp[0])
+            if temp[0] in self.VariableMap:
+                left = self.VariableMap.get(temp[0])
             else:
                 left = int(temp[0])
-            if temp[1] in VariableMap:
-                right = VariableMap.get(temp[1])
+            if temp[1] in self.VariableMap:
+                right = self.VariableMap.get(temp[1])
             else:
                 right = int(temp[1])
             return left - right
         elif "*" in s:
             temp = s.split("*")
-            if temp[0] in VariableMap:
-                left = VariableMap.get(temp[0])
+            if temp[0] in self.VariableMap:
+                left = self.VariableMap.get(temp[0])
             else:
                 left = int(temp[0])
-            if temp[1] in VariableMap:
-                right = VariableMap.get(temp[1])
+            if temp[1] in self.VariableMap:
+                right = self.VariableMap.get(temp[1])
             else:
                 right = int(temp[1])
             return left * right
         elif "/" in s:
             temp = s.split("/")
-            if temp[0] in VariableMap:
-                left = VariableMap.get(temp[0])
+            if temp[0] in self.VariableMap:
+                left = self.VariableMap.get(temp[0])
             else:
                 left = int(temp[0])
-            if temp[1] in VariableMap:
-                right = VariableMap.get(temp[1])
+            if temp[1] in self.VariableMap:
+                right = self.VariableMap.get(temp[1])
             else:
                 right = int(temp[1])
             return left / right
-        if s in VariableMap:
-            return VariableMap.get(s)
+        if s in self.VariableMap:
+            return self.VariableMap.get(s)
         else:
             return int(s)
 
@@ -96,12 +96,10 @@ class Parser:
         # split the code by lines
         codeLines = inputCode.split("\n")
         movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight']
-        global VariableMap
-        global result
         while len(codeLines) > 0:
             code = codeLines.pop(0)
             if code in movement:
-                result += code+"\n"
+                self.result += code+"\n"
                 continue
             if code.split(" ")[0] == "FOR":
                 ForCode = ""
@@ -115,7 +113,7 @@ class Parser:
                 continue
             if code.split(" ")[0] == "SET":
                 one, two = code[4:].split("=")
-                VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
+                self.VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
                 continue
             if code.split(" ")[0] == "IF":
                 logic = code[3:code.find("DO")].replace(" ", "")
@@ -137,13 +135,13 @@ class Parser:
                 while self.parseLogic(logic):
                     self.runCode(WhileCode)
                 continue
-        return result
+        return self.result
 
     # function that receives the string s and output value it corresponding to
     def parseLogic(self, s):
         if "Destination" in s:
             s.split("Destination")
-            return robotX != 3 & robotY != 3
+            return self.robotX != 3 & self.robotY != 3
         elif ">" in s:
             temp = s.split(">")
             return self.parseValue(temp[0]) > self.parseValue(temp[1])

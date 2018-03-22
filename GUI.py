@@ -31,21 +31,24 @@ class Gui:
     MINIBOT = 1
 
     def __init__(self):
-        master = Tk()
-        master.title("Level Chooser")
-        w = Spinbox(master, from_=1, to=10)
+        level_disp = Tk()
+        level_disp.title("Level Chooser")
+        w = Spinbox(level_disp, from_=1, to=10)
         w.pack()
         w.grid(row=0, column=0)
 
+        # storing the chosen level to local variable
         def store():
             self.level = int(w.get())
-            master.destroy()
+            level_disp.destroy()
 
         level_button = Button(text="ENTER", command=store)
         level_button.pack()
         level_button.grid(row=1, column=0)
-        master.mainloop()
+        level_disp.mainloop()
 
+        # after level is chosen, variables related to the game level are stored below
+        # TODO store these in the class variables of control
         map = MapMaker()
         # map.parseMap("/test.json")
         self.BOUNDARY_X = map.BOUNDARY_X
@@ -60,33 +63,38 @@ class Gui:
         self.robot_y = self.START_Y
         self.GOAL_X = 3
         self.GOAL_Y = 4
+        self.WALL_Y = 0
+        self.Wall_X = 0
 
         p = Parser()
-        # a choice box here to choose system (2D or minibot)
-        choice = Tk()
-        listbox = Listbox(choice)
+        # making a choice box here to choose system (2D or minibot)
+        version_disp = Tk()
+        listbox = Listbox(version_disp)
         listbox.pack()
         listbox.insert(0, "2D System")
         listbox.insert(1, "Minibot")
         listbox.grid(row=0, column=0)
 
+        # storing the user's choice of system to local variable
         def store2():
             self.version = listbox.curselection()[0]
-            choice.destroy()
+            version_disp.destroy()
 
-        level_button2 = Button(text="ENTER", command=store2)
-        level_button2.pack()
-        level_button2.grid(row=1, column=0)
-        choice.mainloop()
-        sc = None
+        version_button = Button(text="ENTER", command=store2)
+        version_button.pack()
+        version_button.grid(row=1, column=0)
+        version_disp.mainloop()
+        control = None
         if self.version == self.TWO_D:
-            sc = SystemControl()
+            control = SystemControl()
         elif self.version == self.MINIBOT:
-            sc = moveRobot()
+            control = moveRobot()
         else:
             temp = Tk()
             temp.withdraw()
             tkMessageBox.showerror("Error", "Please choose a version.")
+
+        # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
         root = Tk()
         root.title("WALL")
@@ -96,30 +104,34 @@ class Gui:
         button = Button(frame, image=im)
         button.pack()
 
+        # runs the given file of rfid's
         def start():
             codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
             if self.version == self.TWO_D:
-                if sc.run(codeblock):
+                if control.run(codeblock):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
-                elif not sc.reset_flag:
+                elif not control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
             else:
-                sc.run(codeblock)
-                if sc.check_goal():
+                control.run(codeblock)
+                if control.check_goal():
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
-                else:
+                elif not control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
 
         t = threading.Thread(target=start)
 
+        # runs the method start()
         def start_thread():
             t.start()
 
+        # stops the processing of the rfid's and returns the robot to the starting point
         def reset_thread():
-            sc.reset_flag = True
+            control.reset_flag = True
             tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-            sc.reset()
+            control.reset()
 
+        # making the buttons (start/reset) on the GUI
         start_button = Button(text="START", command=start_thread)
         start_button.pack()
         reset_button = Button(text="RESET", command=reset_thread)
@@ -130,20 +142,7 @@ class Gui:
         frame.grid(row=2, columnspan=3)
         root.mainloop()
 
-    # def gallery(self, array, ncols=BOUNDARY_X):
-    #     ncols = BOUNDARY_X
-    #     nindex, height, width, intensity = array.shape
-    #     nrows = nindex//ncols
-    #     assert nindex == nrows*ncols
-    #     # want result.shape = (height*nrows, width*ncols, intensity)
-    #     result = (array.reshape(nrows, ncols, height, width, intensity)
-    #               .swapaxes(1,2)
-    #               .reshape(height*nrows, width*ncols, intensity))
-    #     return result
-    #
-    # def make_array(self):
-    #     return np.array([np.asarray(Image.open('square.gif').convert('RGB'))]*BOUNDARY_X*BOUNDARY_Y)
-
+    # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
     def make_grid(self):
         # assuming this is a square grid, which is what we will set it as
         w, h = 600, 600
@@ -187,29 +186,29 @@ class Gui:
     #         array[x:(x + 35), y:(y + 50), :] = Image.open('robot3.png').convert('RGB')
     #     return array
 
-    def move_robot(self, code):
-        if code == "Forward":
-            if self.direction == 0:
-                self.robot_x += 1
-            elif self.direction == 1:
-                self.robot_y += 1
-            elif self.direction == 2:
-                self.robot_x -= 1
-            elif self.direction == 3:
-                self.robot_y -= 1
-        elif code == "Backward":
-            if self.direction == 0:
-                self.robot_x -= 1
-            elif self.direction == 1:
-                self.robot_y -= 1
-            elif self.direction == 2:
-                self.robot_x += 1
-            elif self.direction == 3:
-                self.robot_y += 1
-        elif code == "TurnLeft":
-            self.direction = (self.direction + 1) % 4
-        elif code == "TurnRight":
-            self.direction = (self.direction + 3) % 4
+    # def move_robot(self, code):
+    #     if code == "Forward":
+    #         if self.direction == 0:
+    #             self.robot_x += 1
+    #         elif self.direction == 1:
+    #             self.robot_y += 1
+    #         elif self.direction == 2:
+    #             self.robot_x -= 1
+    #         elif self.direction == 3:
+    #             self.robot_y -= 1
+    #     elif code == "Backward":
+    #         if self.direction == 0:
+    #             self.robot_x -= 1
+    #         elif self.direction == 1:
+    #             self.robot_y -= 1
+    #         elif self.direction == 2:
+    #             self.robot_x += 1
+    #         elif self.direction == 3:
+    #             self.robot_y += 1
+    #     elif code == "TurnLeft":
+    #         self.direction = (self.direction + 1) % 4
+    #     elif code == "TurnRight":
+    #         self.direction = (self.direction + 3) % 4
 
     # # assuming code is a one-line command
     # def update_once(self, code):
