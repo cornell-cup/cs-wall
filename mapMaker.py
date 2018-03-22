@@ -41,7 +41,6 @@ class MapMaker():
     def parseMap(self, file_path):
         """Returns a [game_data] from the JSON [file_path]"""
 
-        # json_data = {}
         game_data = {}
 
         with open("{}.json".format(file_path)) as f:
@@ -60,10 +59,6 @@ class MapMaker():
 
             if not boundary:
                 return game_data
-
-            # if not boundary:
-            #     print("Boundary of map not defined")
-            #     break            
 
             boundary_x = self.accessField(boundary,self.BOUNDARY_X)
             boundary_y = self.accessField(boundary,self.BOUNDARY_Y)
@@ -136,7 +131,7 @@ class MapMaker():
 
         return game_data
 
-    def accessField(dictionary,key):
+    def accessField(self, dictionary,key):
 
         try:
             return dictionary.get(key)
