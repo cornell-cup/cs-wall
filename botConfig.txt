@@ -1,0 +1,3 @@
+"WHEEL_CIRCUMFERENCE" = circumference (centimeters)
+"REVOLUTION_TIME" = time bot takes to make one wheel revolution (seconds)
+"DISTANCE_BETWEEN_WHEELS" = distance between the wheel axles (centimeters)
