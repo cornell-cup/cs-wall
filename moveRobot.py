@@ -53,9 +53,9 @@ class moveRobot:
                 self.robotX -= 1;
             elif self.direction == self.WEST:
                 self.robotY -= 1
-            s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "Backward":
             if self.direction == self.SOUTH:
                 self.robotX -= 1
@@ -65,17 +65,17 @@ class moveRobot:
                 self.robotX += 1;
             elif self.direction == self.WEST:
                 self.robotY += 1
-            s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "<<<<SCRIPT," + "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "TurnLeft":
             self.direction = (self.direction + 1) % 4
-            s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
-            s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER)
+            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
         if code == "TurnRight":
             self.direction = (self.direction + 3) % 4
-            s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER) + ">>>>\n"
-            s += "<<<<SCRIPT," + "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER)
+            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return s, goal_reached
@@ -175,6 +175,8 @@ class moveRobot:
                 s += "Forward\n"
         return self.rerun(s)
 
+    # checks whether goal is reached by comparing goal to current location
+    # used in GUI
     def check_goal(self):
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             return True
