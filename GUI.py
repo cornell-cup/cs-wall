@@ -36,9 +36,9 @@ class Gui:
     NORTH = 2
     WEST = 3
 
-    target_file = "target.png"
-    outfile = "outfile.gif"
-    obstacle_file = "Pirate_Hat.png"
+    target_file = "image/target.png"
+    outfile = "output/outfile.gif"
+    obstacle_file = "image/Pirate_Hat.png"
 
     def __init__(self):
         level_disp = Tk()
@@ -59,7 +59,7 @@ class Gui:
 
         # after level is chosen, variables related to the game level are stored below
         map_data = MapMaker()
-        game_data = map_data.parseMap("sample_map")
+        game_data = map_data.parseMap("input/sample_map")
         self.BOUNDARY_X = len(game_data.get("GAME_MAP"))
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
         self.GOAL_Y = game_data.get("GAME_GOAL")[1]
@@ -119,13 +119,13 @@ class Gui:
         root.title("WALL")
         Label(root, text="Level " + str(self.level)).grid(row=0, column=1)
         frame = Frame(root)
-        im = PhotoImage(file="outfile.gif")
+        im = PhotoImage(file="image/outfile.gif")
         button = Button(frame, image=im)
         button.pack()
 
         # runs the given file of rfid's
         def start():
-            codeblock = p.runCode(p.translateRFID("rfidFOR.txt"))
+            codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
             if self.version == self.TWO_D:
                 if control.run(codeblock):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
@@ -183,8 +183,6 @@ class Gui:
         scipy.misc.imsave(self.outfile, data)
 
         # TODO hang obstacles
-
-
     # def hang_robot(self, array):
     #     global direction
     #     global robot_x

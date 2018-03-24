@@ -1,5 +1,5 @@
 {
-	"BACKGROUND":  "map.png",
+	"BACKGROUND":  "image/map.png",
 	"DIRECTION":  1,
 	"BOUNDARY":{
 		"BOUNDARY_X" : 5,
