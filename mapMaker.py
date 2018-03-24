@@ -1,4 +1,5 @@
 import json
+import Globals as g
 
 
 class MapMaker():
@@ -13,8 +14,8 @@ class MapMaker():
     #Background image for game
     BACKGROUND = "BACKGROUND"
 
-    #The length of one square in inches(?)
-    SQUARE_UNIT = "SQUARE_UNIT"
+    #Starting direction of the robot
+    DIRECTION = "DIRECTION"
 
     #Max boundaries of the map
     BOUNDARY = "BOUNDARY"
@@ -39,11 +40,17 @@ class MapMaker():
 
     ###Constants to create game_data
 
-    #game_data constants
+    #Keys to parse game_data dictionary
+
+    #References a string
     GAME_BACKGROUND = "GAME_BACKGROUND"
-    GAME_UNIT = "GAME_UNIT"
+    # References a tuple in the
+    GAME_START_DIRECTION = "GAME_START_DIRECTION"
+    # References a tuple in the format (x,y)
     GAME_START = "GAME_START"
+    # References a tuple in the format (x,y)
     GAME_GOAL = "GAME_GOAL"
+    # References a 2D list (minimap) where rows represent y values and columns are x values
     GAME_MAP = "GAME_MAP"
 
     # Minimap space constants
@@ -65,7 +72,10 @@ class MapMaker():
 
         game_data = {}
 
-        with open("{}.json".format(file_path),"r") as f:
+        if not file_path[-5:0]==".json":
+            file_path = "{}.json".format(file_path)
+
+        with open(file_path,"r") as f:
             json_data = json.load(f)
 
             #TODO: Determine location of level files and decide if name parsing is necessary 
@@ -103,13 +113,13 @@ class MapMaker():
             for unit in range(boundary_y):
                 miniMap.append([self.FREE_SPACE]*boundary_x)
 
-            ### Add walls to map
-            walls = self.accessField(json_data, self.OBSTACLES)
+            ### Add obstacles to map
+            obstacles = self.accessField(json_data, self.OBSTACLES)
 
-            for wall in walls:
-                wall_x = self.accessField(wall, self.OBSTACLE_X)
-                wall_y = self.accessField(wall, self.OBSTACLE_Y)
-                miniMap[wall_y][wall_x] = self.OBSTACLE_SPACE
+            for obstacle in obstacles:
+                obstacle_x = self.accessField(obstacle, self.OBSTACLE_X)
+                obstacle_y = self.accessField(obstacle, self.OBSTACLE_Y)
+                miniMap[obstacle_y][obstacle_x] = self.OBSTACLE_SPACE
 
             
             #Add map to game data
@@ -162,14 +172,16 @@ class MapMaker():
 
 
             ### Establish unit conversion
-            unit = self.accessField(json_data,self.SQUARE_UNIT)
+            direction = self.accessField(json_data,self.DIRECTION)
 
-            if unit==None:
-                print("Please define a valid number for {}".format(self.SQUARE_UNIT))
+            if direction:
+                pass
+            else:
+                print("Please define a valid direction value for ")
                 return game_data
 
             #Add map to game data
-            game_data.update({self.GAME_UNIT:unit})
+            game_data.update({self.GAME_START_DIRECTION:direction})
 
         if not f:
             print("File {}.json could not be read".format(file_path))
