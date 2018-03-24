@@ -37,6 +37,12 @@ class MapMaker():
     OBSTACLE_X = "OBSTACLE_X"
     OBSTACLE_Y = "OBSTACLE_Y"
 
+    #Cardinal directions
+    NORTH = "NORTH"
+    EAST = "EAST"
+    SOUTH = "SOUTH"
+    WEST = "WEST"
+
 
     ###Constants to create game_data
 
@@ -157,7 +163,6 @@ class MapMaker():
             goal_x = self.accessField(goal,self.GOAL_X)
             goal_y = self.accessField(goal,self.GOAL_Y)
 
-
             if goal_x==None:
                 print("Please define a valid number for {}".format(self.GOAL_X))
                 return game_data
@@ -174,20 +179,21 @@ class MapMaker():
             ### Establish unit conversion
             direction = self.accessField(json_data,self.DIRECTION)
 
-            if direction==None:
-                print("Please define a valid direction ('NORTH', 'NORTH','NORTH') for {}".format(self.DIRECTION))
-                return game_data
+            if direction == self.NORTH:
+                game_direction = g.NORTH
+            elif direction == self.EAST:
+                game_direction = g.EAST
+            elif direction == self.SOUTH:
+                game_direction = g.SOUTH
+            elif direction == self.WEST:
+                game_direction = g.WEST
             else:
-                g
-
-            if direction:
-                pass
-            else:
-                print("Please define a valid direction value for ")
+                print("Please define a valid value for {} ('{}', '{}', '{}', '{}')".format(
+                    self.DIRECTION, self.NORTH, self.EAST, self.SOUTH, self.WEST))
                 return game_data
 
             #Add map to game data
-            game_data.update({self.GAME_START_DIRECTION:direction})
+            game_data.update({self.GAME_START_DIRECTION:game_direction})
 
         if not f:
             print("File {}.json could not be read".format(file_path))
