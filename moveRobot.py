@@ -1,4 +1,4 @@
-from Parser import Parser
+import Globals as G
 import time
 
 
@@ -8,10 +8,6 @@ class moveRobot:
     its movement as class variables. """
 
     reset_flag = False
-    SOUTH = 0
-    EAST = 1
-    NORTH = 2
-    WEST = 3
     robotX = 0
     robotY = 0
     direction = 1
@@ -21,6 +17,8 @@ class moveRobot:
     dimY = 0
     startX = 0
     startY = 0
+    OBS_X = []
+    OBS_Y = []
 
     def __init__(self):
         self.startX = 3
@@ -44,25 +42,25 @@ class moveRobot:
         # TODO Figure out how long it takes to turn 90 degrees
         TURN_TIME = 3
         if code == "Forward":
-            if self.direction == self.SOUTH:
+            if self.direction == G.SOUTH:
                 self.robotX += 1
-            elif self.direction == self.EAST:
+            elif self.direction == G.EAST:
                 self.robotY += 1;
-            elif self.direction == self.NORTH:
+            elif self.direction == G.NORTH:
                 self.robotX -= 1;
-            elif self.direction == self.WEST:
+            elif self.direction == G.WEST:
                 self.robotY -= 1
             s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
             s += "bot.wait({})\n".format(time) + ">>>>\n"
         if code == "Backward":
-            if self.direction == self.SOUTH:
+            if self.direction == G.SOUTH:
                 self.robotX -= 1
-            elif self.direction == self.EAST:
+            elif self.direction == G.EAST:
                 self.robotY -= 1;
-            elif self.direction == self.NORTH:
+            elif self.direction == G.NORTH:
                 self.robotX += 1;
-            elif self.direction == self.WEST:
+            elif self.direction == G.WEST:
                 self.robotY += 1
             s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
@@ -98,6 +96,19 @@ class moveRobot:
             self.robotY = 0
         return out_of_bounds
 
+    # checks whether the current position of the robot is on an obstacle in the map/maze
+    # returns True if the robot is on an obstacle, and False if it is not.
+    def check_obstacles(self):
+        on_obstacle = False
+        possible_locations = []
+        for i in range(len(self.OBS_X)):
+            if self.robotX == self.OBS_X[i]:
+                possible_locations.append(i)
+        for j in range(len(possible_locations)):
+            if self.robotY == self.OBS_Y[possible_locations[j]]:
+                on_obstacle = True
+        return on_obstacle
+
     # returns the finalized SCRIPT string to send to minibot
     def run(self, code):
         s = ""
@@ -108,6 +119,8 @@ class moveRobot:
                 code = list[i]
                 temp, goal = self.moveRobot(code)
                 if self.checkBounds():
+                    break
+                if self.check_obstacles():
                     break
                 if temp != "":
                     s += temp
@@ -120,13 +133,13 @@ class moveRobot:
 
     # sets the direction to NORTH
     def check_dir(self):
-        if self.direction == self.NORTH:
+        if self.direction == G.NORTH:
             return ""
-        elif self.direction == self.SOUTH:
+        elif self.direction == G.SOUTH:
             return "TurnRight\nTurnRight\n"
-        elif self.direction == self.EAST:
+        elif self.direction == G.EAST:
             return "TurnLeft\n"
-        elif self.direction == self.WEST:
+        elif self.direction == G.WEST:
             return "TurnRight\n"
 
     # executing specifically reset()
@@ -137,8 +150,6 @@ class moveRobot:
         for i in range(0, length):
             code = list[i]
             temp, goal = self.moveRobot(code)
-            if self.checkBounds():
-                break
             if temp != "":
                 s += temp
             print temp

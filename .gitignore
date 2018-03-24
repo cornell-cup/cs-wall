@@ -4,3 +4,5 @@
 # Idea
 *.iml
 .idea/cs-wall.iml
+
+* .DS_Store

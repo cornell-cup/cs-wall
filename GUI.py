@@ -8,6 +8,7 @@ import tkMessageBox
 import scipy.misc
 import threading
 from moveRobot import moveRobot
+import Globals as G
 
 
 class Gui:
@@ -19,7 +20,7 @@ class Gui:
     robot_x = 0
     robot_y = 0
     BACKGROUND = ""
-    BOUNDARY_X = 0
+    BOUNDARY = 0
     GOAL_X = 0
     GOAL_Y = 0
     START_X = 0
@@ -30,11 +31,6 @@ class Gui:
     version = -1
     TWO_D = 0
     MINIBOT = 1
-
-    SOUTH = 0
-    EAST = 1
-    NORTH = 2
-    WEST = 3
 
     target_file = "image/target.png"
     outfile = "output/outfile.gif"
@@ -60,7 +56,7 @@ class Gui:
         # after level is chosen, variables related to the game level are stored below
         map_data = MapMaker()
         game_data = map_data.parseMap("input/sample_map")
-        self.BOUNDARY_X = len(game_data.get("GAME_MAP"))
+        self.BOUNDARY = len(game_data.get("GAME_MAP"))
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
         self.GOAL_Y = game_data.get("GAME_GOAL")[1]
         self.START_X = game_data.get("GAME_START")[0]
@@ -109,9 +105,11 @@ class Gui:
         control.startY = self.START_Y
         control.GoalX = self.GOAL_X
         control.GoalY = self.GOAL_Y
-        control.dimX = self.BOUNDARY_X
-        control.dimY = self.BOUNDARY_X
+        control.dimX = self.BOUNDARY
+        control.dimY = self.BOUNDARY
         control.direction = self.direction
+        control.OBS_X = self.OBS_X
+        control.OBS_Y = self.OBS_Y
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
@@ -119,7 +117,7 @@ class Gui:
         root.title("WALL")
         Label(root, text="Level " + str(self.level)).grid(row=0, column=1)
         frame = Frame(root)
-        im = PhotoImage(file="image/outfile.gif")
+        im = PhotoImage(file=self.outfile)
         button = Button(frame, image=im)
         button.pack()
 
@@ -167,22 +165,29 @@ class Gui:
         data = np.zeros((h, w, 3), dtype=np.uint8)
         temp_im = Image.open(self.BACKGROUND).convert('RGB')
         data[:600, :600, :] = scipy.misc.imresize(temp_im, (600, 600))
-        block_length = 600 / self.BOUNDARY_X
+        block_length = 600 / self.BOUNDARY
         div_length = 2
-        for i in range(0, self.BOUNDARY_X - 1):
+        for i in range(0, self.BOUNDARY - 1):
             anchor = (i + 1) * block_length
             data[anchor - div_length:anchor + div_length, :, :] = [256, 0, 0]
             data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
+
         # hanging the target
-        target = Image.open(self.target_file).convert('RGB')
-        startx = self.GOAL_X * block_length + (block_length / 4)
-        finx = self.GOAL_X * block_length + (3 * block_length / 4)
-        starty = self.GOAL_Y * block_length + (block_length / 4)
-        finy = self.GOAL_Y * block_length + (3 * block_length / 4)
-        data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
+        self.hang_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
+        # hanging the obstacles
+        for i in range(len(self.OBS_X)):
+            self.hang_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
         scipy.misc.imsave(self.outfile, data)
 
-        # TODO hang obstacles
+    # hangs the designated object on the GUI (either the target or the obstacle(s))
+    def hang_object(self, array, block_length, filename, x, y):
+        target = Image.open(filename).convert('RGB')
+        startx = x * block_length + (block_length / 4)
+        finx = x * block_length + (3 * block_length / 4)
+        starty = y * block_length + (block_length / 4)
+        finy = y * block_length + (3 * block_length / 4)
+        array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
+
     # def hang_robot(self, array):
     #     global direction
     #     global robot_x
@@ -257,5 +262,6 @@ class Gui:
     #     if robot_x == GOAL_X:
     #         if robot_y == GOAL_Y:
     #             print "Goal is reached"
+
 
 g = Gui()
