@@ -103,13 +103,13 @@ class MapMaker():
             for unit in range(boundary_y):
                 miniMap.append([self.FREE_SPACE]*boundary_x)
 
-            ### Add walls to map
-            walls = self.accessField(json_data, self.OBSTACLES)
+            ### Add obstacles to map
+            obstacles = self.accessField(json_data, self.OBSTACLES)
 
-            for wall in walls:
-                wall_x = self.accessField(wall, self.OBSTACLE_X)
-                wall_y = self.accessField(wall, self.OBSTACLE_Y)
-                miniMap[wall_y][wall_x] = self.OBSTACLE_SPACE
+            for obstacle in obstacles:
+                obstacle_x = self.accessField(obstacle, self.OBSTACLE_X)
+                obstacle_y = self.accessField(obstacle, self.OBSTACLE_Y)
+                miniMap[obstacle_y][obstacle_x] = self.OBSTACLE_SPACE
 
             
             #Add map to game data
