@@ -2,16 +2,16 @@
 	"BACKGROUND":  "map.png",
 	"SQUARE_UNIT":  1,
 	"BOUNDARY":{
-		"BOUNDARY_X" : 10,
-		"BOUNDARY_Y" : 10
+		"BOUNDARY_X" : 5,
+		"BOUNDARY_Y" : 5
 	},
 	"START":{
-		"START_X" : 0,
-		"START_Y" : 0
+		"START_X" : 3,
+		"START_Y" : 1
 	},
 	"GOAL":{
-		"GOAL_X" : 0,
-		"GOAL_Y" : 0
+		"GOAL_X" : 3,
+		"GOAL_Y" : 4
 	},
 	"OBSTACLES":[
 		{

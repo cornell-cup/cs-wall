@@ -62,13 +62,13 @@ class Gui:
         self.GOAL_Y = map.GOAL_Y
         self.START_X = map.START_X
         self.START_Y = map.START_Y
-        self.BOUNDARY_X = 5
-        self.START_X = 3
-        self.START_Y = 1
+        # self.BOUNDARY_X = 5
+        # self.START_X = 3
+        # self.START_Y = 1
         self.robot_x = self.START_X
         self.robot_y = self.START_Y
-        self.GOAL_X = 3
-        self.GOAL_Y = 4
+        # self.GOAL_X = 3
+        # self.GOAL_Y = 4
         self.WALL_Y = 0
         self.Wall_X = 0
 
