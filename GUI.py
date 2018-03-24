@@ -18,14 +18,15 @@ class Gui:
     direction = 1
     robot_x = 0
     robot_y = 0
+    BACKGROUND = ""
     index = 0
     BOUNDARY_X = 0
     GOAL_X = 0
     GOAL_Y = 0
     START_X = 0
     START_Y = 0
-    OBS_X = None
-    OBS_Y = None
+    OBS_X = []
+    OBS_Y = []
     level = 1
     version = -1
     TWO_D = 0
@@ -63,6 +64,8 @@ class Gui:
         self.START_Y = game_data.get("GAME_START")[1]
         self.robot_x = self.START_X
         self.robot_y = self.START_Y
+        self.direction = game_data.get("GAME_START_DIRECTION")
+        self.BACKGROUND = game_data.get("GAME_BACKGROUND")
 
         # getting the coordinates of the map that contains an obstacle (not used or tested yet)
         for row in range(len(game_data.get("GAME_MAP"))):
@@ -105,6 +108,7 @@ class Gui:
         control.GoalY = self.GOAL_Y
         control.dimX = self.BOUNDARY_X
         control.dimY = self.BOUNDARY_X
+        control.direction = self.direction
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
@@ -159,7 +163,7 @@ class Gui:
         # assuming this is a square grid, which is what we will set it as
         w, h = 600, 600
         data = np.zeros((h, w, 3), dtype=np.uint8)
-        temp_im = Image.open('map.png').convert('RGB')
+        temp_im = Image.open(self.BACKGROUND).convert('RGB')
         data[:600, :600, :] = scipy.misc.imresize(temp_im, (600, 600))
         block_length = 600 / self.BOUNDARY_X
         div_length = 2
@@ -250,3 +254,5 @@ class Gui:
     #     if robot_x == GOAL_X:
     #         if robot_y == GOAL_Y:
     #             print "Goal is reached"
+
+g = Gui()
