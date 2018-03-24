@@ -1,7 +1,12 @@
 import json
 
 
-class MapMaker(): 
+class MapMaker():
+    """Object class for making levels for Wall from JSON files
+
+       Contains the keywords for parsing a level JSON into
+       a data structure representing the game state for the GUI.
+    """
 
     ###Keys to access JSON data
 
@@ -50,7 +55,13 @@ class MapMaker():
         self.name = name
 
     def parseMap(self, file_path):
-        """Returns a [game_data] from the JSON [file_path]"""
+        """Returns a dictionary [game_data] representing the game state
+        from the JSON given in [file_path]
+
+        :param file_path string representing the filepath to the JSON file
+        :return dictionary with the game state
+
+        """
 
         game_data = {}
 

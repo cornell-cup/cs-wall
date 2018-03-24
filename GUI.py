@@ -30,6 +30,11 @@ class Gui:
     TWO_D = 0
     MINIBOT = 1
 
+    SOUTH = 0
+    EAST = 1
+    NORTH = 2
+    WEST = 3
+
     def __init__(self):
         level_disp = Tk()
         level_disp.title("Level Chooser")
