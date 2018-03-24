@@ -1,7 +1,12 @@
 import json
 
 
-class MapMaker(): 
+class MapMaker():
+    """Object class for making levels for Wall from JSON files
+
+       Contains the keywords for parsing a level JSON into
+       a data structure representing the game state for the GUI.
+    """
 
     ###Keys to access JSON data
 
@@ -27,9 +32,9 @@ class MapMaker():
     GOAL_Y = "GOAL_Y"
 
     #Impassable spots on the map
-    WALLS = "WALLS"
-    WALL_X = "WALL_X"
-    WALL_Y = "WALL_Y"
+    OBSTACLES = "OBSTACLES"
+    OBSTACLE_X = "OBSTACLE_X"
+    OBSTACLE_Y = "OBSTACLE_Y"
 
 
     ###Constants to create game_data
@@ -43,14 +48,20 @@ class MapMaker():
 
     # Minimap space constants
     FREE_SPACE = 0
-    WALL_SPACE = 1
+    OBSTACLE_SPACE = 1
 
     def __init__(self,name=None):
         #TODO: Decide if we need this field for GUI processing
         self.name = name
 
     def parseMap(self, file_path):
-        """Returns a [game_data] from the JSON [file_path]"""
+        """Returns a dictionary [game_data] representing the game state
+        from the JSON given in [file_path]
+
+        :param file_path string representing the filepath to the JSON file
+        :return dictionary with the game state
+
+        """
 
         game_data = {}
 
@@ -93,12 +104,12 @@ class MapMaker():
                 miniMap.append([self.FREE_SPACE]*boundary_x)
 
             ### Add walls to map
-            walls = self.accessField(json_data,self.WALLS)
+            walls = self.accessField(json_data, self.OBSTACLES)
 
             for wall in walls:
-                wall_x = self.accessField(wall,self.WALL_X)
-                wall_y = self.accessField(wall,self.WALL_Y)
-                miniMap[wall_y][wall_x] = self.WALL_SPACE
+                wall_x = self.accessField(wall, self.OBSTACLE_X)
+                wall_y = self.accessField(wall, self.OBSTACLE_Y)
+                miniMap[wall_y][wall_x] = self.OBSTACLE_SPACE
 
             
             #Add map to game data

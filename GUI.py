@@ -10,10 +10,11 @@ import scipy.misc
 import threading
 from moveRobot import moveRobot
 
-
-# direction 0 is facing south, direction 1 is facing east,
-# direction 2 is facing north, and direction 3 is facing west.
 class Gui:
+    """Creates the WALL GUI according to chosen level. Communicates with the wall and the object (2D system/minibot)
+    Throws notifications when designated goal is reached, goal is not reached, and when user fails to provide
+    the information needed (i.e. the system the GUI is running on)"""
+
     direction = 1
     robot_x = 0
     robot_y = 0
@@ -29,6 +30,11 @@ class Gui:
     version = -1
     TWO_D = 0
     MINIBOT = 1
+
+    SOUTH = 0
+    EAST = 1
+    NORTH = 2
+    WEST = 3
 
     def __init__(self):
         level_disp = Tk()

@@ -2,6 +2,8 @@ import time
 
 
 class SystemControl:
+    """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
+    In addition, records the current position of the bot during its movement as class variables. """
 
     SOUTH = 0
     EAST = 1

@@ -1,2 +1,6 @@
 # Python Compiling Files
 *.pyc
+
+# Idea
+*.iml
+.idea/cs-wall.iml
