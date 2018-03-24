@@ -244,6 +244,3 @@ class Gui:
     #     if robot_x == GOAL_X:
     #         if robot_y == GOAL_Y:
     #             print "Goal is reached"
-
-
-g = Gui()
