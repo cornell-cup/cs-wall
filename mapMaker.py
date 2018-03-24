@@ -1,4 +1,5 @@
 import json
+import Globals as g
 
 
 class MapMaker():
@@ -39,11 +40,17 @@ class MapMaker():
 
     ###Constants to create game_data
 
-    #game_data constants
+    #Keys to parse game_data dictionary
+
+    #References a string
     GAME_BACKGROUND = "GAME_BACKGROUND"
-    GAME_UNIT = "GAME_UNIT"
+    # References a tuple in the
+    GAME_START_DIRECTION = "GAME_START_DIRECTION"
+    # References a tuple in the format (x,y)
     GAME_START = "GAME_START"
+    # References a tuple in the format (x,y)
     GAME_GOAL = "GAME_GOAL"
+    # References a 2D list (minimap) where rows represent y values and columns are x values
     GAME_MAP = "GAME_MAP"
 
     # Minimap space constants
@@ -165,14 +172,16 @@ class MapMaker():
 
 
             ### Establish unit conversion
-            unit = self.accessField(json_data,self.SQUARE_UNIT)
+            direction = self.accessField(json_data,self.DIRECTION)
 
-            if unit==None:
-                print("Please define a valid number for {}".format(self.SQUARE_UNIT))
+            if direction:
+                pass
+            else:
+                print("Please define a valid direction value for ")
                 return game_data
 
             #Add map to game data
-            game_data.update({self.GAME_UNIT:unit})
+            game_data.update({self.GAME_START_DIRECTION:direction})
 
         if not f:
             print("File {}.json could not be read".format(file_path))
