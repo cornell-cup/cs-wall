@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
 from Parser import Parser
 from mapMaker import MapMaker
@@ -9,6 +8,7 @@ import tkMessageBox
 import scipy.misc
 import threading
 from moveRobot import moveRobot
+
 
 class Gui:
     """Creates the WALL GUI according to chosen level. Communicates with the wall and the object (2D system/minibot)
@@ -24,8 +24,8 @@ class Gui:
     GOAL_Y = 0
     START_X = 0
     START_Y = 0
-    WALL_X = 0
-    WALL_Y = 0
+    OBS_X = None
+    OBS_Y = None
     level = 1
     version = -1
     TWO_D = 0
@@ -54,23 +54,22 @@ class Gui:
         level_disp.mainloop()
 
         # after level is chosen, variables related to the game level are stored below
-        # TODO store these in the class variables of control
-        map = MapMaker()
-        # map.parseMap("/test.json")
-        self.BOUNDARY_X = map.BOUNDARY_X
-        self.GOAL_X = map.GOAL_X
-        self.GOAL_Y = map.GOAL_Y
-        self.START_X = map.START_X
-        self.START_Y = map.START_Y
-        # self.BOUNDARY_X = 5
-        # self.START_X = 3
-        # self.START_Y = 1
+        map_data = MapMaker()
+        game_data = map_data.parseMap("sample_map")
+        self.BOUNDARY_X = len(game_data.get("GAME_MAP"))
+        self.GOAL_X = game_data.get("GAME_GOAL")[0]
+        self.GOAL_Y = game_data.get("GAME_GOAL")[1]
+        self.START_X = game_data.get("GAME_START")[0]
+        self.START_Y = game_data.get("GAME_START")[1]
         self.robot_x = self.START_X
         self.robot_y = self.START_Y
-        # self.GOAL_X = 3
-        # self.GOAL_Y = 4
-        self.WALL_Y = 0
-        self.Wall_X = 0
+
+        # getting the coordinates of the map that contains an obstacle (not used or tested yet)
+        for row in range(len(game_data.get("GAME_MAP"))):
+            for col in range(len(game_data.get("GAME_MAP")[0])):
+                if game_data.get("GAME_MAP")[row][col] == 1:
+                    self.OBS_X.append(row)
+                    self.OBS_Y.append(col)
 
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
@@ -99,6 +98,13 @@ class Gui:
             temp = Tk()
             temp.withdraw()
             tkMessageBox.showerror("Error", "Please choose a version.")
+
+        control.startX = self.START_X
+        control.startY = self.START_Y
+        control.GoalX = self.GOAL_X
+        control.GoalY = self.GOAL_Y
+        control.dimX = self.BOUNDARY_X
+        control.dimY = self.BOUNDARY_X
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
