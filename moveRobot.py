@@ -1,12 +1,11 @@
 from Parser import Parser
 import time
-# this function is designed to receive movement blocks of Forward, Backward
-# TurnLeft, TurnRight and prints corresponding Minibot API
-# returns: <<<<SCRIPT,(code)>>>>, a String
-# Also note, I don't think that there are parentheses around the code according to their parser
 
 
 class moveRobot:
+    """Packages the translated RFID's received from Wall through Parser as minibot script in the form of
+    "<<<<SCRIPT, code>>>>" and sends it to minibot. In addition, records the current position of the bot during
+    its movement as class variables. """
 
     reset_flag = False
     SOUTH = 0
