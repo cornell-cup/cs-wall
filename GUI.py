@@ -33,7 +33,7 @@ class Gui:
     MINIBOT = 1
 
     target_file = "image/target.png"
-    outfile = "output/outfile.gif"
+    outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
 
     def __init__(self):
