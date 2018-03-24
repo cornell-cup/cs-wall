@@ -66,9 +66,10 @@ class Gui:
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
 
-        # getting the coordinates of the map that contains an obstacle (not used or tested yet)
+        # getting the coordinates of the map that contains an obstacle
         for row in range(len(game_data.get("GAME_MAP"))):
             for col in range(len(game_data.get("GAME_MAP")[0])):
+                # 1 represents obstacle, 0 represents free space.
                 if game_data.get("GAME_MAP")[row][col] == 1:
                     self.OBS_X.append(row)
                     self.OBS_Y.append(col)
