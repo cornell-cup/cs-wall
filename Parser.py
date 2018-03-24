@@ -18,10 +18,10 @@ class Parser:
     def translateRFID(self, rfidfile):
         """translate the RFID file to the blocks"""
 
-        # open RFID file and another file of RFID tag's corresponding blocks
-        #  and translate the file from RFID tags into block language
+        # open file with list of RFIDs and another file of RFID tag's corresponding
+        # blocks and translate the file from RFID tags into block language
         file1 = open(rfidfile, "r")
-        file2 = open("codeBlock.txt", "r")
+        file2 = open("input/codeBlock.txt", "r")
         blockmap = {}
         st = file2.readline()
         # open file of RFID tag's corresponding blocks record and store them in a blockmap

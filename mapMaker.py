@@ -119,7 +119,7 @@ class MapMaker():
             for obstacle in obstacles:
                 obstacle_x = self.accessField(obstacle, self.OBSTACLE_X)
                 obstacle_y = self.accessField(obstacle, self.OBSTACLE_Y)
-                miniMap[obstacle_y][obstacle_x] = self.OBSTACLE_SPACE
+                miniMap[obstacle_x][obstacle_y] = self.OBSTACLE_SPACE
 
             
             #Add map to game data
