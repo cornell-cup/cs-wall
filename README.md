@@ -1,6 +1,6 @@
 # cs-wall
 This repo is a python implementation of Project wall.
-Project Wall is a modular robotics kit meant for children and students from age 6 - 18. This repository contains the python code modules to display the GUI content on the Raspberry Pi. 
+Project Wall is a modular robotics game meant for children and students from age 6 - 18. This repository contains the python code modules to display the GUI content on the Raspberry Pi. 
 
 This repository is currently in development.
 
