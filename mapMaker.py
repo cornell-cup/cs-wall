@@ -13,8 +13,8 @@ class MapMaker():
     #Background image for game
     BACKGROUND = "BACKGROUND"
 
-    #The length of one square in inches(?)
-    SQUARE_UNIT = "SQUARE_UNIT"
+    #Starting direction of the robot
+    DIRECTION = "DIRECTION"
 
     #Max boundaries of the map
     BOUNDARY = "BOUNDARY"
@@ -65,7 +65,10 @@ class MapMaker():
 
         game_data = {}
 
-        with open("{}.json".format(file_path),"r") as f:
+        if not file_path[-5:0]==".json":
+            file_path = "{}.json".format(file_path)
+
+        with open(file_path,"r") as f:
             json_data = json.load(f)
 
             #TODO: Determine location of level files and decide if name parsing is necessary 
