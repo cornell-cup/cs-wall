@@ -13,14 +13,14 @@
 		"GOAL_X" : 0,
 		"GOAL_Y" : 0
 	},
-	"WALLS":[
+	"OBSTACLES":[
 		{
-			"WALL_X": 1,
-			"WALL_Y": 1
+			"OBSTACLE_X": 1,
+			"OBSTACLE_Y": 1
 		},
 		{
-			"WALL_X": 2,
-			"WALL_Y": 3
+			"OBSTACLE_X": 2,
+			"OBSTACLE_Y": 3
 		}
 	]
 }
