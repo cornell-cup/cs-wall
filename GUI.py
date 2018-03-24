@@ -8,7 +8,7 @@ import tkMessageBox
 import scipy.misc
 import threading
 from moveRobot import moveRobot
-import Globals as G
+# import Globals as G
 
 
 class Gui:
@@ -101,6 +101,7 @@ class Gui:
             temp.withdraw()
             tkMessageBox.showerror("Error", "Please choose a version.")
 
+        # storing the map data from mapMaker to the class variables of control
         control.startX = self.START_X
         control.startY = self.START_Y
         control.GoalX = self.GOAL_X
@@ -173,14 +174,14 @@ class Gui:
             data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
 
         # hanging the target
-        self.hang_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
+        self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
         # hanging the obstacles
         for i in range(len(self.OBS_X)):
-            self.hang_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
+            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
         scipy.misc.imsave(self.outfile, data)
 
     # hangs the designated object on the GUI (either the target or the obstacle(s))
-    def hang_object(self, array, block_length, filename, x, y):
+    def hang_square_object(self, array, block_length, filename, x, y):
         target = Image.open(filename).convert('RGB')
         startx = x * block_length + (block_length / 4)
         finx = x * block_length + (3 * block_length / 4)
