@@ -174,6 +174,12 @@ class MapMaker():
             ### Establish unit conversion
             direction = self.accessField(json_data,self.DIRECTION)
 
+            if direction==None:
+                print("Please define a valid direction ('NORTH', 'NORTH','NORTH') for {}".format(self.DIRECTION))
+                return game_data
+            else:
+                g
+
             if direction:
                 pass
             else:
