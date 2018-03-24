@@ -19,7 +19,6 @@ class Gui:
     robot_x = 0
     robot_y = 0
     BACKGROUND = ""
-    index = 0
     BOUNDARY_X = 0
     GOAL_X = 0
     GOAL_Y = 0
@@ -36,6 +35,10 @@ class Gui:
     EAST = 1
     NORTH = 2
     WEST = 3
+
+    target_file = "target.png"
+    outfile = "outfile.gif"
+    obstacle_file = "Pirate_Hat.png"
 
     def __init__(self):
         level_disp = Tk()
@@ -160,7 +163,6 @@ class Gui:
 
     # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
     def make_grid(self):
-        # assuming this is a square grid, which is what we will set it as
         w, h = 600, 600
         data = np.zeros((h, w, 3), dtype=np.uint8)
         temp_im = Image.open(self.BACKGROUND).convert('RGB')
@@ -172,13 +174,16 @@ class Gui:
             data[anchor - div_length:anchor + div_length, :, :] = [256, 0, 0]
             data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
         # hanging the target
-        target = Image.open('target.png').convert('RGB')
+        target = Image.open(self.target_file).convert('RGB')
         startx = self.GOAL_X * block_length + (block_length / 4)
         finx = self.GOAL_X * block_length + (3 * block_length / 4)
         starty = self.GOAL_Y * block_length + (block_length / 4)
         finy = self.GOAL_Y * block_length + (3 * block_length / 4)
         data[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
-        scipy.misc.imsave('outfile.gif', data)
+        scipy.misc.imsave(self.outfile, data)
+
+        # TODO hang obstacles
+
 
     # def hang_robot(self, array):
     #     global direction
