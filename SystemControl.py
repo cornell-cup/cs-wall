@@ -1,5 +1,6 @@
 import time
 import Globals as G
+import a4988
 
 
 class SystemControl:
@@ -189,3 +190,20 @@ class SystemControl:
                 print("RESET")
                 return False
         return goal
+    
+def moveForward(): #motor
+    if(self.direction == 0): moveVerticalDown(1000)
+    elif(self.direction==1): moveHorizontalUp(1000)
+    elif(self.direction==2): moveVerticalUp(1000)
+    else: moveHorizontalDown(1000)
+
+def moveBackward(): #motor
+    if(self.direction == 0): moveVerticalUp(1000)
+    elif(self.direction==1): moveHorizontalDown(1000)
+    elif(self.direction==2): moveVerticalDown(1000)
+    else: moveHorizontalUp(1000)
+ 
+def turnRight(): #motor
+    #move servo
+def turnLeft(): #motor
+    #move servo
