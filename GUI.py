@@ -17,8 +17,6 @@ class Gui:
     the information needed (i.e. the system the GUI is running on)"""
 
     direction = 1
-    robot_x = 0
-    robot_y = 0
     BACKGROUND = ""
     BOUNDARY = 0
     GOAL_X = 0
@@ -190,6 +188,7 @@ class Gui:
         finy = y * block_length + (3 * block_length / 4)
         array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
 
+    # TODO hang and update robot state
     # def hang_robot(self, array):
     #     global direction
     #     global robot_x
