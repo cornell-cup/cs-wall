@@ -8,7 +8,7 @@ import tkMessageBox
 import scipy.misc
 import threading
 from moveRobot import moveRobot
-# import Globals as G
+import Globals as G
 
 
 class Gui:
@@ -30,9 +30,17 @@ class Gui:
     TWO_D = 0
     MINIBOT = 1
 
+    control = None
+
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
+    bot0_file = "image/robot0.png"
+    bot1_file = "image/robot1.png"
+    bot2_file = "image/robot2.png"
+    bot3_file = "image/robot3.png"
+
+    temp_image = ""
 
     def __init__(self):
         level_disp = Tk()
@@ -90,50 +98,65 @@ class Gui:
         version_button.pack()
         version_button.grid(row=1, column=0)
         version_disp.mainloop()
-        control = None
+
         if self.version == self.TWO_D:
-            control = SystemControl()
+            self.control = SystemControl()
         elif self.version == self.MINIBOT:
-            control = moveRobot()
+            self.control = moveRobot()
         else:
             temp = Tk()
             temp.withdraw()
             tkMessageBox.showerror("Error", "Please choose a version.")
 
         # storing the map data from mapMaker to the class variables of control
-        control.startX = self.START_X
-        control.startY = self.START_Y
-        control.GoalX = self.GOAL_X
-        control.GoalY = self.GOAL_Y
-        control.dimX = self.BOUNDARY
-        control.dimY = self.BOUNDARY
-        control.direction = self.direction
-        control.OBS_X = self.OBS_X
-        control.OBS_Y = self.OBS_Y
+        self.control.startX = self.START_X
+        self.control.startY = self.START_Y
+        self.control.GoalX = self.GOAL_X
+        self.control.GoalY = self.GOAL_Y
+        self.control.dimX = self.BOUNDARY
+        self.control.dimY = self.BOUNDARY
+        self.control.start_dir = self.direction
+        self.control.direction = self.control.start_dir
+        self.control.OBS_X = self.OBS_X
+        self.control.OBS_Y = self.OBS_Y
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
         root = Tk()
         root.title("WALL")
-        Label(root, text="Level " + str(self.level)).grid(row=0, column=1)
+        label = Label(root, text="Level " + str(self.level))
+        label.grid(row=0, column=1)
         frame = Frame(root)
-        im = PhotoImage(file=self.outfile)
-        button = Button(frame, image=im)
-        button.pack()
+        self.temp_image = self.outfile
+        im = PhotoImage(file=self.temp_image)
+        im_label = Label(frame, image=im)
+        im_label.pack()
+
+        # updates the grid according to the robot's current location/direction
+        def update():
+            self.make_grid()
+            self.temp_image = self.outfile
+            tempim = PhotoImage(file=self.temp_image)
+            # changes image here
+            im_label.config(image=tempim)
+            im_label.image = tempim
+            im_label.pack()
+            # updates display every 1 second
+            root.after(1000, update)
 
         # runs the given file of rfid's
         def start():
             codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
             if self.version == self.TWO_D:
-                if control.run(codeblock):
+                if self.control.run(codeblock):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
-                elif not control.reset_flag:
+                elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
             else:
-                control.run(codeblock)
-                if control.check_goal():
+                self.control.run(codeblock)
+                if self.control.check_goal():
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
-                elif not control.reset_flag:
+                elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
 
         t = threading.Thread(target=start)
@@ -144,9 +167,9 @@ class Gui:
 
         # stops the processing of the rfid's and returns the robot to the starting point
         def reset_thread():
-            control.reset_flag = True
+            self.control.reset_flag = True
             tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-            control.reset()
+            self.control.reset()
 
         # making the buttons (start/reset) on the GUI
         start_button = Button(text="START", command=start_thread)
@@ -157,6 +180,7 @@ class Gui:
         reset_button.grid(row=1, column=2)
         frame.pack()
         frame.grid(row=2, columnspan=3)
+        update()
         root.mainloop()
 
     # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
@@ -177,6 +201,8 @@ class Gui:
         # hanging the obstacles
         for i in range(len(self.OBS_X)):
             self.hang_square_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
+        # hanging robot
+        self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
 
     # hangs the designated object on the GUI (either the target or the obstacle(s))
@@ -188,81 +214,16 @@ class Gui:
         finy = y * block_length + (3 * block_length / 4)
         array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
 
-    # TODO hang and update robot state
-    # def hang_robot(self, array):
-    #     global direction
-    #     global robot_x
-    #     global robot_y
-    #     if direction == 0:
-    #         x = 75 + 200 * robot_x
-    #         y = 82.5 + 200 * robot_y
-    #         array[x:(x + 50), y:(y + 35), :] = Image.open('robot0.png').convert('RGB')
-    #     elif direction == 1:
-    #         y = 75 + 200 * robot_y
-    #         x = 82.5 + 200 * robot_x
-    #         array[x:(x + 35), y:(y + 50), :] = Image.open('robot1.png').convert('RGB')
-    #     elif direction == 2:
-    #         x = 75 + 200 * robot_x
-    #         y = 82.5 + 200 * robot_y
-    #         array[x:(x + 50), y:(y + 35), :] = Image.open('robot2.png').convert('RGB')
-    #     elif direction == 3:
-    #         y = 75 + 200 * robot_y
-    #         x = 82.5 + 200 * robot_x
-    #         array[x:(x + 35), y:(y + 50), :] = Image.open('robot3.png').convert('RGB')
-    #     return array
-
-    # def move_robot(self, code):
-    #     if code == "Forward":
-    #         if self.direction == 0:
-    #             self.robot_x += 1
-    #         elif self.direction == 1:
-    #             self.robot_y += 1
-    #         elif self.direction == 2:
-    #             self.robot_x -= 1
-    #         elif self.direction == 3:
-    #             self.robot_y -= 1
-    #     elif code == "Backward":
-    #         if self.direction == 0:
-    #             self.robot_x -= 1
-    #         elif self.direction == 1:
-    #             self.robot_y -= 1
-    #         elif self.direction == 2:
-    #             self.robot_x += 1
-    #         elif self.direction == 3:
-    #             self.robot_y += 1
-    #     elif code == "TurnLeft":
-    #         self.direction = (self.direction + 1) % 4
-    #     elif code == "TurnRight":
-    #         self.direction = (self.direction + 3) % 4
-
-    # # assuming code is a one-line command
-    # def update_once(self, code):
-    #     array = self.make_array()
-    #     result = self.gallery(array)
-    #     self.move_robot(code)
-    #     # hanging the target
-    #     result[680:720, 880:920, :] = Image.open('target.png').convert('RGB')
-    #     self.hang_robot(result)
-    #     return result
-    #
-    # def hang(self, array):
-    #     plt.ion()
-    #     plt.imshow(array)
-    #     plt.pause(0.1)
-    #     plt.show()
-    #
-    # def update(self, code):
-    #     global robot_x
-    #     global robot_y
-    #     list = code.split("\n")
-    #     length = len(list)
-    #     # self.update_once(code[1])
-    #     for i in range(0, length):
-    #         code = list[i]
-    #         self.hang(self.update_once(code))
-    #     if robot_x == GOAL_X:
-    #         if robot_y == GOAL_Y:
-    #             print "Goal is reached"
+    # hangs the robot according to its current position
+    def hang_robot(self, block_length, array):
+        if self.control.direction == G.SOUTH:
+            self.hang_square_object(array, block_length, self.bot0_file, self.control.robotX, self.control.robotY)
+        elif self.control.direction == G.EAST:
+            self.hang_square_object(array, block_length, self.bot1_file, self.control.robotX, self.control.robotY)
+        elif self.control.direction == G.NORTH:
+            self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
+        elif self.control.direction == G.WEST:
+            self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
 
 
 g = Gui()

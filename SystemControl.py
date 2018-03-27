@@ -8,7 +8,8 @@ class SystemControl:
     In addition, records the current position of the bot during its movement as class variables. """
 
     reset_flag = False
-    direction = 1
+    start_dir = 1
+    direction = start_dir
     startX = 3
     startY = 1
     robotX = startX
@@ -89,6 +90,18 @@ class SystemControl:
         elif self.direction == G.WEST:
             return "TurnRight\n"
 
+    # reverts direction back to starting direction, starting at direction NORTH
+    def revert_dir(self, dir):
+        # assuming everything starts facing NORTH
+        if dir == G.NORTH:
+            return ""
+        elif dir == G.SOUTH:
+            return "TurnRight\nTurnRight\n"
+        elif dir == G.EAST:
+            return "TurnRight\n"
+        else:
+            return "TurnLeft\n"
+
     # returns the robot from its current location to the starting point
     def reset(self):
         distX = self.robotX - self.startX
@@ -101,21 +114,27 @@ class SystemControl:
             s += self.check_dir()
             for i in range(distX):
                 s += "Forward\n"
+            s += self.revert_dir(self.start_dir)
         elif distX < 0:
             # go south
             s += self.check_dir()
             for i in range(distX):
                 s += "Backward\n"
+            s += self.revert_dir(self.start_dir)
         if distY > 0:
             # go west
             s += self.check_dir() + "TurnLeft\n"
             for i in range(distY):
                 s += "Forward\n"
+            s += "TurnRight\n"
+            s += self.revert_dir(self.start_dir)
         elif distY < 0:
             # go east
             s += self.check_dir() + "TurnRight\n"
             for i in range(distY):
                 s += "Forward\n"
+            s += "TurnLeft\n"
+            s += self.revert_dir(self.start_dir)
         self.rerun(s)
 
     # checks whether the current position of the robot is out of bounds in the map/maze
@@ -154,7 +173,7 @@ class SystemControl:
     def rerun(self, code):
         action_list = code.split("\n")
         length = len(action_list)
-        for i in range(0, length):
+        for i in range(0, length-1):
             code = action_list[i]
             self.moveRobot(code)
             print("robotX")
@@ -163,14 +182,14 @@ class SystemControl:
             print(self.robotY)
             print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
-            time.sleep(2)
+            # time.sleep(2)
 
     # runs the actions on the 2D system
     def run(self, code):
         action_list = code.split("\n")
         length = len(action_list)
         goal = False
-        for i in range(0, length):
+        for i in range(0, length-1):
             code = action_list[i]
             goal, out, on_obstacle = self.moveRobot(code)
             print("robotX")

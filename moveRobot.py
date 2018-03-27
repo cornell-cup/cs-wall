@@ -8,9 +8,10 @@ class moveRobot:
     its movement as class variables. """
 
     reset_flag = False
+    start_dir = 1
     robotX = 0
     robotY = 0
-    direction = 1
+    direction = start_dir
     GoalX = 0
     GoalY = 0
     dimX = 0
@@ -156,34 +157,52 @@ class moveRobot:
             # time.sleep(1)
         return s
 
+    # reverts direction back to starting direction, starting at direction NORTH
+    def revert_dir(self, dir):
+        # assuming everything starts facing NORTH
+        if dir == G.NORTH:
+            return ""
+        elif dir == G.SOUTH:
+            return "TurnRight\nTurnRight\n"
+        elif dir == G.EAST:
+            return "TurnRight\n"
+        else:
+            return "TurnLeft\n"
+
     # returns the string to send to minibot for it to revert to its starting point
     def reset(self):
         distX = self.robotX - self.startX
         distY = self.robotY - self.startY
         s = ""
         if distX == 0 and distY == 0:
-            return ""
+            return
         if distX > 0:
             # go north
             s += self.check_dir()
-            for i in range(0, distX):
+            for i in range(distX):
                 s += "Forward\n"
+            s += self.revert_dir(self.start_dir)
         elif distX < 0:
             # go south
             s += self.check_dir()
-            for i in range(0, distX):
+            for i in range(distX):
                 s += "Backward\n"
+            s += self.revert_dir(self.start_dir)
         if distY > 0:
             # go west
             s += self.check_dir() + "TurnLeft\n"
-            for i in range(0, distY):
+            for i in range(distY):
                 s += "Forward\n"
+            s += "TurnRight\n"
+            s += self.revert_dir(self.start_dir)
         elif distY < 0:
             # go east
             s += self.check_dir() + "TurnRight\n"
-            for i in range(0, distY):
+            for i in range(distY):
                 s += "Forward\n"
-        return self.rerun(s)
+            s += "TurnLeft\n"
+            s += self.revert_dir(self.start_dir)
+        self.rerun(s)
 
     # checks whether goal is reached by comparing goal to current location
     # used in GUI
