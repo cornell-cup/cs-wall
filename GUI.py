@@ -164,6 +164,7 @@ class Gui:
 
         # checks every second whether the start button has been pressed
         # I don't know if this works, theoretically it should LMAO
+        # if this doesn't work, we can just stick this into the update() method
         def check_start():
             if self.start_flag:
                 t.start()
@@ -175,13 +176,6 @@ class Gui:
         #     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
         #     self.control.reset()
 
-        # making the buttons (start/reset) on the GUI
-        # start_button = Button(text="START", command=start_thread)
-        # start_button.pack()
-        # reset_button = Button(text="RESET", command=reset_thread)
-        # reset_button.pack()
-        # start_button.grid(row=1, column=0)
-        # reset_button.grid(row=1, column=2)
         frame.pack()
         frame.grid(row=2, columnspan=3)
         update()

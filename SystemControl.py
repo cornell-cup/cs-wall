@@ -1,6 +1,6 @@
 import time
 import Globals as G
-# import a4988
+import a4988
 
 
 class SystemControl:
@@ -52,7 +52,7 @@ class SystemControl:
             if self.check_obstacles():
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            # self.moveForward()
+            self.moveForward()
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -68,13 +68,13 @@ class SystemControl:
             if self.check_obstacles():
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            # self.moveBackward()
+            self.moveBackward()
         if code == "TurnLeft":
             self.direction = (self.direction + 1) % 4
-            # self.turnLeft()
+            self.turnLeft()
         if code == "TurnRight":
             self.direction = (self.direction + 3) % 4
-            # self.turnRight()
+            self.turnRight()
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return goal_reached, out, on_obstacle
@@ -182,7 +182,7 @@ class SystemControl:
             print(self.robotY)
             print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
-            # time.sleep(2)
+            time.sleep(2)
 
     # runs the actions on the 2D system
     def run(self, code):
@@ -211,34 +211,34 @@ class SystemControl:
         return goal
 
     # below are methods from the ECE team
-    # def moveForward(self):
-    #     # motor
-    #     if self.direction == 0:
-    #         a4988.moveVerticalDown(1000)
-    #     elif self.direction == 1:
-    #         a4988.moveHorizontalUp(1000)
-    #     elif self.direction == 2:
-    #         a4988.moveVerticalUp(1000)
-    #     else:
-    #         a4988.moveHorizontalDown(1000)
-    #
-    # def moveBackward(self):
-    #     # motor
-    #     if self.direction == 0:
-    #         a4988.moveVerticalUp(1000)
-    #     elif self.direction == 1:
-    #         a4988.moveHorizontalDown(1000)
-    #     elif self.direction == 2:
-    #         a4988.moveVerticalDown(1000)
-    #     else:
-    #         a4988.moveHorizontalUp(1000)
-    #
-    # def turnRight(self):
-    #     # motor
-    #     # TODO move servo
-    #     print "turnRight"
-    #
-    # def turnLeft(self):
-    #     # motor
-    #     # TODO move servo
-    #     print "turnLeft"
+    def moveForward(self):
+        # motor
+        if self.direction == 0:
+            a4988.moveVerticalDown(1000)
+        elif self.direction == 1:
+            a4988.moveHorizontalUp(1000)
+        elif self.direction == 2:
+            a4988.moveVerticalUp(1000)
+        else:
+            a4988.moveHorizontalDown(1000)
+
+    def moveBackward(self):
+        # motor
+        if self.direction == 0:
+            a4988.moveVerticalUp(1000)
+        elif self.direction == 1:
+            a4988.moveHorizontalDown(1000)
+        elif self.direction == 2:
+            a4988.moveVerticalDown(1000)
+        else:
+            a4988.moveHorizontalUp(1000)
+
+    def turnRight(self):
+        # motor
+        # TODO move servo
+        print "turnRight"
+
+    def turnLeft(self):
+        # motor
+        # TODO move servo
+        print "turnLeft"
