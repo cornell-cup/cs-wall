@@ -31,6 +31,7 @@ class Gui:
     MINIBOT = 1
 
     control = None
+    start_flag = False
 
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
@@ -161,27 +162,37 @@ class Gui:
 
         t = threading.Thread(target=start)
 
+        # TODO needs to loop to continuously check this statement
         # runs the method start()
-        def start_thread():
+        if self.start_flag:
             t.start()
 
-        # stops the processing of the rfid's and returns the robot to the starting point
-        def reset_thread():
-            self.control.reset_flag = True
-            tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-            self.control.reset()
+        # # stops the processing of the rfid's and returns the robot to the starting point
+        # def reset_thread():
+        #     self.control.reset_flag = True
+        #     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+        #     self.control.reset()
 
         # making the buttons (start/reset) on the GUI
-        start_button = Button(text="START", command=start_thread)
-        start_button.pack()
-        reset_button = Button(text="RESET", command=reset_thread)
-        reset_button.pack()
-        start_button.grid(row=1, column=0)
-        reset_button.grid(row=1, column=2)
+        # start_button = Button(text="START", command=start_thread)
+        # start_button.pack()
+        # reset_button = Button(text="RESET", command=reset_thread)
+        # reset_button.pack()
+        # start_button.grid(row=1, column=0)
+        # reset_button.grid(row=1, column=2)
         frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
         root.mainloop()
+
+    def start_thread(self):
+        self.start_flag = True
+
+    # method specifically for the ECE end to invoke the reset button
+    def reset_thread(self):
+        self.control.reset_flag = True
+        tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+        self.control.reset()
 
     # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
     def make_grid(self):
