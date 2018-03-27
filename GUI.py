@@ -162,10 +162,12 @@ class Gui:
 
         t = threading.Thread(target=start)
 
-        # TODO needs to loop to continuously check this statement
-        # runs the method start()
-        if self.start_flag:
-            t.start()
+        # checks every second whether the start button has been pressed
+        # I don't know if this works, theoretically it should LMAO
+        def check_start():
+            if self.start_flag:
+                t.start()
+            root.after(1000, check_start)
 
         # # stops the processing of the rfid's and returns the robot to the starting point
         # def reset_thread():
@@ -183,8 +185,10 @@ class Gui:
         frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
+        check_start()
         root.mainloop()
 
+    # method specifically for the ECE end to invoke the start button
     def start_thread(self):
         self.start_flag = True
 
