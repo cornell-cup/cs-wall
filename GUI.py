@@ -163,11 +163,10 @@ class Gui:
         t = threading.Thread(target=start)
 
         # checks every second whether the start button has been pressed
-        # I don't know if this works, theoretically it should LMAO
-        # if this doesn't work, we can just stick this into the update() method
         def check_start():
             if self.start_flag:
                 t.start()
+                self.start_flag = False
             root.after(1000, check_start)
 
         # # stops the processing of the rfid's and returns the robot to the starting point
@@ -183,10 +182,12 @@ class Gui:
         root.mainloop()
 
     # method specifically for the ECE end to invoke the start button
+    # TODO check whether this works
     def start_thread(self):
         self.start_flag = True
 
     # method specifically for the ECE end to invoke the reset button
+    # TODO check whether this works
     def reset_thread(self):
         self.control.reset_flag = True
         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
