@@ -44,6 +44,9 @@ class Gui:
     temp_image = ""
 
     def __init__(self):
+        self.start_flag = False
+
+    def make_GUI(self):
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
@@ -236,4 +239,4 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
 
 
-g = Gui()
+# g = Gui()
