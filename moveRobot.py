@@ -18,8 +18,7 @@ class moveRobot:
     dimY = 0
     startX = 0
     startY = 0
-    OBS_X = []
-    OBS_Y = []
+    OBS = []
 
     def __init__(self):
         self.startX = 3
@@ -74,6 +73,26 @@ class moveRobot:
             self.direction = (self.direction + 3) % 4
             s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER)
             s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+        if code == "Attack":
+            in_range = []
+            if self.direction == G.SOUTH:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX + (dist + 1), self.robotY])
+            elif self.direction == G.NORTH:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX - (dist + 1), self.robotY])
+            elif self.direction == G.EAST:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX, self.robotY + (dist + 1)])
+            elif self.direction == G.WEST:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX, self.robotY - (dist + 1)])
+            for i in range(len(in_range)):
+                x = in_range[i][0]
+                y = in_range[i][1]
+                if self.check_obstacles(x, y):
+                    self.OBS.remove([x, y])
+                    break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return s, goal_reached
@@ -99,19 +118,14 @@ class moveRobot:
 
     # checks whether the current position of the robot is on an obstacle in the map/maze
     # returns True if the robot is on an obstacle, and False if it is not.
-    def check_obstacles(self):
+    def check_obstacles(self, x, y):
         on_obstacle = False
-        possible_locations = []
-        for i in range(len(self.OBS_X)):
-            if self.robotX == self.OBS_X[i]:
-                possible_locations.append(i)
-        for j in range(len(possible_locations)):
-            if self.robotY == self.OBS_Y[possible_locations[j]]:
-                on_obstacle = True
+        if [x, y] in self.OBS:
+            on_obstacle = True
         return on_obstacle
 
     # returns the finalized SCRIPT string to send to minibot
-    def run(self, code):
+    def run(self, code, obs):
         s = ""
         list = code.split("\n")
         length = len(list)
@@ -119,9 +133,10 @@ class moveRobot:
             if not self.reset_flag:
                 code = list[i]
                 temp, goal = self.moveRobot(code)
+                obs = self.OBS
                 if self.checkBounds():
                     break
-                if self.check_obstacles():
+                if self.check_obstacles(self.robotX, self.robotY):
                     break
                 if temp != "":
                     s += temp

@@ -1,3 +1,4 @@
+from random import *
 import numpy as np
 from PIL import Image
 from Parser import Parser
@@ -23,8 +24,8 @@ class Gui:
     GOAL_Y = 0
     START_X = 0
     START_Y = 0
-    OBS_X = []
-    OBS_Y = []
+    init_OBS = []
+    OBS = []
     level = 1
     version = -1
     TWO_D = 0
@@ -32,6 +33,7 @@ class Gui:
 
     control = None
 
+    rfid_file = "input/rfidFOR.txt"
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
@@ -46,7 +48,6 @@ class Gui:
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
-        w.pack()
         w.grid(row=0, column=0)
 
         # storing the chosen level to local variable
@@ -55,7 +56,6 @@ class Gui:
             level_disp.destroy()
 
         level_button = Button(text="ENTER", command=store)
-        level_button.pack()
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
@@ -77,14 +77,13 @@ class Gui:
             for col in range(len(game_data.get("GAME_MAP")[0])):
                 # 1 represents obstacle, 0 represents free space.
                 if game_data.get("GAME_MAP")[row][col] == 1:
-                    self.OBS_X.append(row)
-                    self.OBS_Y.append(col)
+                    self.init_OBS.append([row, col])
+                    self.OBS.append([row, col])
 
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
         version_disp = Tk()
         listbox = Listbox(version_disp)
-        listbox.pack()
         listbox.insert(0, "2D System")
         listbox.insert(1, "Minibot")
         listbox.grid(row=0, column=0)
@@ -95,7 +94,6 @@ class Gui:
             version_disp.destroy()
 
         version_button = Button(text="ENTER", command=store2)
-        version_button.pack()
         version_button.grid(row=1, column=0)
         version_disp.mainloop()
 
@@ -117,8 +115,7 @@ class Gui:
         self.control.dimY = self.BOUNDARY
         self.control.start_dir = self.direction
         self.control.direction = self.control.start_dir
-        self.control.OBS_X = self.OBS_X
-        self.control.OBS_Y = self.OBS_Y
+        self.control.OBS = self.OBS
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
@@ -134,21 +131,26 @@ class Gui:
 
         # updates the grid according to the robot's current location/direction
         def update():
-            self.make_grid()
-            self.temp_image = self.outfile
-            tempim = PhotoImage(file=self.temp_image)
-            # changes image here
-            im_label.config(image=tempim)
-            im_label.image = tempim
-            im_label.pack()
-            # updates display every 1 second
-            root.after(1000, update)
+            if t.is_alive():
+                self.make_grid()
+                # updates locations of the obstacles for next second
+                self.move_obs_random()
+                self.control.OBS = self.OBS
+
+                self.temp_image = self.outfile
+                tempim = PhotoImage(file=self.temp_image)
+                # changes image here
+                im_label.config(image=tempim)
+                im_label.image = tempim
+                im_label.pack()
+                # updates display every 2 seconds
+            root.after(2000, update)
 
         # runs the given file of rfid's
         def start():
-            codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
+            codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
-                if self.control.run(codeblock):
+                if self.control.run(codeblock, self.OBS):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
@@ -170,15 +172,20 @@ class Gui:
             self.control.reset_flag = True
             tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
             self.control.reset()
+            self.OBS = self.init_OBS
+            self.make_grid()
+            self.temp_image = self.outfile
+            tempim = PhotoImage(file=self.temp_image)
+            # changes image here
+            im_label.config(image=tempim)
+            im_label.image = tempim
+            im_label.pack()
 
         # making the buttons (start/reset) on the GUI
         start_button = Button(text="START", command=start_thread)
-        start_button.pack()
         reset_button = Button(text="RESET", command=reset_thread)
-        reset_button.pack()
         start_button.grid(row=1, column=0)
         reset_button.grid(row=1, column=2)
-        frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
         root.mainloop()
@@ -199,8 +206,8 @@ class Gui:
         # hanging the target
         self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
         # hanging the obstacles
-        for i in range(len(self.OBS_X)):
-            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
+        for i in range(len(self.OBS)):
+            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i][0], self.OBS[i][1])
         # hanging robot
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
@@ -224,6 +231,60 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.WEST:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
+
+    # checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping
+    def check_random(self, pseudo_x, pseudo_y):
+        # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
+        allowed = False
+        if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.BOUNDARY or pseudo_y >= self.BOUNDARY:
+            # check if it is out of bounds
+            return allowed
+        else:
+            # check if it is overlapping with the obstacles
+            if [pseudo_x, pseudo_y] in self.OBS:
+                return allowed
+            allowed = True
+        return allowed
+
+    # moves the obstacle randomly
+    def move_obs_random(self):
+        # possible movements: north, south, east, west, attack
+        for i in range(len(self.OBS)):
+            allowed = False
+            while not allowed:
+                index = randint(1, 5)
+                if index == 1:
+                    # move north
+                    temp_x = self.OBS[i][0] - 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 2:
+                    # move south
+                    temp_x = self.OBS[i][0] + 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 3:
+                    # move east
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] + 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 4:
+                    # move west
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] - 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 5:
+                    # TODO
+                    # attack
+                    print "attack"
 
 
 g = Gui()
