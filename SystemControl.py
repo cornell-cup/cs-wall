@@ -32,8 +32,8 @@ class SystemControl:
         self.dimX = 5
         self.dimY = 5
 
-    # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
     def moveRobot(self, code):
+        """returns one line of the SCRIPT string and a boolean representing whether the target goal is reached"""
         goal_reached = False
         out = False
         on_obstacle = False
@@ -46,7 +46,7 @@ class SystemControl:
                 self.robotX -= 1
             elif self.direction == G.WEST:
                 self.robotY -= 1
-            if self.checkBounds():
+            if self.checkBounds(self.robotX, self.robotY):
                 out = True
                 return goal_reached, out, on_obstacle
             if self.check_obstacles(self.robotX, self.robotY):
@@ -62,7 +62,7 @@ class SystemControl:
                 self.robotX += 1
             elif self.direction == G.WEST:
                 self.robotY += 1
-            if self.checkBounds():
+            if self.checkBounds(self.robotX, self.robotY):
                 out = True
                 return goal_reached, out, on_obstacle
             if self.check_obstacles(self.robotX, self.robotY):
@@ -92,15 +92,21 @@ class SystemControl:
             for i in range(len(in_range)):
                 x = in_range[i][0]
                 y = in_range[i][1]
-                if self.check_obstacles(x, y):
+                temp_x = x
+                temp_y = y
+                if self.checkBounds(temp_x, temp_y):
+                    # if a possible block is out of bounds, then the following blocks in the same direction will also
+                    # be out of bounds, so no need to continue checking.
+                    break
+                elif self.check_obstacles(x, y):
                     self.OBS.remove([x, y])
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return goal_reached, out, on_obstacle
 
-    # sets the direction to NORTH
     def check_dir(self):
+        """sets the direction to NORTh"""
         if self.direction == G.NORTH:
             return ""
         elif self.direction == G.SOUTH:
@@ -110,8 +116,8 @@ class SystemControl:
         elif self.direction == G.WEST:
             return "TurnRight\n"
 
-    # reverts direction back to starting direction, starting at direction NORTH
     def revert_dir(self, dir):
+        """reverts direction back to starting direction, starting at direction NORTH"""
         # assuming everything starts facing NORTH
         if dir == G.NORTH:
             return ""
@@ -122,8 +128,8 @@ class SystemControl:
         else:
             return "TurnLeft\n"
 
-    # returns the robot from its current location to the starting point
     def reset(self):
+        """returns the robot from its current location to the starting point"""
         distX = self.robotX - self.startX
         distY = self.robotY - self.startY
         s = ""
@@ -157,35 +163,35 @@ class SystemControl:
             s += self.revert_dir(self.start_dir)
         self.rerun(s)
 
-    # checks whether the current position of the robot is out of bounds in the map/maze
-    # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
-    # returns True if the robot is out of bounds, and False if it is not.
-    def checkBounds(self):
+    def checkBounds(self, x, y):
+        """checks whether the current position of the robot is out of bounds in the map/maze
+        if the robot is out of bounds, then it resets the position of the robot at its last position in bound
+        returns True if the robot is out of bounds, and False if it is not."""
         out_of_bounds = False
-        if self.robotX >= self.dimX:
+        if x >= self.dimX:
             out_of_bounds = True
-            self.robotX = self.dimX - 1
-        elif self.robotX < 0:
+            x = self.dimX - 1
+        elif x < 0:
             out_of_bounds = True
-            self.robotX = 0
-        if self.robotY >= self.dimY:
+            x = 0
+        if y >= self.dimY:
             out_of_bounds = True
-            self.robotY = self.dimY - 1
-        elif self.robotY < 0:
+            y = self.dimY - 1
+        elif y < 0:
             out_of_bounds = True
-            self.robotY = 0
+            y = 0
         return out_of_bounds
 
-    # checks whether the current position of the robot is on an obstacle in the map/maze
-    # returns True if the robot is on an obstacle, and False if it is not.
     def check_obstacles(self, x, y):
+        """checks whether the current position of the robot is on an obstacle in the map/maze
+        returns True if the robot is on an obstacle, and False if it is not."""
         on_obstacle = False
         if [x, y] in self.OBS:
             on_obstacle = True
         return on_obstacle
 
-    # executing specifically reset()
     def rerun(self, code):
+        """executing specifically reset()"""
         action_list = code.split("\n")
         length = len(action_list)
         for i in range(0, length-1):
@@ -199,8 +205,8 @@ class SystemControl:
             # TODO sleep time probably needs to correlate to 2D system move time.
             # time.sleep(2)
 
-    # runs the actions on the 2D system
     def run(self, code, obs):
+        """runs the actions on the 2D system"""
         action_list = code.split("\n")
         length = len(action_list)
         goal = False
