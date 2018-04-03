@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 class Parser:
     # class parser is used to parse the block code into robot command
 
