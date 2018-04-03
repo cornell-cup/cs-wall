@@ -4,3 +4,4 @@
 # Idea
 *.iml
 .idea/cs-wall.iml
+/venv
