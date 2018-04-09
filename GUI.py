@@ -9,6 +9,8 @@ import scipy.misc
 import threading
 from moveRobot import moveRobot
 import Globals as G
+from pynput import keyboard
+from pynput.keyboard import Key, Controller
 
 
 class Gui:
@@ -170,13 +172,12 @@ class Gui:
             if self.start_flag:
                 t.start()
                 self.start_flag = False
+            else:
+                lis = keyboard.Listener(on_press=self.on_press)
+                lis.start()  # start to listen on a separate thread
+                # k = Controller()
+                # k.press(Key.cmd)
             root.after(1000, check_start)
-
-        # # stops the processing of the rfid's and returns the robot to the starting point
-        # def reset_thread():
-        #     self.control.reset_flag = True
-        #     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        #     self.control.reset()
 
         frame.pack()
         frame.grid(row=2, columnspan=3)
@@ -184,14 +185,28 @@ class Gui:
         check_start()
         root.mainloop()
 
+    def on_press(self, key):
+        try:
+            k = key.char  # single-char keys
+        except:
+            k = key.name  # other keys
+        if key == keyboard.Key.esc: return False  # stop listener
+        if k in ['cmd']:  # keys interested
+            # self.keys.append(k) # store it in global-like variable
+            print('Key pressed: ' + k)
+            self.start_flag = True
+            return False  # remove this if want more keys
+
     # method specifically for the ECE end to invoke the start button
     # TODO check whether this works
-    def start_thread(self):
-        self.start_flag = True
+    def start_button(self):
+        self.start_flag = False
+        # k = Controller()
+        # k.press(Key.cmd)
 
     # method specifically for the ECE end to invoke the reset button
     # TODO check whether this works
-    def reset_thread(self):
+    def reset_button(self):
         self.control.reset_flag = True
         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
         self.control.reset()
