@@ -18,8 +18,7 @@ class moveRobot:
     dimY = 0
     startX = 0
     startY = 0
-    OBS_X = []
-    OBS_Y = []
+    OBS = []
 
     def __init__(self):
         self.startX = 3
@@ -31,9 +30,8 @@ class moveRobot:
         self.dimX = 5
         self.dimY = 5
 
-    # returns one line of the SCRIPT string and a boolean representing whether the target goal is reached
-    # TODO to pop off 5 commands at a time, we don't need the "<<<<SCRIPT,>>>>" packaging in this method
     def moveRobot(self, code):
+        """returns one line of the SCRIPT string and a boolean representing whether the target goal is reached"""
         goal_reached = False
         s = ""
         # TODO change "dummy" to actual power level
@@ -74,44 +72,65 @@ class moveRobot:
             self.direction = (self.direction + 3) % 4
             s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER)
             s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+        if code == "Attack":
+            in_range = []
+            if self.direction == G.SOUTH:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX + (dist + 1), self.robotY])
+            elif self.direction == G.NORTH:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX - (dist + 1), self.robotY])
+            elif self.direction == G.EAST:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX, self.robotY + (dist + 1)])
+            elif self.direction == G.WEST:
+                for dist in range(self.attack_range):
+                    in_range.append([self.robotX, self.robotY - (dist + 1)])
+            for i in range(len(in_range)):
+                x = in_range[i][0]
+                y = in_range[i][1]
+                temp_x = x
+                temp_y = y
+                if self.checkBounds(temp_x, temp_y):
+                    # if a possible block is out of bounds, then the following blocks in the same direction will also
+                    # be out of bounds, so no need to continue checking.
+                    break
+                elif self.check_obstacles(x, y):
+                    self.OBS.remove([x, y])
+                    break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
         return s, goal_reached
 
-    # checks whether the current position of the robot is out of bounds in the map/maze
-    # if the robot is out of bounds, then it resets the position of the robot at its last position in bound
-    # returns True if the robot is out of bounds, and False if it is not.
-    def checkBounds(self):
+    def checkBounds(self, x, y):
+        """checks whether the current position of the robot is out of bounds in the map/maze
+        if the robot is out of bounds, then it resets the position of the robot at its last position in bound
+        returns True if the robot is out of bounds, and False if it is not."""
         out_of_bounds = False
-        if self.robotX >= self.dimX:
+        if x >= self.dimX:
             out_of_bounds = True
-            self.robotX = self.dimX-1
-        elif self.robotX < 0:
+            x = self.dimX-1
+        elif x < 0:
             out_of_bounds = True
-            self.robotX = 0
-        if self.robotY >= self.dimY:
+            x = 0
+        if y >= self.dimY:
             out_of_bounds = True
-            self.robotY = self.dimY-1
-        elif self.robotY < 0:
+            y = self.dimY-1
+        elif y < 0:
             out_of_bounds = True
-            self.robotY = 0
+            y = 0
         return out_of_bounds
 
-    # checks whether the current position of the robot is on an obstacle in the map/maze
-    # returns True if the robot is on an obstacle, and False if it is not.
-    def check_obstacles(self):
+    def check_obstacles(self, x, y):
+        """checks whether the current position of the robot is on an obstacle in the map/maze
+        returns True if the robot is on an obstacle, and False if it is not."""
         on_obstacle = False
-        possible_locations = []
-        for i in range(len(self.OBS_X)):
-            if self.robotX == self.OBS_X[i]:
-                possible_locations.append(i)
-        for j in range(len(possible_locations)):
-            if self.robotY == self.OBS_Y[possible_locations[j]]:
-                on_obstacle = True
+        if [x, y] in self.OBS:
+            on_obstacle = True
         return on_obstacle
 
-    # returns the finalized SCRIPT string to send to minibot
-    def run(self, code):
+    def run(self, code, obs):
+        """returns the finalized SCRIPT string to send to minibot"""
         s = ""
         list = code.split("\n")
         length = len(list)
@@ -119,9 +138,10 @@ class moveRobot:
             if not self.reset_flag:
                 code = list[i]
                 temp, goal = self.moveRobot(code)
-                if self.checkBounds():
+                obs = self.OBS
+                if self.checkBounds(self.robotX, self.robotY):
                     break
-                if self.check_obstacles():
+                if self.check_obstacles(self.robotX, self.robotY):
                     break
                 if temp != "":
                     s += temp
@@ -132,8 +152,8 @@ class moveRobot:
                 break
         return s
 
-    # sets the direction to NORTH
     def check_dir(self):
+        """sets the direction to NORTH"""
         if self.direction == G.NORTH:
             return ""
         elif self.direction == G.SOUTH:
@@ -143,8 +163,8 @@ class moveRobot:
         elif self.direction == G.WEST:
             return "TurnRight\n"
 
-    # executing specifically reset()
     def rerun(self, code):
+        """executing specifically reset()"""
         s = ""
         list = code.split("\n")
         length = len(list)
@@ -157,8 +177,8 @@ class moveRobot:
             # time.sleep(1)
         return s
 
-    # reverts direction back to starting direction, starting at direction NORTH
     def revert_dir(self, dir):
+        """reverts direction back to starting direction, starting at direction NORTH"""
         # assuming everything starts facing NORTH
         if dir == G.NORTH:
             return ""
@@ -169,8 +189,8 @@ class moveRobot:
         else:
             return "TurnLeft\n"
 
-    # returns the string to send to minibot for it to revert to its starting point
     def reset(self):
+        """returns the string to send to minibot for it to revert to its starting point"""
         distX = self.robotX - self.startX
         distY = self.robotY - self.startY
         s = ""
@@ -204,14 +224,12 @@ class moveRobot:
             s += self.revert_dir(self.start_dir)
         self.rerun(s)
 
-    # checks whether goal is reached by comparing goal to current location
-    # used in GUI
     def check_goal(self):
+        """checks whether goal is reached by comparing goal to current location. (used in GUI)"""
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             return True
         return False
 
-    # calculates the time needed for the robot to travel a certain distance at a certain power
     def calcTravelTime(self, distance, power):
         """Returns the amount of [time] Minibot needs to move to go one unit of [distance]"""
         time = 2

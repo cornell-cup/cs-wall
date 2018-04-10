@@ -9,12 +9,14 @@ class Test:
     def __init__(self):
         print "test file"
 
-    def test_start_thread(self):
-        # I still think we need a key listener
-        # self.g.start_button()
+    def test_GUI(self):
+        """Now we have a key listener. What the ECE part needs I guess is just to simulate key presses with
+        {k = Controller()
+        k.press(Key.cmd)/(Key.shift)}
+        where cmd is the key for start and shift is the key for reset. At the head of their class, before
+        any button presses, they need to make a GUI object and call make_GUI()"""
         self.g.make_GUI()
-        # self.g.start_thread()
 
 
 t = Test()
-t.test_start_thread()
+t.test_GUI()

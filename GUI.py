@@ -11,6 +11,7 @@ from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
 from pynput.keyboard import Key, Controller
+from random import *
 
 
 class Gui:
@@ -25,8 +26,8 @@ class Gui:
     GOAL_Y = 0
     START_X = 0
     START_Y = 0
-    OBS_X = []
-    OBS_Y = []
+    init_OBS = []
+    OBS = []
     level = 1
     version = -1
     TWO_D = 0
@@ -77,14 +78,16 @@ class Gui:
         self.robot_y = self.START_Y
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
+        self.init_OBS = []
+        self.OBS = []
 
         # getting the coordinates of the map that contains an obstacle
         for row in range(len(game_data.get("GAME_MAP"))):
             for col in range(len(game_data.get("GAME_MAP")[0])):
                 # 1 represents obstacle, 0 represents free space.
                 if game_data.get("GAME_MAP")[row][col] == 1:
-                    self.OBS_X.append(row)
-                    self.OBS_Y.append(col)
+                    self.init_OBS.append([row, col])
+                    self.OBS.append([row, col])
 
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
@@ -123,8 +126,7 @@ class Gui:
         self.control.dimY = self.BOUNDARY
         self.control.start_dir = self.direction
         self.control.direction = self.control.start_dir
-        self.control.OBS_X = self.OBS_X
-        self.control.OBS_Y = self.OBS_Y
+        self.control.OBS = self.OBS
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
@@ -140,24 +142,38 @@ class Gui:
 
         # updates the grid according to the robot's current location/direction
         def update():
-            self.make_grid()
-            self.temp_image = self.outfile
-            tempim = PhotoImage(file=self.temp_image)
-            # changes image here
-            im_label.config(image=tempim)
-            im_label.image = tempim
-            im_label.pack()
-            # updates display every 1 second
+            if t.is_alive():
+                self.make_grid()
+                # updates locations of the obstacles for next second
+                self.move_obs_random()
+                self.control.OBS = self.OBS
+
+                self.temp_image = self.outfile
+                tempim = PhotoImage(file=self.temp_image)
+                # changes image here
+                im_label.config(image=tempim)
+                im_label.image = tempim
+                im_label.pack()
+                # updates display every 2 seconds
             root.after(1000, update)
 
         # runs the given file of rfid's
         def start():
             codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
             if self.version == self.TWO_D:
-                if self.control.run(codeblock):
+                if self.control.run(codeblock, self.OBS):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
+                    self.control.reset()
+                    self.OBS = self.init_OBS
+                    self.make_grid()
+                    self.temp_image = self.outfile
+                    tempim = PhotoImage(file=self.temp_image)
+                    # changes image here
+                    im_label.config(image=tempim)
+                    im_label.image = tempim
+                    im_label.pack()
             else:
                 self.control.run(codeblock)
                 if self.control.check_goal():
@@ -219,8 +235,8 @@ class Gui:
         # hanging the target
         self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
         # hanging the obstacles
-        for i in range(len(self.OBS_X)):
-            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS_X[i], self.OBS_Y[i])
+        for i in range(len(self.OBS)):
+            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i][0], self.OBS[i][1])
         # hanging robot
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
@@ -244,3 +260,57 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.WEST:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
+
+    def check_random(self, pseudo_x, pseudo_y):
+        """checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping"""
+        # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
+        allowed = False
+        if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.BOUNDARY or pseudo_y >= self.BOUNDARY:
+            # check if it is out of bounds
+            return allowed
+        else:
+            # check if it is overlapping with the obstacles
+            if [pseudo_x, pseudo_y] in self.OBS:
+                return allowed
+            allowed = True
+        return allowed
+
+    def move_obs_random(self):
+        """moves the obstacle randomly"""
+        # possible movements: north, south, east, west, attack
+        for i in range(len(self.OBS)):
+            allowed = False
+            while not allowed:
+                index = randint(1, 5)
+                if index == 1:
+                    # move north
+                    temp_x = self.OBS[i][0] - 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 2:
+                    # move south
+                    temp_x = self.OBS[i][0] + 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 3:
+                    # move east
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] + 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 4:
+                    # move west
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] - 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 5:
+                    # TODO
+                    # attack
+                    print "attack"
