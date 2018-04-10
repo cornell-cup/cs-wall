@@ -11,7 +11,7 @@ class Test:
 
     def test_start_thread(self):
         # I still think we need a key listener
-        self.g.start_button()
+        # self.g.start_button()
         self.g.make_GUI()
         # self.g.start_thread()
 

@@ -167,25 +167,25 @@ class Gui:
 
         t = threading.Thread(target=start)
 
+        lis = keyboard.Listener(on_press=self.on_press)
+        lis.start()
+
         # checks every second whether the start button has been pressed
-        def check_start():
+        def check_status():
             if self.start_flag:
                 t.start()
                 self.start_flag = False
-            else:
-                lis = keyboard.Listener(on_press=self.on_press)
-                lis.start()  # start to listen on a separate thread
-                # k = Controller()
-                # k.press(Key.cmd)
-            root.after(1000, check_start)
+            root.after(1000, check_status)
 
         frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
-        check_start()
+        check_status()
         root.mainloop()
 
+    # defines what the key listener does
     def on_press(self, key):
+        """NOTE: Now the ECE end does not have to call a method, they need to simulate key presses."""
         try:
             k = key.char  # single-char keys
         except:
@@ -195,21 +195,13 @@ class Gui:
             # self.keys.append(k) # store it in global-like variable
             print('Key pressed: ' + k)
             self.start_flag = True
-            return False  # remove this if want more keys
-
-    # method specifically for the ECE end to invoke the start button
-    # TODO check whether this works
-    def start_button(self):
-        self.start_flag = False
-        # k = Controller()
-        # k.press(Key.cmd)
-
-    # method specifically for the ECE end to invoke the reset button
-    # TODO check whether this works
-    def reset_button(self):
-        self.control.reset_flag = True
-        tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        self.control.reset()
+        if k in ['shift']:
+            print('Key pressed: ' + k)
+            if not self.control.reset_flag:
+                self.control.reset_flag = True
+                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+                self.control.reset()
+            return False
 
     # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
     def make_grid(self):
@@ -252,6 +244,3 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.WEST:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
-
-
-# g = Gui()
