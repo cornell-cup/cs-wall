@@ -1,5 +1,6 @@
 import time
 import Globals as G
+from random import *
 # import a4988
 
 
@@ -212,6 +213,7 @@ class SystemControl:
         goal = False
         for i in range(0, length-1):
             code = action_list[i]
+            self.move_obs_random()
             goal, out, on_obstacle = self.moveRobot(code)
             print("robotX")
             print(self.robotX)
@@ -231,6 +233,60 @@ class SystemControl:
                 print("RESET")
                 return False
         return goal
+
+    def check_random(self, pseudo_x, pseudo_y):
+        """checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping"""
+        # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
+        allowed = False
+        if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.dimX or pseudo_y >= self.dimX:
+            # check if it is out of bounds
+            return allowed
+        else:
+            # check if it is overlapping with the obstacles
+            if [pseudo_x, pseudo_y] in self.OBS:
+                return allowed
+            allowed = True
+        return allowed
+
+    def move_obs_random(self):
+        """moves the obstacle randomly"""
+        # possible movements: north, south, east, west, attack
+        for i in range(len(self.OBS)):
+            allowed = False
+            while not allowed:
+                index = randint(1, 5)
+                if index == 1:
+                    # move north
+                    temp_x = self.OBS[i][0] - 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 2:
+                    # move south
+                    temp_x = self.OBS[i][0] + 1
+                    temp_y = self.OBS[i][1]
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][0] = temp_x
+                        allowed = True
+                elif index == 3:
+                    # move east
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] + 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 4:
+                    # move west
+                    temp_x = self.OBS[i][0]
+                    temp_y = self.OBS[i][1] - 1
+                    if self.check_random(temp_x, temp_y):
+                        self.OBS[i][1] = temp_y
+                        allowed = True
+                elif index == 5:
+                    # TODO
+                    # attack
+                    print "attack"
 
     # below are methods from the ECE team
     # def moveForward(self):
