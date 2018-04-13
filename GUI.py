@@ -50,14 +50,15 @@ class Gui:
         self.start_flag = False
 
     def make_GUI(self):
+        """makes the GUI"""
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
         w.pack()
         w.grid(row=0, column=0)
 
-        # storing the chosen level to local variable
         def store():
+            """storing the chosen level to local variable"""
             self.level = int(w.get())
             level_disp.destroy()
 
@@ -74,8 +75,6 @@ class Gui:
         self.GOAL_Y = game_data.get("GAME_GOAL")[1]
         self.START_X = game_data.get("GAME_START")[0]
         self.START_Y = game_data.get("GAME_START")[1]
-        self.robot_x = self.START_X
-        self.robot_y = self.START_Y
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
         self.init_OBS = []
@@ -92,14 +91,15 @@ class Gui:
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
         version_disp = Tk()
+        version_disp.title("Version Chooser")
         listbox = Listbox(version_disp)
         listbox.pack()
         listbox.insert(0, "2D System")
         listbox.insert(1, "Minibot")
         listbox.grid(row=0, column=0)
 
-        # storing the user's choice of system to local variable
         def store2():
+            """storing the user's choice of system to local variable"""
             self.version = listbox.curselection()[0]
             version_disp.destroy()
 
@@ -128,8 +128,8 @@ class Gui:
         self.control.direction = self.control.start_dir
         self.control.OBS = self.OBS
 
-        # Constructs the grid according to defined dimensions and displays it on the GUI
         self.make_grid()
+        """Constructs the grid according to defined dimensions and displays it on the GUI"""
         root = Tk()
         root.title("WALL")
         label = Label(root, text="Level " + str(self.level))
@@ -140,8 +140,8 @@ class Gui:
         im_label = Label(frame, image=im)
         im_label.pack()
 
-        # updates the grid according to the robot's current location/direction
         def update():
+            """updates the grid according to the robot's current location/direction"""
             if t.is_alive():
                 self.make_grid()
                 # updates locations of the obstacles for next second
@@ -154,11 +154,41 @@ class Gui:
                 im_label.config(image=tempim)
                 im_label.image = tempim
                 im_label.pack()
+            else:
+                self.make_grid()
+                self.temp_image = self.outfile
+                tempim = PhotoImage(file=self.temp_image)
+                # changes image here
+                im_label.config(image=tempim)
+                im_label.image = tempim
+                im_label.pack()
+
                 # updates display every 2 seconds
             root.after(1000, update)
 
-        # runs the given file of rfid's
+        def on_press(key):
+            """defines what the key listener does
+            NOTE: Now the ECE end does not have to call a method, they need to simulate key presses."""
+            try:
+                k = key.char  # single-char keys
+            except:
+                k = key.name  # other keys
+            if key == keyboard.Key.esc: return False  # stop listener
+            if k in ['cmd']:  # keys interested
+                # self.keys.append(k) # store it in global-like variable
+                print('Key pressed: ' + k)
+                self.start_flag = True
+            if k in ['shift']:
+                print('Key pressed: ' + k)
+                if not self.control.reset_flag:
+                    self.control.reset_flag = True
+                    tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+                    self.control.reset()
+                    self.OBS = self.init_OBS
+                return False
+
         def start():
+            """runs the given file of rfid's"""
             codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
@@ -183,11 +213,11 @@ class Gui:
 
         t = threading.Thread(target=start)
 
-        lis = keyboard.Listener(on_press=self.on_press)
+        lis = keyboard.Listener(on_press=on_press)
         lis.start()
 
-        # checks every second whether the start button has been pressed
         def check_status():
+            """checks every second whether the start button has been pressed"""
             if self.start_flag:
                 t.start()
                 self.start_flag = False
@@ -199,28 +229,9 @@ class Gui:
         check_status()
         root.mainloop()
 
-    # defines what the key listener does
-    def on_press(self, key):
-        """NOTE: Now the ECE end does not have to call a method, they need to simulate key presses."""
-        try:
-            k = key.char  # single-char keys
-        except:
-            k = key.name  # other keys
-        if key == keyboard.Key.esc: return False  # stop listener
-        if k in ['cmd']:  # keys interested
-            # self.keys.append(k) # store it in global-like variable
-            print('Key pressed: ' + k)
-            self.start_flag = True
-        if k in ['shift']:
-            print('Key pressed: ' + k)
-            if not self.control.reset_flag:
-                self.control.reset_flag = True
-                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-                self.control.reset()
-            return False
-
-    # divides the given background image into given number of blocks, saves the image to outfile.gif in the directory
     def make_grid(self):
+        """divides the given background image into given number of blocks, saves the image to outfile.gif
+        in the directory"""
         w, h = 600, 600
         data = np.zeros((h, w, 3), dtype=np.uint8)
         temp_im = Image.open(self.BACKGROUND).convert('RGB')
@@ -241,8 +252,8 @@ class Gui:
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
 
-    # hangs the designated object on the GUI (either the target or the obstacle(s))
     def hang_square_object(self, array, block_length, filename, x, y):
+        """hangs the designated object on the GUI (either the target or the obstacle(s))"""
         target = Image.open(filename).convert('RGB')
         startx = x * block_length + (block_length / 4)
         finx = x * block_length + (3 * block_length / 4)
@@ -250,8 +261,8 @@ class Gui:
         finy = y * block_length + (3 * block_length / 4)
         array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2))
 
-    # hangs the robot according to its current position
     def hang_robot(self, block_length, array):
+        """hangs the robot according to its current position"""
         if self.control.direction == G.SOUTH:
             self.hang_square_object(array, block_length, self.bot0_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.EAST:

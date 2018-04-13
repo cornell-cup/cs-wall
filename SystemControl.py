@@ -203,7 +203,7 @@ class SystemControl:
             print(self.robotY)
             print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
-            # time.sleep(2)
+            time.sleep(2)
 
     def run(self, code, obs):
         """runs the actions on the 2D system"""
