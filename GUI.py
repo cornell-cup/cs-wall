@@ -10,8 +10,6 @@ import threading
 from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
-from pynput.keyboard import Key, Controller
-from random import *
 
 
 class Gui:
@@ -145,8 +143,8 @@ class Gui:
             if t.is_alive():
                 self.make_grid()
                 # updates locations of the obstacles for next second
-                self.move_obs_random()
-                self.control.OBS = self.OBS
+                # self.move_obs_random()
+                # self.control.OBS = self.OBS
 
                 self.temp_image = self.outfile
                 tempim = PhotoImage(file=self.temp_image)
@@ -271,57 +269,3 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.WEST:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
-
-    def check_random(self, pseudo_x, pseudo_y):
-        """checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping"""
-        # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
-        allowed = False
-        if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.BOUNDARY or pseudo_y >= self.BOUNDARY:
-            # check if it is out of bounds
-            return allowed
-        else:
-            # check if it is overlapping with the obstacles
-            if [pseudo_x, pseudo_y] in self.OBS:
-                return allowed
-            allowed = True
-        return allowed
-
-    def move_obs_random(self):
-        """moves the obstacle randomly"""
-        # possible movements: north, south, east, west, attack
-        for i in range(len(self.OBS)):
-            allowed = False
-            while not allowed:
-                index = randint(1, 5)
-                if index == 1:
-                    # move north
-                    temp_x = self.OBS[i][0] - 1
-                    temp_y = self.OBS[i][1]
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i][0] = temp_x
-                        allowed = True
-                elif index == 2:
-                    # move south
-                    temp_x = self.OBS[i][0] + 1
-                    temp_y = self.OBS[i][1]
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i][0] = temp_x
-                        allowed = True
-                elif index == 3:
-                    # move east
-                    temp_x = self.OBS[i][0]
-                    temp_y = self.OBS[i][1] + 1
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i][1] = temp_y
-                        allowed = True
-                elif index == 4:
-                    # move west
-                    temp_x = self.OBS[i][0]
-                    temp_y = self.OBS[i][1] - 1
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i][1] = temp_y
-                        allowed = True
-                elif index == 5:
-                    # TODO
-                    # attack
-                    print "attack"
