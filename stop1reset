@@ -1,0 +1,6 @@
+
+    scanner_top_pin = 21
+    def stop1(scanner_top_pin):
+        print('reset')
+        
+    GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
