@@ -265,8 +265,12 @@ class Gui:
                 tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                 self.control.reset()
                 self.OBS = self.init_OBS
+                
+        def start1(scanner_top_pin):
+            self.start_flag = True
+            self.control.start_flag = True
             
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
