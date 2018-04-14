@@ -247,7 +247,7 @@ class SystemControl:
             # check if it is overlapping with the obstacles
             for i in range(len(self.OBS)):
                 temp = self.OBS[i]
-                if temp.location == [pseudo_x, pseudo_y]:
+                if temp.location[0] == [pseudo_x] and temp.location[1] == [pseudo_y]:
                     return False
             allowed = True
         return allowed
@@ -256,6 +256,8 @@ class SystemControl:
         """moves the obstacle randomly"""
         # possible movements: north, south, east, west, attack
         for i in range(len(self.OBS)):
+            if not self.OBS[i].movable:
+                continue
             allowed = False
             while not allowed:
                 index = randint(1, 5)

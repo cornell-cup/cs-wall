@@ -120,6 +120,8 @@ class Gui:
                 # 1 represents obstacle, 0 represents free space.
                 if game_data.get("GAME_MAP")[row][col] == 1:
                     pirate = Pirate(row, col)
+                    if self.game == self.PIRATES:
+                        pirate.movable = True
                     self.init_OBS.append(pirate)
                     self.OBS.append(pirate)
 
