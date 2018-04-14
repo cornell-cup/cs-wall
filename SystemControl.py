@@ -8,7 +8,9 @@ class SystemControl:
     """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
     In addition, records the current position of the bot during its movement as class variables. """
 
+    start_flag = False
     reset_flag = False
+    time_step = 0
     start_dir = 1
     direction = start_dir
     startX = 3
@@ -36,6 +38,7 @@ class SystemControl:
         goal_reached = False
         out = False
         on_obstacle = False
+
         if code == "Forward":
             if self.direction == G.SOUTH:
                 self.robotX += 1
@@ -212,6 +215,7 @@ class SystemControl:
         goal = False
         for i in range(0, length-1):
             code = action_list[i]
+            self.time_step += 1
             self.move_obs_random()
             goal, out, on_obstacle = self.moveRobot(code)
             print("robotX")
@@ -229,6 +233,7 @@ class SystemControl:
                 return False
             if self.reset_flag:
                 print("RESET")
+                self.start_flag = False
                 return False
         return goal
 
@@ -247,6 +252,18 @@ class SystemControl:
                     return False
             allowed = True
         return allowed
+
+    def move_obs(self):
+        """Moves the obstacles according to designated path"""
+        # TODO test this after json file is made
+        while self.start_flag:
+            for i in range(len(self.OBS)):
+                temp_obs = self.OBS[i]
+                if not temp_obs.movable:
+                    continue
+                path = temp_obs.path
+                movement_serial = self.time_step % len(path)
+                self.OBS[i].location = path[movement_serial]
 
     def move_obs_random(self):
         """moves the obstacle randomly"""

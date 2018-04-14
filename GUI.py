@@ -212,6 +212,7 @@ class Gui:
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
                 self.start_flag = True
+                self.control.start_flag = True
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -274,8 +275,8 @@ class Gui:
         div_length = 2
         for i in range(0, self.BOUNDARY - 1):
             anchor = (i + 1) * block_length
-            data[anchor - div_length:anchor + div_length, :, :] = [256, 0, 0]
-            data[:, anchor - div_length:anchor + div_length, :] = [256, 0, 0]
+            data[anchor - div_length:anchor + div_length, :, :] = [192, 192, 192]
+            data[:, anchor - div_length:anchor + div_length, :] = [192, 192, 192]
 
         # hanging the target
         self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
