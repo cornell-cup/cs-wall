@@ -187,7 +187,6 @@ class SystemControl:
         returns True if the robot is on an obstacle, and False if it is not."""
         for i in range(len(self.OBS)):
             temp = self.OBS[i]
-            print temp.location
             if temp.location[0] == x and temp.location[1] == y:
                 return True, temp
         return False, None
