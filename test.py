@@ -7,7 +7,7 @@ class Test:
     g = Gui()
 
     def __init__(self):
-        print "test file"
+        print ("test file")
 
     def test_GUI(self):
         """Now we have a key listener. What the ECE part needs I guess is just to simulate key presses with
