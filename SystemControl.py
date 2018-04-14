@@ -18,7 +18,6 @@ class SystemControl:
     GoalX = 3
     GoalY = 4
     dimX = 5
-    dimY = 5
     OBS = []
     attack_range = 2
 
@@ -31,7 +30,6 @@ class SystemControl:
         self.GoalX = 3
         self.GoalY = 4
         self.dimX = 5
-        self.dimY = 5
 
     def moveRobot(self, code):
         """returns one line of the SCRIPT string and a boolean representing whether the target goal is reached"""
@@ -47,10 +45,11 @@ class SystemControl:
                 self.robotX -= 1
             elif self.direction == G.WEST:
                 self.robotY -= 1
+            check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
                 return goal_reached, out, on_obstacle
-            if self.check_obstacles(self.robotX, self.robotY):
+            if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
             # self.moveForward()
@@ -63,10 +62,11 @@ class SystemControl:
                 self.robotX += 1
             elif self.direction == G.WEST:
                 self.robotY += 1
+            check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
                 return goal_reached, out, on_obstacle
-            if self.check_obstacles(self.robotX, self.robotY):
+            if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
             # self.moveBackward()
@@ -95,12 +95,13 @@ class SystemControl:
                 y = in_range[i][1]
                 temp_x = x
                 temp_y = y
+                check, obs = self.check_obstacles(x, y)
                 if self.checkBounds(temp_x, temp_y):
                     # if a possible block is out of bounds, then the following blocks in the same direction will also
                     # be out of bounds, so no need to continue checking.
                     break
-                elif self.check_obstacles(x, y):
-                    self.OBS.remove([x, y])
+                elif check:
+                    self.OBS.remove(obs)
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
@@ -175,9 +176,9 @@ class SystemControl:
         elif x < 0:
             out_of_bounds = True
             x = 0
-        if y >= self.dimY:
+        if y >= self.dimX:
             out_of_bounds = True
-            y = self.dimY - 1
+            y = self.dimX - 1
         elif y < 0:
             out_of_bounds = True
             y = 0
@@ -186,10 +187,11 @@ class SystemControl:
     def check_obstacles(self, x, y):
         """checks whether the current position of the robot is on an obstacle in the map/maze
         returns True if the robot is on an obstacle, and False if it is not."""
-        on_obstacle = False
-        if [x, y] in self.OBS:
-            on_obstacle = True
-        return on_obstacle
+        for i in range(len(self.OBS)):
+            temp = self.OBS[i]
+            if temp.location[0] == x and temp.location[1] == y:
+                return True, temp
+        return False, None
 
     def rerun(self, code):
         """executing specifically reset()"""
@@ -243,8 +245,10 @@ class SystemControl:
             return allowed
         else:
             # check if it is overlapping with the obstacles
-            if [pseudo_x, pseudo_y] in self.OBS:
-                return allowed
+            for i in range(len(self.OBS)):
+                temp = self.OBS[i]
+                if temp.location == [pseudo_x, pseudo_y]:
+                    return False
             allowed = True
         return allowed
 
@@ -257,31 +261,31 @@ class SystemControl:
                 index = randint(1, 5)
                 if index == 1:
                     # move north
-                    temp_x = self.OBS[i][0] - 1
-                    temp_y = self.OBS[i][1]
+                    temp_x = self.OBS[i].location[0] - 1
+                    temp_y = self.OBS[i].location[1]
                     if self.check_random(temp_x, temp_y):
-                        self.OBS[i][0] = temp_x
+                        self.OBS[i].location[0] = temp_x
                         allowed = True
                 elif index == 2:
                     # move south
-                    temp_x = self.OBS[i][0] + 1
-                    temp_y = self.OBS[i][1]
+                    temp_x = self.OBS[i].location[0] + 1
+                    temp_y = self.OBS[i].location[1]
                     if self.check_random(temp_x, temp_y):
-                        self.OBS[i][0] = temp_x
+                        self.OBS[i].location[0] = temp_x
                         allowed = True
                 elif index == 3:
                     # move east
-                    temp_x = self.OBS[i][0]
-                    temp_y = self.OBS[i][1] + 1
+                    temp_x = self.OBS[i].location[0]
+                    temp_y = self.OBS[i].location[1] + 1
                     if self.check_random(temp_x, temp_y):
-                        self.OBS[i][1] = temp_y
+                        self.OBS[i].location[1] = temp_y
                         allowed = True
                 elif index == 4:
                     # move west
-                    temp_x = self.OBS[i][0]
-                    temp_y = self.OBS[i][1] - 1
+                    temp_x = self.OBS[i].location[0]
+                    temp_y = self.OBS[i].location[1] - 1
                     if self.check_random(temp_x, temp_y):
-                        self.OBS[i][1] = temp_y
+                        self.OBS[i].location[1] = temp_y
                         allowed = True
                 elif index == 5:
                     # TODO

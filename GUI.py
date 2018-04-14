@@ -10,6 +10,7 @@ import threading
 from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
+from pirate import Pirate
 
 
 class Gui:
@@ -27,9 +28,12 @@ class Gui:
     init_OBS = []
     OBS = []
     level = 1
+    game = -1
     version = -1
     TWO_D = 0
     MINIBOT = 1
+    MAZE = 0
+    PIRATES = 1
 
     control = None
     start_flag = False
@@ -49,6 +53,36 @@ class Gui:
 
     def make_GUI(self):
         """makes the GUI"""
+
+        game_disp = Tk()
+        game_disp.title("Game Chooser")
+        listbox = Listbox(game_disp)
+        listbox.pack()
+        listbox.insert(0, "Maze")
+        listbox.insert(1, "Pirates")
+        listbox.grid(row=0, column=0)
+
+        def store3():
+            """storing the user's choice of system to local variable"""
+            self.game = listbox.curselection()[0]
+            game_disp.destroy()
+
+        # stores the type of game in a string (maze/pirates)
+        game_button = Button(text="ENTER", command=store3)
+        game_button.pack()
+        game_button.grid(row=1, column=0)
+        game_disp.mainloop()
+
+        game_name = ""
+        if self.game == self.MAZE:
+            game_name = "maze"
+        elif self.game == self.PIRATES:
+            game_name = "pirates"
+        else:
+            temp1 = Tk()
+            temp1.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a game.")
+
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
@@ -67,6 +101,8 @@ class Gui:
 
         # after level is chosen, variables related to the game level are stored below
         map_data = MapMaker()
+        # TODO use "game_name"
+        # game_data = map_data.parseMap("input/" + game_name + "/sample_map" + str(self.level))
         game_data = map_data.parseMap("input/sample_map")
         self.BOUNDARY = len(game_data.get("GAME_MAP"))
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
@@ -83,8 +119,9 @@ class Gui:
             for col in range(len(game_data.get("GAME_MAP")[0])):
                 # 1 represents obstacle, 0 represents free space.
                 if game_data.get("GAME_MAP")[row][col] == 1:
-                    self.init_OBS.append([row, col])
-                    self.OBS.append([row, col])
+                    pirate = Pirate(row, col)
+                    self.init_OBS.append(pirate)
+                    self.OBS.append(pirate)
 
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
@@ -121,7 +158,6 @@ class Gui:
         self.control.GoalX = self.GOAL_X
         self.control.GoalY = self.GOAL_Y
         self.control.dimX = self.BOUNDARY
-        self.control.dimY = self.BOUNDARY
         self.control.start_dir = self.direction
         self.control.direction = self.control.start_dir
         self.control.OBS = self.OBS
@@ -142,9 +178,6 @@ class Gui:
             """updates the grid according to the robot's current location/direction"""
             if t.is_alive():
                 self.make_grid()
-                # updates locations of the obstacles for next second
-                # self.move_obs_random()
-                # self.control.OBS = self.OBS
 
                 self.temp_image = self.outfile
                 tempim = PhotoImage(file=self.temp_image)
@@ -245,7 +278,8 @@ class Gui:
         self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
         # hanging the obstacles
         for i in range(len(self.OBS)):
-            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i][0], self.OBS[i][1])
+            self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i].location[0],
+                                    self.OBS[i].location[1])
         # hanging robot
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
