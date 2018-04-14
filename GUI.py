@@ -38,6 +38,7 @@ class Gui:
     control = None
     start_flag = False
 
+    rfid_file = "input/rfidAttack.txt"
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
@@ -222,7 +223,7 @@ class Gui:
 
         def start():
             """runs the given file of rfid's"""
-            codeblock = p.runCode(p.translateRFID("input/rfidFOR.txt"))
+            codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")

@@ -93,10 +93,8 @@ class SystemControl:
             for i in range(len(in_range)):
                 x = in_range[i][0]
                 y = in_range[i][1]
-                temp_x = x
-                temp_y = y
                 check, obs = self.check_obstacles(x, y)
-                if self.checkBounds(temp_x, temp_y):
+                if self.checkBounds(x, y):
                     # if a possible block is out of bounds, then the following blocks in the same direction will also
                     # be out of bounds, so no need to continue checking.
                     break
@@ -204,7 +202,6 @@ class SystemControl:
             print(self.robotX)
             print("robotY")
             print(self.robotY)
-            print(self.reset_flag)
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
 
@@ -221,7 +218,6 @@ class SystemControl:
             print(self.robotX)
             print("robotY")
             print(self.robotY)
-            print(self.reset_flag)
             obs = self.OBS
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
