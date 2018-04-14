@@ -11,6 +11,7 @@ from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
 from pirate import Pirate
+import RPi.GPIO as GPIO
 
 
 class Gui:
@@ -74,7 +75,7 @@ class Gui:
 
         # stores the type of game in a string (maze/pirates)
         game_button = Button(text="ENTER", command=store3)
-        game_button.pack()
+       # game_button.pack()
         game_button.grid(row=1, column=0)
         game_disp.mainloop()
 
@@ -100,7 +101,7 @@ class Gui:
             level_disp.destroy()
 
         level_button = Button(text="ENTER", command=store)
-        level_button.pack()
+        #level_button.pack()
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
@@ -146,7 +147,7 @@ class Gui:
             version_disp.destroy()
 
         version_button = Button(text="ENTER", command=store2)
-        version_button.pack()
+      #  version_button.pack()
         version_button.grid(row=1, column=0)
         version_disp.mainloop()
 
@@ -212,7 +213,7 @@ class Gui:
             except:
                 k = key.name  # other keys
             if key == keyboard.Key.esc: return False  # stop listener
-            if k in ['cmd']:  # keys interested
+            if k in ['ctrl']:  # keys interested
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
                 self.start_flag = True
@@ -254,6 +255,16 @@ class Gui:
 
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
+        
+        scanner_top_pin = 21
+        
+        def stop1(scanner_top_pin):
+            if not self.control.reset_flag: 
+                print('reset')
+                self.control.reset_flag = True
+                self.control.reset()
+            
+        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
@@ -262,7 +273,7 @@ class Gui:
                 self.start_flag = False
             root.after(1000, check_status)
 
-        frame.pack()
+       # frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
         check_status()
@@ -350,3 +361,7 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot2_file, self.control.robotX, self.control.robotY)
         elif self.control.direction == G.WEST:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
+
+
+g = Gui()
+g.make_GUI()
