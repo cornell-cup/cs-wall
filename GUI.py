@@ -42,6 +42,10 @@ class Gui:
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
+    path1_file = "image/path1.png"
+    path2_file = "image/path2.png"
+    path3_file = "image/path3.png"
+    path4_file = "image/path4.png"
     bot0_file = "image/robot0.png"
     bot1_file = "image/robot1.png"
     bot2_file = "image/robot2.png"
@@ -283,9 +287,48 @@ class Gui:
         for i in range(len(self.OBS)):
             self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i].location[0],
                                     self.OBS[i].location[1])
+        # path added to the graph
+        # path1 = [[1, 2], [1, 3], [1, 4]]
+        # self.hang_path(data, block_length, 1, 2, 1, 3)
+        self.hang_path(data, block_length, 2, 3, 1, 3)
+
+        # for i in range(len(path1)):
+        #     self.hang_square_object(data, block_length, self.path_file, path1[i][0],
+        #                             path1[i][1])
+
         # hanging robot
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
+
+
+    def hang_path(self, array, block_length, x1, y1, x2, y2):
+        """hangs the designated object on the GUI (either the target or the obstacle(s))"""
+        if x1 == x2:
+            if y1 < y2:
+                filename = self.path4_file
+            else:
+                y1 = y2
+                filename = self.path3_file
+            target = Image.open(filename).convert('RGB')
+            startx = x1 * block_length + (block_length / 4) + (2 * block_length / 4)
+            finx = x1 * block_length + (3 * block_length / 4) + (2 * block_length / 4)
+            starty = y1 * block_length + (block_length / 4) - (3 * block_length / 4)
+            finy = y1 * block_length + (block_length / 4) + (block_length / 2 / 10) - (3 * block_length / 4)
+            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2 / 10))
+        else:
+            if x1 < x2:
+                filename = self.path2_file
+            else:
+                x1 = x2
+                filename = self.path1_file
+            target = Image.open(filename).convert('RGB')
+            startx = x1 * block_length + (block_length / 4) + (5 * block_length / 4)
+            finx = x1 * block_length + (block_length / 4) + (block_length / 2 / 10) + (5 * block_length / 4)
+            starty = y1 * block_length + (block_length / 4) - (6 * block_length / 4)
+            finy = y1 * block_length + (3 * block_length / 4) - (6 * block_length / 4)
+            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target,
+                                                                         (block_length / 2 / 10, block_length / 2))
+
 
     def hang_square_object(self, array, block_length, filename, x, y):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
