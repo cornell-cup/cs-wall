@@ -75,7 +75,7 @@ class Gui:
 
         # stores the type of game in a string (maze/pirates)
         game_button = Button(text="ENTER", command=store3)
-       # game_button.pack()
+        # game_button.pack()
         game_button.grid(row=1, column=0)
         game_disp.mainloop()
 
@@ -101,7 +101,7 @@ class Gui:
             level_disp.destroy()
 
         level_button = Button(text="ENTER", command=store)
-        #level_button.pack()
+        # level_button.pack()
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
@@ -147,7 +147,7 @@ class Gui:
             version_disp.destroy()
 
         version_button = Button(text="ENTER", command=store2)
-      #  version_button.pack()
+        #  version_button.pack()
         version_button.grid(row=1, column=0)
         version_disp.mainloop()
 
@@ -262,7 +262,9 @@ class Gui:
             if not self.control.reset_flag: 
                 print('reset')
                 self.control.reset_flag = True
+                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                 self.control.reset()
+                self.OBS = self.init_OBS
             
         GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
 
@@ -273,7 +275,7 @@ class Gui:
                 self.start_flag = False
             root.after(1000, check_status)
 
-       # frame.pack()
+        # frame.pack()
         frame.grid(row=2, columnspan=3)
         update()
         check_status()
