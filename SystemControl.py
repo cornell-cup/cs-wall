@@ -187,6 +187,7 @@ class SystemControl:
         returns True if the robot is on an obstacle, and False if it is not."""
         for i in range(len(self.OBS)):
             temp = self.OBS[i]
+            print temp.location
             if temp.location[0] == x and temp.location[1] == y:
                 return True, temp
         return False, None
@@ -256,7 +257,7 @@ class SystemControl:
                 continue
             allowed = False
             while not allowed:
-                index = randint(1, 5)
+                index = randint(1, 4)
                 if index == 1:
                     # move north
                     temp_x = self.OBS[i].location[0] - 1
@@ -285,10 +286,6 @@ class SystemControl:
                     if self.check_random(temp_x, temp_y):
                         self.OBS[i].location[1] = temp_y
                         allowed = True
-                elif index == 5:
-                    # TODO
-                    # attack
-                    print "attack"
 
     # below are methods from the ECE team
     # def moveForward(self):
