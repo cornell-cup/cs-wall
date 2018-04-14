@@ -84,7 +84,7 @@ GPIO.output(enablePin3, GPIO.LOW)
 GPIO.output(sleepPin3, GPIO.LOW)
 GPIO.output(dirPin3, GPIO.HIGH)
 
-delay = .0005
+delay = .005
 
 
 #Moving Scanner Motor
@@ -165,47 +165,48 @@ def moveHorizontalDown(num):
         sleep(delay)
     GPIO.output(sleepPin3, GPIO.LOW)
 
-def stop1(scanner_top_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+'''def stop1(scanner_top_pin):
+    print('1stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-    
+    '''
 def stop2(scanner_bottom_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+    print('2stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
     
 def stop3(horizontal_top_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+    print('3stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
     
 def stop4(horizontal_bottom_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+    print('4stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
     
 def stop5(vertical_top_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+    print('5stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
     
 def stop6(vertical_bottom_pin):
-    print('stopping the scanner when it reaches the top or bottom')
+    print('6stopping the scanner when it reaches the top or bottom')
     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
 
-GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+#GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+'''
 GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
 GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
 GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
 GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
 GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 #add interrupt and handler for start and reset button
-
+'''
 #the following method isn't needed once CS is integrated
-def reset(): #motor 
-    moveScannerUp(10000)
-    moveScannerDown(200) #release from pressing the switch
-    moveVerticalUp(10000)
-    moveVerticalDown(200) #release from pressing the switch
-    moveHorizontalLeft(10000)
-    moveHorizontalRight(200) #release from pressing the switch
-
+#def reset(): #motor 
+ #   moveScannerUp(10000)
+  #  moveScannerDown(200) #release from pressing the switch
+   # moveVerticalUp(10000)
+   # moveVerticalDown(200) #release from pressing the switch
+   # moveHorizontalLeft(10000)
+   # moveHorizontalRight(200) #release from pressing the switch
+"""
 while(1):
 
     #command = raw_input("Enter command: ")
@@ -251,11 +252,11 @@ while(1):
         elif(direction==2): moveVerticalDown(2000)
         else: moveHorizontalDown(2000)
 		
-		
+	"""	
 def resetReader():
-	# wiringpi.digitalWrite(12, 0) # sets port 24 to 0 (0V, off)  #low
+	# wiringpi.digitalWrite(24, 0) # sets port 24 to 0 (0V, off)  #low
 	sleep(10)                    # wait 10s  
-	# wiringpi.digitalWrite(12, 1) # sets port 24 to 1 (3V3, on) #high
+	# wiringpi.digitalWrite(24, 1) # sets port 24 to 1 (3V3, on) #high
 	sleep(10)                    # wait 10s  
 
 
