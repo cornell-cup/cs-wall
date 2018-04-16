@@ -1,7 +1,7 @@
 import time
 import Globals as G
 from random import *
-# import a4988
+import a4988
 
 
 class SystemControl:
@@ -55,7 +55,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            # self.moveForward()
+            a4988.moveVerticalUp(1)
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -302,36 +302,3 @@ class SystemControl:
                     if self.check_random(temp_x, temp_y):
                         self.OBS[i].location[1] = temp_y
                         allowed = True
-
-    # below are methods from the ECE team
-    # def moveForward(self):
-    #     # motor
-    #     if self.direction == 0:
-    #         a4988.moveVerticalDown(1000)
-    #     elif self.direction == 1:
-    #         a4988.moveHorizontalUp(1000)
-    #     elif self.direction == 2:
-    #         a4988.moveVerticalUp(1000)
-    #     else:
-    #         a4988.moveHorizontalDown(1000)
-    #
-    # def moveBackward(self):
-    #     # motor
-    #     if self.direction == 0:
-    #         a4988.moveVerticalUp(1000)
-    #     elif self.direction == 1:
-    #         a4988.moveHorizontalDown(1000)
-    #     elif self.direction == 2:
-    #         a4988.moveVerticalDown(1000)
-    #     else:
-    #         a4988.moveHorizontalUp(1000)
-    #
-    # def turnRight(self):
-    #     # motor
-    #     # TODO move servo
-    #     print "turnRight"
-    #
-    # def turnLeft(self):
-    #     # motor
-    #     # TODO move servo
-    #     print "turnLeft"

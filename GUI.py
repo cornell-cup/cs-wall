@@ -175,7 +175,7 @@ class Gui:
         root = Tk()
         root.title("WALL")
         label = Label(root, text="Level " + str(self.level))
-        label.grid(row=0, column=0)
+        label.grid(row=0, column=1)
         frame = Frame(root)
         self.temp_image = self.outfile
         im = PhotoImage(file=self.temp_image)
@@ -183,7 +183,7 @@ class Gui:
         im_label.pack()
 
         step_label = Label(root, text="Time Step: " + str(self.control.time_step))
-        step_label.grid(row=0, column=1)
+        step_label.grid(row=0, column=2)
 
         def update():
             """updates the grid according to the robot's current location/direction"""
@@ -260,19 +260,19 @@ class Gui:
         lis.start()
         
         scanner_top_pin = 21
-        
+
         def stop1(scanner_top_pin):
-            if not self.control.reset_flag: 
+            if not self.control.reset_flag:
                 print('reset')
                 self.control.reset_flag = True
                 tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                 self.control.reset()
                 self.OBS = self.init_OBS
-                
+
         def start1(scanner_top_pin):
             self.start_flag = True
             self.control.start_flag = True
-            
+
         GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
 
         def check_status():
@@ -283,7 +283,7 @@ class Gui:
             root.after(1000, check_status)
 
         # frame.pack()
-        frame.grid(row=2, columnspan=3)
+        frame.grid(row=2, columnspan=4)
         update()
         check_status()
         root.mainloop()
