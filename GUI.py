@@ -175,18 +175,21 @@ class Gui:
         root = Tk()
         root.title("WALL")
         label = Label(root, text="Level " + str(self.level))
-        label.grid(row=0, column=1)
+        label.grid(row=0, column=0)
         frame = Frame(root)
         self.temp_image = self.outfile
         im = PhotoImage(file=self.temp_image)
         im_label = Label(frame, image=im)
         im_label.pack()
 
+        step_label = Label(root, text="Time Step: " + str(self.control.time_step))
+        step_label.grid(row=0, column=1)
+
         def update():
             """updates the grid according to the robot's current location/direction"""
             if t.is_alive():
                 self.make_grid()
-
+                step_label.config(text="Time Step: " + str(self.control.time_step))
                 self.temp_image = self.outfile
                 tempim = PhotoImage(file=self.temp_image)
                 # changes image here
@@ -314,7 +317,6 @@ class Gui:
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
 
-
     def hang_path(self, array, block_length, x1, y1, x2, y2):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
         if x1 == x2:
@@ -342,7 +344,6 @@ class Gui:
             finy = y1 * block_length + (3 * block_length / 4) - (6 * block_length / 4)
             array[startx:finx, starty:finy, :] = scipy.misc.imresize(target,
                                                                          (block_length / 2 / 10, block_length / 2))
-
 
     def hang_square_object(self, array, block_length, filename, x, y):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
