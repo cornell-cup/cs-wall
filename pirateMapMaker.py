@@ -52,15 +52,19 @@ class PirateMapMaker():
 
     #References a string
     GAME_BACKGROUND = "GAME_BACKGROUND"
-    # References a tuple in the
+    # References a direction global
     GAME_START_DIRECTION = "GAME_START_DIRECTION"
     # References a tuple in the format (x,y)
     GAME_START = "GAME_START"
     # References a tuple in the format (x,y)
     GAME_GOAL = "GAME_GOAL"
     # References a 2D list (minimap) where rows represent y values and columns are x values
+    GAME_MAP = "GAME_MAP"
+    # References a list of dictionaries
     GAME_ENEMIES = "GAME_ENEMIES"
+    # Within GAME_ENEMIES, references a direction global
     GAME_ENEMY_DIRECTION = "ENEMY_DIRECTION"
+    # # Within GAME_ENEMIES, references a list of tuples in the format (x,y)
     GAME_ENEMY_PATH = "ENEMY_PATH"
 
     # Minimap space constants
@@ -118,18 +122,22 @@ class PirateMapMaker():
                 print("Please define a valid number for {}".format(self.BOUNDARY_Y))
                 return game_data
 
-            enemy_data = []
+            map_data = []
 
-            # for unit in range(boundary_y):
-            #     enemy_data.append([self.FREE_SPACE]*boundary_x)
+            for unit in range(boundary_y):
+                map_data.append([self.FREE_SPACE]*boundary_x)
+
+            # Add map to game data
+            game_data.update({self.GAME_MAP: map_data})
 
             ### Add enemies to map
             enemies = self.accessField(json_data, self.ENEMIES)
 
+            enemy_data = []
+
             for enemy in enemies:
                 enemy_direction = self.accessField(enemy, self.ENEMY_DIRECTION)
                 enemy_path = self.accessField(enemy, self.ENEMY_PATH)
-                ##############
 
                 enemy = {}
                 direction = ""
@@ -152,11 +160,10 @@ class PirateMapMaker():
                     space = (point[0],point[1])
                     path.append(space)
 
-                ############
                 enemy.update({self.GAME_ENEMY_DIRECTION:direction, self.GAME_ENEMY_PATH:path})
                 enemy_data.append(enemy)
 
-            #Add map to game data
+            #Add enemies to game data
             game_data.update({self.GAME_ENEMIES:enemy_data})
 
             ### Establish starting location
@@ -201,7 +208,6 @@ class PirateMapMaker():
 
             #Add map to game data
             game_data.update({self.GAME_GOAL:(goal_x,goal_y)})
-            # print("Goal data added")
 
 
             ### Establish unit conversion
@@ -223,9 +229,6 @@ class PirateMapMaker():
                 print("Please define a valid value for {} ('{}', '{}', '{}', '{}')".format(
                     self.DIRECTION, self.NORTH, self.EAST, self.SOUTH, self.WEST))
                 return game_data
-
-            #Add map to game data
-            # game_data.update({self.GAME_START_DIRECTION:game_direction})
 
         if not f:
             print("File {}.json could not be read".format(file_path))
