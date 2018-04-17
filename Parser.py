@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 class Parser:
     # class parser is used to parse the block code into robot command
 
@@ -119,7 +120,7 @@ class Parser:
 
         # split the code by lines
         codeLines = inputCode.split("\n")
-        movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight']
+        movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight', 'Attack']
         while len(codeLines) > 0:
             code = codeLines.pop(0)
             # the code starts with movement statement

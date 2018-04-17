@@ -1,6 +1,7 @@
 import time
 import Globals as G
-
+import a4988
+import RPi.GPIO as GPIO
 
 class SystemControl:
     """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
@@ -36,6 +37,8 @@ class SystemControl:
         out = False
         on_obstacle = False
         if code == "Forward":
+            a4988.moveVerticalUp(1)
+            print("HEllo")
             if self.direction == G.SOUTH:
                 self.robotX += 1
             elif self.direction == G.EAST:
@@ -87,7 +90,7 @@ class SystemControl:
             return "TurnLeft\n"
         elif self.direction == G.WEST:
             return "TurnRight\n"
-
+    
     # returns the robot from its current location to the starting point
     def reset(self):
         distX = self.robotX - self.startX
@@ -189,3 +192,4 @@ class SystemControl:
                 print("RESET")
                 return False
         return goal
+
