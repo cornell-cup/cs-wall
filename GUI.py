@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from Parser import Parser
-from mapMaker import MapMaker
+from mazeMaker import MapMaker
 from SystemControl import SystemControl
 from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
 import tkMessageBox
@@ -11,7 +11,8 @@ from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
 from pirate import Pirate
-import RPi.GPIO as GPIO
+from pirateMapMaker import PirateMapMaker
+# import RPi.GPIO as GPIO
 
 
 class Gui:
@@ -75,7 +76,6 @@ class Gui:
 
         # stores the type of game in a string (maze/pirates)
         game_button = Button(text="ENTER", command=store3)
-        # game_button.pack()
         game_button.grid(row=1, column=0)
         game_disp.mainloop()
 
@@ -83,7 +83,7 @@ class Gui:
         if self.game == self.MAZE:
             game_name = "maze"
         elif self.game == self.PIRATES:
-            game_name = "pirates"
+            game_name = "pirate"
         else:
             temp1 = Tk()
             temp1.withdraw()
@@ -92,7 +92,6 @@ class Gui:
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
-        w.pack()
         w.grid(row=0, column=0)
 
         def store():
@@ -101,35 +100,42 @@ class Gui:
             level_disp.destroy()
 
         level_button = Button(text="ENTER", command=store)
-        # level_button.pack()
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
         # after level is chosen, variables related to the game level are stored below
-        map_data = MapMaker()
-        # TODO use "game_name"
-        # game_data = map_data.parseMap("input/" + game_name + "/sample_map" + str(self.level))
-        game_data = map_data.parseMap("input/sample_map")
-        self.BOUNDARY = len(game_data.get("GAME_MAP"))
+        game_data = {}
+
+        if self.game == self.MAZE:
+            map_data = MapMaker()
+            game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
+            # game_data = map_data.parseMap("input/sample_map")
+            self.BOUNDARY = len(game_data.get("GAME_MAP"))
+            self.init_OBS = []
+            self.OBS = []
+
+            # getting the coordinates of the map that contains an obstacle
+            for row in range(len(game_data.get("GAME_MAP"))):
+                for col in range(len(game_data.get("GAME_MAP")[0])):
+                    # 1 represents obstacle, 0 represents free space.
+                    if game_data.get("GAME_MAP")[row][col] == 1:
+                        pirate = Pirate(row, col)
+                        if self.game == self.PIRATES:
+                            pirate.movable = True
+                        self.init_OBS.append(pirate)
+                        self.OBS.append(pirate)
+
+        elif self.game == self.PIRATES:
+            map_data = PirateMapMaker()
+            # TODO define boundaries, can't use for now. Also import other variables.
+            game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
+
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
         self.GOAL_Y = game_data.get("GAME_GOAL")[1]
         self.START_X = game_data.get("GAME_START")[0]
         self.START_Y = game_data.get("GAME_START")[1]
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
-        self.init_OBS = []
-        self.OBS = []
-
-        # getting the coordinates of the map that contains an obstacle
-        for row in range(len(game_data.get("GAME_MAP"))):
-            for col in range(len(game_data.get("GAME_MAP")[0])):
-                # 1 represents obstacle, 0 represents free space.
-                if game_data.get("GAME_MAP")[row][col] == 1:
-                    pirate = Pirate(row, col)
-                    if self.game == self.PIRATES:
-                        pirate.movable = True
-                    self.init_OBS.append(pirate)
-                    self.OBS.append(pirate)
 
         p = Parser()
         # making a choice box here to choose system (2D or minibot)
@@ -163,6 +169,8 @@ class Gui:
         # storing the map data from mapMaker to the class variables of control
         self.control.startX = self.START_X
         self.control.startY = self.START_Y
+        self.control.robotX = self.START_X
+        self.control.robotY = self.START_Y
         self.control.GoalX = self.GOAL_X
         self.control.GoalY = self.GOAL_Y
         self.control.dimX = self.BOUNDARY
@@ -259,21 +267,21 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
         
-        scanner_top_pin = 21
-
-        def stop1(scanner_top_pin):
-            if not self.control.reset_flag:
-                print('reset')
-                self.control.reset_flag = True
-                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-                self.control.reset()
-                self.OBS = self.init_OBS
-
-        def start1(scanner_top_pin):
-            self.start_flag = True
-            self.control.start_flag = True
-
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
+        # scanner_top_pin = 21
+        #
+        # def stop1(scanner_top_pin):
+        #     if not self.control.reset_flag:
+        #         print('reset')
+        #         self.control.reset_flag = True
+        #         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+        #         self.control.reset()
+        #         self.OBS = self.init_OBS
+        #
+        # def start1(scanner_top_pin):
+        #     self.start_flag = True
+        #     self.control.start_flag = True
+        #
+        # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""

@@ -1,7 +1,7 @@
 import time
 import Globals as G
 from random import *
-import a4988
+# import a4988
 
 
 class SystemControl:
@@ -55,7 +55,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            a4988.moveVerticalUp(1)
+            # a4988.moveVerticalUp(1)
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -147,7 +147,7 @@ class SystemControl:
         elif distX < 0:
             # go south
             s += self.check_dir()
-            for i in range(distX):
+            for i in range(-distX):
                 s += "Backward\n"
             s += self.revert_dir(self.start_dir)
         if distY > 0:
@@ -160,7 +160,7 @@ class SystemControl:
         elif distY < 0:
             # go east
             s += self.check_dir() + "TurnRight\n"
-            for i in range(distY):
+            for i in range(-distY):
                 s += "Forward\n"
             s += "TurnLeft\n"
             s += self.revert_dir(self.start_dir)
