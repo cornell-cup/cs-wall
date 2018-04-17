@@ -2,7 +2,7 @@ from random import *
 import numpy as np
 from PIL import Image
 from Parser import Parser
-from mapMaker import MapMaker
+from mazeMaker import MazeMaker
 from SystemControl import SystemControl
 from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
 import tkMessageBox
@@ -93,7 +93,7 @@ class Gui:
         """makes the GUI display after level and version are chosen. Displays game level accordingly."""
 
         # after level is chosen, variables related to the game level are stored below
-        map_data = MapMaker()
+        map_data = MazeMaker()
         game_data = map_data.parseMap("input/sample_map")
         self.BOUNDARY = len(game_data.get("GAME_MAP"))
         self.GOAL_X = game_data.get("GAME_GOAL")[0]

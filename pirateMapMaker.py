@@ -2,7 +2,7 @@ import json
 import Globals as g
 
 
-class MapMaker():
+class PirateMapMaker():
     """Object class for making levels for Wall from JSON files
 
        Contains the keywords for parsing a level JSON into
@@ -33,9 +33,11 @@ class MapMaker():
     GOAL_Y = "GOAL_Y"
 
     #Impassable spots on the map
-    OBSTACLES = "OBSTACLES"
-    OBSTACLE_X = "OBSTACLE_X"
-    OBSTACLE_Y = "OBSTACLE_Y"
+    ENEMIES = "ENEMIES"
+    ENEMY_DIRECTION = "ENEMY_DIRECTION"
+    ENEMY_PATH = "ENEMY_PATH"
+    # ENEMY_X = "ENEMY_X"
+    # ENEMY_Y = "ENEMY_Y"
 
     #Cardinal directions
     NORTH = "NORTH"
@@ -57,7 +59,9 @@ class MapMaker():
     # References a tuple in the format (x,y)
     GAME_GOAL = "GAME_GOAL"
     # References a 2D list (minimap) where rows represent y values and columns are x values
-    GAME_MAP = "GAME_MAP"
+    GAME_ENEMIES = "GAME_ENEMIES"
+    GAME_ENEMY_DIRECTION = "ENEMY_DIRECTION"
+    GAME_ENEMY_PATH = "ENEMY_PATH"
 
     # Minimap space constants
     FREE_SPACE = 0
@@ -114,22 +118,46 @@ class MapMaker():
                 print("Please define a valid number for {}".format(self.BOUNDARY_Y))
                 return game_data
 
-            miniMap = []
+            enemy_data = []
 
-            for unit in range(boundary_y):
-                miniMap.append([self.FREE_SPACE]*boundary_x)
+            # for unit in range(boundary_y):
+            #     enemy_data.append([self.FREE_SPACE]*boundary_x)
 
-            ### Add obstacles to map
-            obstacles = self.accessField(json_data, self.OBSTACLES)
+            ### Add enemies to map
+            enemies = self.accessField(json_data, self.ENEMIES)
 
-            for obstacle in obstacles:
-                obstacle_x = self.accessField(obstacle, self.OBSTACLE_X)
-                obstacle_y = self.accessField(obstacle, self.OBSTACLE_Y)
-                miniMap[obstacle_x][obstacle_y] = self.OBSTACLE_SPACE
+            for enemy in enemies:
+                enemy_direction = self.accessField(enemy, self.ENEMY_DIRECTION)
+                enemy_path = self.accessField(enemy, self.ENEMY_PATH)
+                ##############
 
-            
+                enemy = {}
+                direction = ""
+                path = []
+
+                if enemy_direction == self.NORTH:
+                    direction = g.NORTH
+                elif enemy_direction == self.EAST:
+                    direction = g.EAST
+                elif enemy_direction == self.SOUTH:
+                    direction = g.SOUTH
+                elif enemy_direction == self.WEST:
+                    direction = g.WEST
+                else:
+                    print("Please define a valid value for {} ('{}', '{}', '{}', '{}')".format(
+                        self.ENEMY_DIRECTION, self.NORTH, self.EAST, self.SOUTH, self.WEST))
+                    return game_data
+
+                for point in enemy_path:
+                    space = (point[0],point[1])
+                    path.append(space)
+
+                ############
+                enemy.update({self.GAME_ENEMY_DIRECTION:direction, self.GAME_ENEMY_PATH:path})
+                enemy_data.append(enemy)
+
             #Add map to game data
-            game_data.update({self.GAME_MAP:miniMap})
+            game_data.update({self.GAME_ENEMIES:enemy_data})
 
             ### Establish starting location
             start = self.accessField(json_data,self.START)
@@ -180,20 +208,24 @@ class MapMaker():
             direction = self.accessField(json_data,self.DIRECTION)
 
             if direction == self.NORTH:
-                game_direction = g.NORTH
+                # game_direction = g.NORTH
+                game_data.update({self.GAME_START_DIRECTION: g.NORTH})
             elif direction == self.EAST:
-                game_direction = g.EAST
+                # game_direction = g.EAST
+                game_data.update({self.GAME_START_DIRECTION: g.EAST})
             elif direction == self.SOUTH:
-                game_direction = g.SOUTH
+                # game_direction = g.SOUTH
+                game_data.update({self.GAME_START_DIRECTION: g.SOUTH})
             elif direction == self.WEST:
-                game_direction = g.WEST
+                # game_direction = g.WEST
+                game_data.update({self.GAME_START_DIRECTION: g.WEST})
             else:
                 print("Please define a valid value for {} ('{}', '{}', '{}', '{}')".format(
                     self.DIRECTION, self.NORTH, self.EAST, self.SOUTH, self.WEST))
                 return game_data
 
             #Add map to game data
-            game_data.update({self.GAME_START_DIRECTION:game_direction})
+            # game_data.update({self.GAME_START_DIRECTION:game_direction})
 
         if not f:
             print("File {}.json could not be read".format(file_path))
