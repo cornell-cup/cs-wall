@@ -1,6 +1,6 @@
 {
 	"BACKGROUND":  "image/map.png",
-	"DIRECTION":  "NORTH",
+	"DIRECTION":  "SOUTH",
 	"BOUNDARY":{
 		"BOUNDARY_X" : 7,
 		"BOUNDARY_Y" : 7

@@ -8,7 +8,6 @@ class SystemControl:
     """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
     In addition, records the current position of the bot during its movement as class variables. """
 
-    start_flag = False
     reset_flag = False
     time_step = 0
     start_dir = 1
@@ -216,7 +215,7 @@ class SystemControl:
         for i in range(0, length-1):
             code = action_list[i]
             self.time_step += 1
-            self.move_obs_random()
+            self.move_obs()
             goal, out, on_obstacle = self.moveRobot(code)
             print("robotX")
             print(self.robotX)
@@ -237,68 +236,67 @@ class SystemControl:
                 return False
         return goal
 
-    def check_random(self, pseudo_x, pseudo_y):
-        """checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping"""
-        # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
-        allowed = False
-        if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.dimX or pseudo_y >= self.dimX:
-            # check if it is out of bounds
-            return allowed
-        else:
-            # check if it is overlapping with the obstacles
-            for i in range(len(self.OBS)):
-                temp = self.OBS[i]
-                if temp.location[0] == [pseudo_x] and temp.location[1] == [pseudo_y]:
-                    return False
-            allowed = True
-        return allowed
-
     def move_obs(self):
         """Moves the obstacles according to designated path"""
         # TODO test this after json file is made
-        while self.start_flag:
-            for i in range(len(self.OBS)):
-                temp_obs = self.OBS[i]
-                if not temp_obs.movable:
-                    continue
-                path = temp_obs.path
-                movement_serial = self.time_step % len(path)
-                self.OBS[i].location = path[movement_serial]
-
-    def move_obs_random(self):
-        """moves the obstacle randomly"""
-        # possible movements: north, south, east, west, attack
         for i in range(len(self.OBS)):
-            if not self.OBS[i].movable:
+            temp_obs = self.OBS[i]
+            if not temp_obs.movable:
                 continue
-            allowed = False
-            while not allowed:
-                index = randint(1, 4)
-                if index == 1:
-                    # move north
-                    temp_x = self.OBS[i].location[0] - 1
-                    temp_y = self.OBS[i].location[1]
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i].location[0] = temp_x
-                        allowed = True
-                elif index == 2:
-                    # move south
-                    temp_x = self.OBS[i].location[0] + 1
-                    temp_y = self.OBS[i].location[1]
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i].location[0] = temp_x
-                        allowed = True
-                elif index == 3:
-                    # move east
-                    temp_x = self.OBS[i].location[0]
-                    temp_y = self.OBS[i].location[1] + 1
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i].location[1] = temp_y
-                        allowed = True
-                elif index == 4:
-                    # move west
-                    temp_x = self.OBS[i].location[0]
-                    temp_y = self.OBS[i].location[1] - 1
-                    if self.check_random(temp_x, temp_y):
-                        self.OBS[i].location[1] = temp_y
-                        allowed = True
+            path = temp_obs.path
+            movement_serial = self.time_step % len(path)
+            self.OBS[i].location = path[movement_serial]
+
+    # def check_random(self, pseudo_x, pseudo_y):
+    #     """checks whether a single random move of the robot is feasible, ie not out of bounds and not overlapping"""
+    #     # check whether it is out of bounds or overlapping with another obstacle, which are not allowed
+    #     allowed = False
+    #     if pseudo_x < 0 or pseudo_y < 0 or pseudo_x >= self.dimX or pseudo_y >= self.dimX:
+    #         # check if it is out of bounds
+    #         return allowed
+    #     else:
+    #         # check if it is overlapping with the obstacles
+    #         for i in range(len(self.OBS)):
+    #             temp = self.OBS[i]
+    #             if temp.location[0] == [pseudo_x] and temp.location[1] == [pseudo_y]:
+    #                 return False
+    #         allowed = True
+    #     return allowed
+    #
+    # def move_obs_random(self):
+    #     """moves the obstacle randomly"""
+    #     # possible movements: north, south, east, west, attack
+    #     for i in range(len(self.OBS)):
+    #         if not self.OBS[i].movable:
+    #             continue
+    #         allowed = False
+    #         while not allowed:
+    #             index = randint(1, 4)
+    #             if index == 1:
+    #                 # move north
+    #                 temp_x = self.OBS[i].location[0] - 1
+    #                 temp_y = self.OBS[i].location[1]
+    #                 if self.check_random(temp_x, temp_y):
+    #                     self.OBS[i].location[0] = temp_x
+    #                     allowed = True
+    #             elif index == 2:
+    #                 # move south
+    #                 temp_x = self.OBS[i].location[0] + 1
+    #                 temp_y = self.OBS[i].location[1]
+    #                 if self.check_random(temp_x, temp_y):
+    #                     self.OBS[i].location[0] = temp_x
+    #                     allowed = True
+    #             elif index == 3:
+    #                 # move east
+    #                 temp_x = self.OBS[i].location[0]
+    #                 temp_y = self.OBS[i].location[1] + 1
+    #                 if self.check_random(temp_x, temp_y):
+    #                     self.OBS[i].location[1] = temp_y
+    #                     allowed = True
+    #             elif index == 4:
+    #                 # move west
+    #                 temp_x = self.OBS[i].location[0]
+    #                 temp_y = self.OBS[i].location[1] - 1
+    #                 if self.check_random(temp_x, temp_y):
+    #                     self.OBS[i].location[1] = temp_y
+    #                     allowed = True

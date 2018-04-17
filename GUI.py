@@ -120,15 +120,27 @@ class Gui:
                     # 1 represents obstacle, 0 represents free space.
                     if game_data.get("GAME_MAP")[row][col] == 1:
                         pirate = Pirate(row, col)
-                        if self.game == self.PIRATES:
-                            pirate.movable = True
+                        pirate.movable = False
                         self.init_OBS.append(pirate)
                         self.OBS.append(pirate)
 
         elif self.game == self.PIRATES:
             map_data = PirateMapMaker()
-            # TODO define boundaries, can't use for now. Also import other variables.
             game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
+            self.BOUNDARY = len(game_data.get("GAME_MAP"))
+            self.init_OBS = []
+            self.OBS = []
+
+            for index in range(len(game_data.get("GAME_ENEMIES"))):
+                temp_data = game_data.get("GAME_ENEMIES")[index]
+                temp_path = temp_data.get("ENEMY_PATH")
+                pirate = Pirate(temp_path[0][0], temp_path[0][1])
+                pirate2 = Pirate(temp_path[0][0], temp_path[0][1])
+                pirate2.movable = False
+                self.init_OBS.append(pirate2)
+                pirate.movable = True
+                pirate.path = temp_path
+                self.OBS.append(pirate)
 
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
         self.GOAL_Y = game_data.get("GAME_GOAL")[1]
@@ -228,7 +240,6 @@ class Gui:
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
                 self.start_flag = True
-                self.control.start_flag = True
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -279,7 +290,6 @@ class Gui:
         #
         # def start1(scanner_top_pin):
         #     self.start_flag = True
-        #     self.control.start_flag = True
         #
         # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
 

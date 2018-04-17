@@ -10,7 +10,7 @@
 		"START_Y" : 1
 	},
 	"GOAL":{
-		"GOAL_X" : 4,
+		"GOAL_X" : 3,
 		"GOAL_Y" : 3
 	},
 	"ENEMIES":[
