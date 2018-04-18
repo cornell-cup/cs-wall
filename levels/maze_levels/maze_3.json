@@ -1,0 +1,50 @@
+{
+	"BACKGROUND":  "image/map.png",
+	"DIRECTION":  "NORTH",
+	"BOUNDARY":{
+		"BOUNDARY_X" : 5,
+		"BOUNDARY_Y" : 5
+	},
+	"START":{
+		"START_X" : 0,
+		"START_Y" : 0
+	},
+	"GOAL":{
+		"GOAL_X" : 0,
+		"GOAL_Y" : 4
+	},
+	"OBSTACLES":[
+		{
+			"OBSTACLE_X": 0,
+			"OBSTACLE_Y": 1
+		},
+		{
+			"OBSTACLE_X": 1,
+			"OBSTACLE_Y": 1
+		},
+		{
+			"OBSTACLE_X": 1,
+			"OBSTACLE_Y": 3
+		},
+		{
+			"OBSTACLE_X": 2,
+			"OBSTACLE_Y": 3
+		},
+		{
+			"OBSTACLE_X": 3,
+			"OBSTACLE_Y": 2
+		},
+		{
+			"OBSTACLE_X": 3,
+			"OBSTACLE_Y": 1
+		},
+		{
+			"OBSTACLE_X": 3,
+			"OBSTACLE_Y": 0
+		},
+		{
+			"OBSTACLE_X": 4,
+			"OBSTACLE_Y": 4
+		}
+	]
+}
