@@ -12,7 +12,7 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 
 
 class Gui:
