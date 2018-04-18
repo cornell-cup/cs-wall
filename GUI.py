@@ -12,7 +12,7 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 
 class Gui:
@@ -278,20 +278,20 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
         
-        # scanner_top_pin = 21
-        #
-        # def stop1(scanner_top_pin):
-        #     if not self.control.reset_flag:
-        #         print('reset')
-        #         self.control.reset_flag = True
-        #         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        #         self.control.reset()
-        #         self.OBS = self.init_OBS
-        #
-        # def start1(scanner_top_pin):
-        #     self.start_flag = True
-        #
-        # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
+        scanner_top_pin = 21
+
+        def stop1(scanner_top_pin):
+            if not self.control.reset_flag:
+                print('reset')
+                self.control.reset_flag = True
+                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+                self.control.reset()
+                self.OBS = self.init_OBS
+
+        def start1(scanner_top_pin):
+            self.start_flag = True
+
+        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
@@ -329,7 +329,7 @@ class Gui:
         # path added to the graph
         # path1 = [[1, 2], [1, 3], [1, 4]]
         # self.hang_path(data, block_length, 1, 2, 1, 3)
-        self.hang_path(data, block_length, 2, 3, 1, 3)
+        # self.hang_path(data, block_length, 2, 3, 1, 3)
 
         # for i in range(len(path1)):
         #     self.hang_square_object(data, block_length, self.path_file, path1[i][0],

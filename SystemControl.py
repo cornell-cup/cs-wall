@@ -1,7 +1,7 @@
 import time
 import Globals as G
 from random import *
-# import a4988
+import a4988
 
 
 class SystemControl:
@@ -54,7 +54,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            # a4988.moveVerticalUp(1)
+            a4988.moveVerticalUp(1)
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -238,7 +238,6 @@ class SystemControl:
 
     def move_obs(self):
         """Moves the obstacles according to designated path"""
-        # TODO test this after json file is made
         for i in range(len(self.OBS)):
             temp_obs = self.OBS[i]
             if not temp_obs.movable:
