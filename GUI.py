@@ -278,7 +278,7 @@ class Gui:
 
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
-        
+
         start_button = 6
         reset_button = 5
         scanner_top_pin = 21

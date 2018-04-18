@@ -2,7 +2,6 @@ import time
 import Globals as G
 import a4988
 
-
 class SystemControl:
     """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
     In addition, records the current position of the bot during its movement as class variables. """
