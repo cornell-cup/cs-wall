@@ -329,8 +329,8 @@ class Gui:
             GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveVerticalUp(25)
 
-        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
         GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
         GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
         GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
