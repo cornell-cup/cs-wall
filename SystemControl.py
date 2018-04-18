@@ -1,6 +1,5 @@
 import time
 import Globals as G
-from random import *
 import a4988
 
 
