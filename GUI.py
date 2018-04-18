@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from Parser import Parser
-from mazeMaker import MapMaker
+from mazeMaker import MazeMaker
 from SystemControl import SystemControl
 from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
 import tkMessageBox
@@ -12,7 +12,8 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
+import a4988
 
 
 class Gui:
@@ -107,7 +108,7 @@ class Gui:
         game_data = {}
 
         if self.game == self.MAZE:
-            map_data = MapMaker()
+            map_data = MazeMaker()
             game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
             # game_data = map_data.parseMap("input/sample_map")
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
@@ -278,9 +279,16 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
         
+        start_button = 6
+        reset_button = 5
         scanner_top_pin = 21
+        scanner_bottom_pin = 26
+        horizontal_top_pin = 16
+        horizontal_bottom_pin = 20
+        vertical_top_pin = 13
+        vertical_bottom_pin=19
 
-        def stop1(scanner_top_pin):
+        def reset(reset_button):
             if not self.control.reset_flag:
                 print('reset')
                 self.control.reset_flag = True
@@ -288,10 +296,47 @@ class Gui:
                 self.control.reset()
                 self.OBS = self.init_OBS
 
-        def start1(scanner_top_pin):
+        def start(start_button):
             self.start_flag = True
 
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=start1, bouncetime=2000)
+        def stop1(scanner_top_pin):
+            print(' scanner, hit top')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveScannerDown(25)
+
+        def stop2(scanner_bottom_pin):
+            print('scanner, hit bottom')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveScannerUp(25)
+
+        def stop3(horizontal_top_pin):
+            print('horizontal , hit top bound')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveHorizontalDown(25)
+
+        def stop4(horizontal_bottom_pin):
+            print('horizontal , hit bottom bound')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveHorizontalUp(25)
+
+        def stop5(vertical_top_pin):
+            print('vertical , hit top bound')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveVerticalDown(25)
+
+        def stop6(vertical_bottom_pin):
+            print('vertical , hit bottom bound')
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            a4988.moveVerticalUp(25)
+
+        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
+        GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
+        GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
+        GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
+        GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
+        GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
