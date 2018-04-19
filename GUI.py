@@ -278,7 +278,56 @@ class Gui:
 
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
+ 
+        #Motor Scanner Setup
+        stepPin1 = 2
+        dirPin1 = 3
+        enablePin1 = 18
+        sleepPin1 = 4
 
+        GPIO.setup(stepPin1, GPIO.OUT)
+        GPIO.setup(dirPin1, GPIO.OUT)
+        GPIO.setup(enablePin1, GPIO.OUT)
+        GPIO.setup(sleepPin1, GPIO.OUT)
+
+        GPIO.output(enablePin1, GPIO.LOW)
+        GPIO.output(sleepPin1, GPIO.LOW)
+        GPIO.output(dirPin1, GPIO.HIGH)
+
+
+        #Motor Vertical
+        stepPin2 = 27
+        dirPin2 = 22
+        enablePin2 = 23
+        sleepPin2 = 17
+
+        GPIO.setup(stepPin2, GPIO.OUT)
+        GPIO.setup(dirPin2, GPIO.OUT)
+        GPIO.setup(enablePin2, GPIO.OUT)
+        GPIO.setup(sleepPin2, GPIO.OUT)
+
+        GPIO.output(enablePin2, GPIO.LOW)
+        GPIO.output(sleepPin2, GPIO.LOW)
+        GPIO.output(dirPin2, GPIO.HIGH)
+
+
+        #Motor Horizontal
+        stepPin3 = 9
+        dirPin3 = 11
+        enablePin3 = 24
+        sleepPin3 = 10
+
+        GPIO.setup(stepPin3, GPIO.OUT)
+        GPIO.setup(dirPin3, GPIO.OUT)
+        GPIO.setup(enablePin3, GPIO.OUT)
+        GPIO.setup(sleepPin3, GPIO.OUT)
+
+        GPIO.output(enablePin3, GPIO.LOW)
+        GPIO.output(sleepPin3, GPIO.LOW)
+        GPIO.output(dirPin3, GPIO.HIGH)
+
+        
+        
         start_button = 6
         reset_button = 5
         scanner_top_pin = 21
@@ -287,6 +336,17 @@ class Gui:
         horizontal_bottom_pin = 20
         vertical_top_pin = 13
         vertical_bottom_pin=19
+
+        
+        GPIO.setup(start_button, GPIO.IN)
+        GPIO.setup(reset_button, GPIO.IN)
+        GPIO.setup(scanner_top_pin, GPIO.IN)
+        GPIO.setup(scanner_bottom_pin, GPIO.IN)
+        GPIO.setup(horizontal_top_pin, GPIO.IN)
+        GPIO.setup(horizontal_bottom_pin, GPIO.IN)
+        GPIO.setup(vertical_top_pin, GPIO.IN)
+        GPIO.setup(vertical_bottom_pin, GPIO.IN)
+        
 
         def reset(reset_button):
             if not self.control.reset_flag:
