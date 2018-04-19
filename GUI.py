@@ -252,6 +252,7 @@ class Gui:
 
         def start():
             """runs the given file of rfid's"""
+            a4988.init()
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
@@ -361,37 +362,43 @@ class Gui:
 
         def stop1(scanner_top_pin):
             print(' scanner, hit top')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveScannerDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         def stop2(scanner_bottom_pin):
             print('scanner, hit bottom')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveScannerUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         def stop3(horizontal_top_pin):
             print('horizontal , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveHorizontalDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         def stop4(horizontal_bottom_pin):
             print('horizontal , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveHorizontalUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         def stop5(vertical_top_pin):
             print('vertical , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveVerticalDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         def stop6(vertical_bottom_pin):
             print('vertical , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
             a4988.moveVerticalUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            
 
         GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
         GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+       # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
         GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
         GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
         GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
