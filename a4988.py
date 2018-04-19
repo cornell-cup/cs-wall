@@ -24,11 +24,11 @@ GPIO.setmode(GPIO.BCM)
 #GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 scanner_top_pin = 21
-scanner_bottom_pin = 26
+scanner_bottom_pin = 19 # was26
 horizontal_top_pin = 16
 horizontal_bottom_pin = 20
 vertical_top_pin = 13
-vertical_bottom_pin=19
+vertical_bottom_pin= 26 # was19
 
 GPIO.setup(scanner_top_pin, GPIO.IN)
 GPIO.setup(scanner_bottom_pin, GPIO.IN)
