@@ -37,8 +37,8 @@ class SystemControl:
         out = False
         on_obstacle = False
         if code == "Forward":
-            a4988.moveVerticalUp(1)
-            print("HEllo")
+            a4988.moveVerticalUp(100)
+            print("moving robot")
             if self.direction == G.SOUTH:
                 self.robotX += 1
             elif self.direction == G.EAST:
