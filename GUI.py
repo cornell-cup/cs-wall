@@ -244,7 +244,8 @@ class Gui:
                 if not self.dead_flag:
                     self.start_flag = True
                 else:
-                    t = threading.Thread(target=start)
+                    print("lol")
+                    # t = threading.Thread(target=start)
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -506,7 +507,14 @@ class Gui:
         # path added to the graph
         # path1 = [[1, 2], [1, 3], [1, 4]]
         # self.hang_path(data, block_length, 1, 2, 1, 3)
-        self.hang_path(data, block_length, 2, 3, 1, 3)
+        # self.hang_path(data, block_length, 2, 3, 1, 3)
+
+        for i in range(len(self.OBS)):
+            temp_obs = self.OBS[i]
+            for j in range(len(temp_obs.path)-1):
+                loc1 = temp_obs.path[j]
+                loc2 = temp_obs.path[j+1]
+                self.hang_path(data, block_length, loc1[0], loc1[1], loc2[0], loc2[1])
 
         # for i in range(len(path1)):
         #     self.hang_square_object(data, block_length, self.path_file, path1[i][0],
