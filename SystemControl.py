@@ -52,7 +52,8 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            a4988.moveVerticalUp(1)
+            a4988.moveVerticalUp(10)
+            print('moved')
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1

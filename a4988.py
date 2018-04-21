@@ -24,11 +24,11 @@ GPIO.setmode(GPIO.BCM)
 #GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 scanner_top_pin = 21
-scanner_bottom_pin = 26
+scanner_bottom_pin = 19 # was26
 horizontal_top_pin = 16
 horizontal_bottom_pin = 20
 vertical_top_pin = 13
-vertical_bottom_pin=19
+vertical_bottom_pin= 26 # was19
 
 GPIO.setup(scanner_top_pin, GPIO.IN)
 GPIO.setup(scanner_bottom_pin, GPIO.IN)
@@ -53,7 +53,7 @@ GPIO.output(sleepPin1, GPIO.LOW)
 GPIO.output(dirPin1, GPIO.HIGH)
 
 
-#Motor Vertical
+#Motor Horizontal
 stepPin2 = 27
 dirPin2 = 22
 enablePin2 = 23
@@ -69,7 +69,7 @@ GPIO.output(sleepPin2, GPIO.LOW)
 GPIO.output(dirPin2, GPIO.HIGH)
 
 
-#Motor Horizontal
+#Motor Vertical
 stepPin3 = 9
 dirPin3 = 11
 enablePin3 = 24
@@ -113,8 +113,8 @@ def moveScannerDown(num):
     GPIO.output(sleepPin1, GPIO.LOW)
 
 
-#Moving Vertical Motor
-def moveVerticalUp(num):
+#Moving Horizontal Motor
+def moveHorizontalUp(num):
     print"yola"
     #step_count = input("Enter number of steps: ")
     step_count = num
@@ -128,7 +128,7 @@ def moveVerticalUp(num):
     print('sleep pin 2')
     GPIO.output(sleepPin2, GPIO.LOW)
 
-def moveVerticalDown(num):
+def moveHorizontalDown(num):
     #step_count = input("Enter number of steps: ")
     step_count = num
     GPIO.output(dirPin2, GPIO.HIGH)
@@ -140,8 +140,8 @@ def moveVerticalDown(num):
         sleep(delay)
     GPIO.output(sleepPin2, GPIO.LOW)
 
-#Moving Horizontal Motor
-def moveHorizontalUp(num):
+#Moving vertical Motor
+def moveVerticalUp(num):
     #step_count = input("Enter number of steps: ")
     step_count = num
     GPIO.output(dirPin3, GPIO.LOW)
@@ -153,7 +153,7 @@ def moveHorizontalUp(num):
         sleep(delay)
     GPIO.output(sleepPin3, GPIO.LOW)
 
-def moveHorizontalDown(num):
+def moveVerticalDown(num):
     #step_count = input("Enter number of steps: ")
     step_count = num
     GPIO.output(dirPin3, GPIO.HIGH)
@@ -258,6 +258,5 @@ def resetReader():
 	sleep(10)                    # wait 10s  
 	# wiringpi.digitalWrite(24, 1) # sets port 24 to 1 (3V3, on) #high
 	sleep(10)                    # wait 10s  
-
 
 
