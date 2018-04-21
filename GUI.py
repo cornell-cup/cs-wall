@@ -40,7 +40,9 @@ class Gui:
 
     control = None
     start_flag = False
+    thread_started = False
     dead_flag = False
+    t = None
 
     rfid_file = "input/rfidAttack.txt"
     target_file = "image/target.png"
@@ -138,10 +140,11 @@ class Gui:
                 temp_path = temp_data.get("ENEMY_PATH")
                 pirate = Pirate(temp_path[0][0], temp_path[0][1])
                 pirate2 = Pirate(temp_path[0][0], temp_path[0][1])
-                pirate2.movable = False
-                self.init_OBS.append(pirate2)
                 pirate.movable = True
+                pirate2.movable = True
                 pirate.path = temp_path
+                pirate2.path = temp_path
+                self.init_OBS.append(pirate2)
                 self.OBS.append(pirate)
 
         self.GOAL_X = game_data.get("GAME_GOAL")[0]
@@ -151,7 +154,6 @@ class Gui:
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
 
-        p = Parser()
         # making a choice box here to choose system (2D or minibot)
         version_disp = Tk()
         version_disp.title("Version Chooser")
@@ -209,25 +211,16 @@ class Gui:
 
         def update():
             """updates the grid according to the robot's current location/direction"""
-            if t.is_alive():
-                self.make_grid()
-                step_label.config(text="Time Step: " + str(self.control.time_step))
-                self.temp_image = self.outfile
-                tempim = PhotoImage(file=self.temp_image)
-                # changes image here
-                im_label.config(image=tempim)
-                im_label.image = tempim
-                im_label.pack()
-            else:
-                self.make_grid()
-                self.temp_image = self.outfile
-                tempim = PhotoImage(file=self.temp_image)
-                # changes image here
-                im_label.config(image=tempim)
-                im_label.image = tempim
-                im_label.pack()
+            self.make_grid()
+            step_label.config(text="Time Step: " + str(self.control.time_step))
+            self.temp_image = self.outfile
+            tempim = PhotoImage(file=self.temp_image)
+            # changes image here
+            im_label.config(image=tempim)
+            im_label.image = tempim
+            im_label.pack()
 
-                # updates display every 2 seconds
+            # updates display every 1 second
             root.after(1000, update)
 
         def on_press(key):
@@ -241,11 +234,16 @@ class Gui:
             if k in ['ctrl']:  # keys interested
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
-                if not self.dead_flag:
+                if not self.thread_started:
+                    self.t = threading.Thread(target=start)
+                    self.thread_started = True
                     self.start_flag = True
                 else:
-                    print("lol")
-                    # t = threading.Thread(target=start)
+                    if self.dead_flag:
+                        self.t = None
+                        self.t = threading.Thread(target=start)
+                        self.start_flag = True
+                        self.dead_flag = False
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -253,12 +251,15 @@ class Gui:
                     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                     self.control.reset()
                     self.OBS = self.init_OBS
-                    self.start_flag = True
-                return False
+                    self.start_flag = False
+                    self.dead_flag = True
+                    self.control.reset_flag = False
+                # return False
 
         def start():
             """runs the given file of rfid's"""
             # a4988.init()
+            p = Parser()
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
@@ -266,7 +267,9 @@ class Gui:
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
                     self.control.reset()
+                    self.control.time_step = 0
                     self.OBS = self.init_OBS
+                    self.control.OBS = self.init_OBS
                     self.make_grid()
                     self.temp_image = self.outfile
                     tempim = PhotoImage(file=self.temp_image)
@@ -274,6 +277,7 @@ class Gui:
                     im_label.config(image=tempim)
                     im_label.image = tempim
                     im_label.pack()
+                    self.dead_flag = True
             else:
                 self.control.run(codeblock)
                 if self.control.check_goal():
@@ -281,200 +285,151 @@ class Gui:
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
 
-        t = threading.Thread(target=start)
-
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
-
-        # start_button = 6
-        # reset_button = 5
-        # scanner_top_pin = 21
-        # scanner_bottom_pin = 26
-        # horizontal_top_pin = 16
-        # horizontal_bottom_pin = 20
-        # vertical_top_pin = 13
-        # vertical_bottom_pin=19
-        #
-        # def reset(reset_button):
-        #     if not self.control.reset_flag:
-        #         print('reset')
-        #         self.control.reset_flag = True
-        #         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        #         self.control.reset()
-        #         self.OBS = self.init_OBS
-        #
-        # def start(start_button):
-        #     self.start_flag = True
-        #
-        # def stop1(scanner_top_pin):
-        #     print(' scanner, hit top')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveScannerDown(25)
-        #
-        # def stop2(scanner_bottom_pin):
-        #     print('scanner, hit bottom')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveScannerUp(25)
-        #
-        # def stop3(horizontal_top_pin):
-        #     print('horizontal , hit top bound')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveHorizontalDown(25)
-        #
-        # def stop4(horizontal_bottom_pin):
-        #     print('horizontal , hit bottom bound')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveHorizontalUp(25)
-        #
-        # def stop5(vertical_top_pin):
-        #     print('vertical , hit top bound')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveVerticalDown(25)
-        #
-        # def stop6(vertical_bottom_pin):
-        #     print('vertical , hit bottom bound')
-        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #     a4988.moveVerticalUp(25)
-
-        # GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-        # GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-        # GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-        # GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-        # GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-        # GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
  
-        # #Motor Scanner Setup
-        # stepPin1 = 2
-        # dirPin1 = 3
-        # enablePin1 = 18
-        # sleepPin1 = 4
-        #
-        # GPIO.setup(stepPin1, GPIO.OUT)
-        # GPIO.setup(dirPin1, GPIO.OUT)
-        # GPIO.setup(enablePin1, GPIO.OUT)
-        # GPIO.setup(sleepPin1, GPIO.OUT)
-        #
-        # GPIO.output(enablePin1, GPIO.LOW)
-        # GPIO.output(sleepPin1, GPIO.LOW)
-        # GPIO.output(dirPin1, GPIO.HIGH)
-        #
-        #
-        # #Motor Vertical
-        # stepPin2 = 27
-        # dirPin2 = 22
-        # enablePin2 = 23
-        # sleepPin2 = 17
-        #
-        # GPIO.setup(stepPin2, GPIO.OUT)
-        # GPIO.setup(dirPin2, GPIO.OUT)
-        # GPIO.setup(enablePin2, GPIO.OUT)
-        # GPIO.setup(sleepPin2, GPIO.OUT)
-        #
-        # GPIO.output(enablePin2, GPIO.LOW)
-        # GPIO.output(sleepPin2, GPIO.LOW)
-        # GPIO.output(dirPin2, GPIO.HIGH)
-        #
-        #
-        # #Motor Horizontal
-        # stepPin3 = 9
-        # dirPin3 = 11
-        # enablePin3 = 24
-        # sleepPin3 = 10
-        #
-        # GPIO.setup(stepPin3, GPIO.OUT)
-        # GPIO.setup(dirPin3, GPIO.OUT)
-        # GPIO.setup(enablePin3, GPIO.OUT)
-        # GPIO.setup(sleepPin3, GPIO.OUT)
-        #
-        # GPIO.output(enablePin3, GPIO.LOW)
-        # GPIO.output(sleepPin3, GPIO.LOW)
-        # GPIO.output(dirPin3, GPIO.HIGH)
-        #
-        #
-        #
-        # start_button = 6
-        # reset_button = 5
-        # scanner_top_pin = 21
-        # scanner_bottom_pin = 26
-        # horizontal_top_pin = 16
-        # horizontal_bottom_pin = 20
-        # vertical_top_pin = 13
-        # vertical_bottom_pin=19
-        #
-        #
-        # GPIO.setup(start_button, GPIO.IN)
-        # GPIO.setup(reset_button, GPIO.IN)
-        # GPIO.setup(scanner_top_pin, GPIO.IN)
-        # GPIO.setup(scanner_bottom_pin, GPIO.IN)
-        # GPIO.setup(horizontal_top_pin, GPIO.IN)
-        # GPIO.setup(horizontal_bottom_pin, GPIO.IN)
-        # GPIO.setup(vertical_top_pin, GPIO.IN)
-        # GPIO.setup(vertical_bottom_pin, GPIO.IN)
-        
+        # Motor Scanner Setup
+        stepPin1 = 2
+        dirPin1 = 3
+        enablePin1 = 18
+        sleepPin1 = 4
 
-       #  def reset(reset_button):
-       #      if not self.control.reset_flag:
-       #          print('reset')
-       #          self.control.reset_flag = True
-       #          tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-       #          self.control.reset()
-       #          self.OBS = self.init_OBS
-       #
-       #  def start(start_button):
-       #      self.start_flag = True
-       #
-       #  def stop1(scanner_top_pin):
-       #      print(' scanner, hit top')
-       #      a4988.moveScannerDown(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  def stop2(scanner_bottom_pin):
-       #      print('scanner, hit bottom')
-       #      a4988.moveScannerUp(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  def stop3(horizontal_top_pin):
-       #      print('horizontal , hit top bound')
-       #      a4988.moveHorizontalDown(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  def stop4(horizontal_bottom_pin):
-       #      print('horizontal , hit bottom bound')
-       #      a4988.moveHorizontalUp(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  def stop5(vertical_top_pin):
-       #      print('vertical , hit top bound')
-       #      a4988.moveVerticalDown(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  def stop6(vertical_bottom_pin):
-       #      print('vertical , hit bottom bound')
-       #      a4988.moveVerticalUp(25)
-       #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-       #
-       #
-       #  GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-       #  GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-       # # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-       #  GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-       #  GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-       #  GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-       #  GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-       #  GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
+        GPIO.setup(stepPin1, GPIO.OUT)
+        GPIO.setup(dirPin1, GPIO.OUT)
+        GPIO.setup(enablePin1, GPIO.OUT)
+        GPIO.setup(sleepPin1, GPIO.OUT)
+
+        GPIO.output(enablePin1, GPIO.LOW)
+        GPIO.output(sleepPin1, GPIO.LOW)
+        GPIO.output(dirPin1, GPIO.HIGH)
+
+
+        #Motor Vertical
+        stepPin2 = 27
+        dirPin2 = 22
+        enablePin2 = 23
+        sleepPin2 = 17
+
+        GPIO.setup(stepPin2, GPIO.OUT)
+        GPIO.setup(dirPin2, GPIO.OUT)
+        GPIO.setup(enablePin2, GPIO.OUT)
+        GPIO.setup(sleepPin2, GPIO.OUT)
+
+        GPIO.output(enablePin2, GPIO.LOW)
+        GPIO.output(sleepPin2, GPIO.LOW)
+        GPIO.output(dirPin2, GPIO.HIGH)
+
+
+        #Motor Horizontal
+        stepPin3 = 9
+        dirPin3 = 11
+        enablePin3 = 24
+        sleepPin3 = 10
+
+        GPIO.setup(stepPin3, GPIO.OUT)
+        GPIO.setup(dirPin3, GPIO.OUT)
+        GPIO.setup(enablePin3, GPIO.OUT)
+        GPIO.setup(sleepPin3, GPIO.OUT)
+
+        GPIO.output(enablePin3, GPIO.LOW)
+        GPIO.output(sleepPin3, GPIO.LOW)
+        GPIO.output(dirPin3, GPIO.HIGH)
+
+
+
+        start_button = 6
+        reset_button = 5
+        scanner_top_pin = 21
+        scanner_bottom_pin = 26
+        horizontal_top_pin = 16
+        horizontal_bottom_pin = 20
+        vertical_top_pin = 13
+        vertical_bottom_pin=19
+
+
+        GPIO.setup(start_button, GPIO.IN)
+        GPIO.setup(reset_button, GPIO.IN)
+        GPIO.setup(scanner_top_pin, GPIO.IN)
+        GPIO.setup(scanner_bottom_pin, GPIO.IN)
+        GPIO.setup(horizontal_top_pin, GPIO.IN)
+        GPIO.setup(horizontal_bottom_pin, GPIO.IN)
+        GPIO.setup(vertical_top_pin, GPIO.IN)
+        GPIO.setup(vertical_bottom_pin, GPIO.IN)
+
+        def reset(reset_button):
+            if not self.control.reset_flag:
+                print ('reset')
+                self.control.reset_flag = True
+                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+                self.control.reset()
+                self.OBS = self.init_OBS
+                self.start_flag = False
+                self.dead_flag = True
+                self.control.reset_flag = False
+
+        def start(start_button):
+            if not self.thread_started:
+                self.t = threading.Thread(target=start)
+                self.thread_started = True
+                self.start_flag = True
+            else:
+                if self.dead_flag:
+                    self.t = None
+                    self.t = threading.Thread(target=start)
+                    self.start_flag = True
+                    self.dead_flag = False
+
+        def stop1(scanner_top_pin):
+            print(' scanner, hit top')
+            a4988.moveScannerDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        def stop2(scanner_bottom_pin):
+            print('scanner, hit bottom')
+            a4988.moveScannerUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        def stop3(horizontal_top_pin):
+            print('horizontal , hit top bound')
+            a4988.moveHorizontalDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        def stop4(horizontal_bottom_pin):
+            print('horizontal , hit bottom bound')
+            a4988.moveHorizontalUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        def stop5(vertical_top_pin):
+            print('vertical , hit top bound')
+            a4988.moveVerticalDown(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        def stop6(vertical_bottom_pin):
+            print('vertical , hit bottom bound')
+            a4988.moveVerticalUp(25)
+            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+
+
+        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
+       # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
+        GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
+        GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
+        GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
+        GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
             if self.start_flag:
-                t.start()
-                self.start_flag = False
+                if not self.control.reset_flag:
+                    self.t.start()
+                    self.start_flag = False
 
             root.after(1000, check_status)
 
@@ -505,21 +460,13 @@ class Gui:
             self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i].location[0],
                                     self.OBS[i].location[1])
         # path added to the graph
-        # path1 = [[1, 2], [1, 3], [1, 4]]
-        # self.hang_path(data, block_length, 1, 2, 1, 3)
-        # self.hang_path(data, block_length, 2, 3, 1, 3)
-
         for i in range(len(self.OBS)):
             temp_obs = self.OBS[i]
             for j in range(len(temp_obs.path)-1):
                 loc1 = temp_obs.path[j]
                 loc2 = temp_obs.path[j+1]
                 self.hang_path(data, block_length, loc1[0], loc1[1], loc2[0], loc2[1])
-
-        # for i in range(len(path1)):
-        #     self.hang_square_object(data, block_length, self.path_file, path1[i][0],
-        #                             path1[i][1])
-
+        
         # hanging robot
         self.hang_robot(block_length, data)
         scipy.misc.imsave(self.outfile, data)
@@ -574,5 +521,5 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
 
 
-# g = Gui()
-# g.make_GUI()
+g = Gui()
+g.make_GUI()
