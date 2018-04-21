@@ -1,10 +1,6 @@
 {
 	"BACKGROUND":  "image/map.png",
-<<<<<<< HEAD
 	"DIRECTION":  "SOUTH",
-=======
-	"DIRECTION":  "NORTH",
->>>>>>> develop
 	"BOUNDARY":{
 		"BOUNDARY_X" : 7,
 		"BOUNDARY_Y" : 7
@@ -24,12 +20,8 @@
 				[1, 2],
 				[2, 2],
 				[3, 2],
-<<<<<<< HEAD
 				[2, 2],
 				[1, 2]
-=======
-				[2, 2]
->>>>>>> develop
 			]
 		},
 		{
@@ -40,12 +32,8 @@
 				[4, 5],
 				[5, 5],
 				[5, 4],
-<<<<<<< HEAD
 				[5, 3],
                 [4, 3]
-=======
-				[5, 3]
->>>>>>> develop
 			]
 		}
 	]

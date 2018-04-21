@@ -19,11 +19,8 @@ class moveRobot:
     startX = 0
     startY = 0
     OBS = []
-<<<<<<< HEAD
 
     attack_range = 2
-=======
->>>>>>> develop
 
     def __init__(self):
         self.startX = 3
@@ -94,7 +91,6 @@ class moveRobot:
             for i in range(len(in_range)):
                 x = in_range[i][0]
                 y = in_range[i][1]
-<<<<<<< HEAD
                 check, obs = self.check_obstacles(x, y)
                 if self.checkBounds(x, y):
                     # if a possible block is out of bounds, then the following blocks in the same direction will also
@@ -102,16 +98,6 @@ class moveRobot:
                     break
                 elif check:
                     self.OBS.remove(obs)
-=======
-                temp_x = x
-                temp_y = y
-                if self.checkBounds(temp_x, temp_y):
-                    # if a possible block is out of bounds, then the following blocks in the same direction will also
-                    # be out of bounds, so no need to continue checking.
-                    break
-                elif self.check_obstacles(x, y):
-                    self.OBS.remove([x, y])
->>>>>>> develop
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
@@ -139,18 +125,11 @@ class moveRobot:
     def check_obstacles(self, x, y):
         """checks whether the current position of the robot is on an obstacle in the map/maze
         returns True if the robot is on an obstacle, and False if it is not."""
-<<<<<<< HEAD
         for i in range(len(self.OBS)):
             temp = self.OBS[i]
             if temp.location[0] == x and temp.location[1] == y:
                 return True, temp
         return False, None
-=======
-        on_obstacle = False
-        if [x, y] in self.OBS:
-            on_obstacle = True
-        return on_obstacle
->>>>>>> develop
 
     def run(self, code, obs):
         """returns the finalized SCRIPT string to send to minibot"""
