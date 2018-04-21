@@ -12,8 +12,8 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-import RPi.GPIO as GPIO
-import a4988
+# import RPi.GPIO as GPIO
+# import a4988
 
 
 class Gui:
@@ -248,6 +248,7 @@ class Gui:
                     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                     self.control.reset()
                     self.OBS = self.init_OBS
+                    self.start_flag = True
                 return False
 
         def start():
@@ -279,70 +280,71 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
 
-        start_button = 6
-        reset_button = 5
-        scanner_top_pin = 21
-        scanner_bottom_pin = 26
-        horizontal_top_pin = 16
-        horizontal_bottom_pin = 20
-        vertical_top_pin = 13
-        vertical_bottom_pin=19
+        # start_button = 6
+        # reset_button = 5
+        # scanner_top_pin = 21
+        # scanner_bottom_pin = 26
+        # horizontal_top_pin = 16
+        # horizontal_bottom_pin = 20
+        # vertical_top_pin = 13
+        # vertical_bottom_pin=19
+        #
+        # def reset(reset_button):
+        #     if not self.control.reset_flag:
+        #         print('reset')
+        #         self.control.reset_flag = True
+        #         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+        #         self.control.reset()
+        #         self.OBS = self.init_OBS
+        #
+        # def start(start_button):
+        #     self.start_flag = True
+        #
+        # def stop1(scanner_top_pin):
+        #     print(' scanner, hit top')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveScannerDown(25)
+        #
+        # def stop2(scanner_bottom_pin):
+        #     print('scanner, hit bottom')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveScannerUp(25)
+        #
+        # def stop3(horizontal_top_pin):
+        #     print('horizontal , hit top bound')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveHorizontalDown(25)
+        #
+        # def stop4(horizontal_bottom_pin):
+        #     print('horizontal , hit bottom bound')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveHorizontalUp(25)
+        #
+        # def stop5(vertical_top_pin):
+        #     print('vertical , hit top bound')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveVerticalDown(25)
+        #
+        # def stop6(vertical_bottom_pin):
+        #     print('vertical , hit bottom bound')
+        #     GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #     a4988.moveVerticalUp(25)
 
-        def reset(reset_button):
-            if not self.control.reset_flag:
-                print('reset')
-                self.control.reset_flag = True
-                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-                self.control.reset()
-                self.OBS = self.init_OBS
-
-        def start(start_button):
-            self.start_flag = True
-
-        def stop1(scanner_top_pin):
-            print(' scanner, hit top')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveScannerDown(25)
-
-        def stop2(scanner_bottom_pin):
-            print('scanner, hit bottom')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveScannerUp(25)
-
-        def stop3(horizontal_top_pin):
-            print('horizontal , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveHorizontalDown(25)
-
-        def stop4(horizontal_bottom_pin):
-            print('horizontal , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveHorizontalUp(25)
-
-        def stop5(vertical_top_pin):
-            print('vertical , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveVerticalDown(25)
-
-        def stop6(vertical_bottom_pin):
-            print('vertical , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveVerticalUp(25)
-
-        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-        GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-        GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
+        # GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        # GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
+        # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
+        # GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
+        # GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
+        # GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
+        # GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
             if self.start_flag:
                 t.start()
                 self.start_flag = False
+
             root.after(1000, check_status)
 
         # frame.pack()
@@ -374,7 +376,7 @@ class Gui:
         # path added to the graph
         # path1 = [[1, 2], [1, 3], [1, 4]]
         # self.hang_path(data, block_length, 1, 2, 1, 3)
-        # self.hang_path(data, block_length, 2, 3, 1, 3)
+        self.hang_path(data, block_length, 2, 3, 1, 3)
 
         # for i in range(len(path1)):
         #     self.hang_square_object(data, block_length, self.path_file, path1[i][0],
@@ -387,30 +389,31 @@ class Gui:
     def hang_path(self, array, block_length, x1, y1, x2, y2):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
         if x1 == x2:
+        # horizontal
             if y1 < y2:
-                filename = self.path4_file
-            else:
-                y1 = y2
-                filename = self.path3_file
-            target = Image.open(filename).convert('RGB')
-            startx = x1 * block_length + (block_length / 4) + (2 * block_length / 4)
-            finx = x1 * block_length + (3 * block_length / 4) + (2 * block_length / 4)
-            starty = y1 * block_length + (block_length / 4) - (3 * block_length / 4)
-            finy = y1 * block_length + (block_length / 4) + (block_length / 2 / 10) - (3 * block_length / 4)
-            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2 / 10))
-        else:
-            if x1 < x2:
                 filename = self.path2_file
             else:
-                x1 = x2
+                y1 = y2
                 filename = self.path1_file
             target = Image.open(filename).convert('RGB')
-            startx = x1 * block_length + (block_length / 4) + (5 * block_length / 4)
-            finx = x1 * block_length + (block_length / 4) + (block_length / 2 / 10) + (5 * block_length / 4)
-            starty = y1 * block_length + (block_length / 4) - (6 * block_length / 4)
-            finy = y1 * block_length + (3 * block_length / 4) - (6 * block_length / 4)
-            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target,
-                                                                         (block_length / 2 / 10, block_length / 2))
+            startx = x1 * block_length + (block_length / 4) + (1 * block_length / 4)
+            finx = x1 * block_length + (block_length / 4) + (1 * block_length / 4) + (block_length / 2 / 10)
+            starty = y1 * block_length + (block_length / 4) + (2 * block_length / 4)
+            finy = y1 * block_length + (block_length / 4) + (2 * block_length / 4) + (block_length / 2)
+            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2 / 10, block_length / 2))
+        else:
+        # vertical
+            if x1 < x2:
+                filename = self.path4_file
+            else:
+                x1 = x2
+                filename = self.path3_file
+            target = Image.open(filename).convert('RGB')
+            startx = x1 * block_length + (3 * block_length / 4)
+            finx = x1 * block_length + (3 * block_length / 4) + (block_length / 2)
+            starty = y1 * block_length + (2 * block_length / 4)
+            finy = y1 * block_length + (2 * block_length / 4) + (block_length / 2 / 10)
+            array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2, block_length / 2 / 10))
 
     def hang_square_object(self, array, block_length, filename, x, y):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
@@ -433,5 +436,5 @@ class Gui:
             self.hang_square_object(array, block_length, self.bot3_file, self.control.robotX, self.control.robotY)
 
 
-g = Gui()
-g.make_GUI()
+# g = Gui()
+# g.make_GUI()
