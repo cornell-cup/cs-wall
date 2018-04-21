@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from Parser import Parser
-from mazeMaker import MapMaker
+from mazeMaker import MazeMaker
 from SystemControl import SystemControl
 from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
 import tkMessageBox
@@ -109,7 +109,7 @@ class Gui:
         game_data = {}
 
         if self.game == self.MAZE:
-            map_data = MapMaker()
+            map_data = MazeMaker()
             game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
             # game_data = map_data.parseMap("input/sample_map")
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
