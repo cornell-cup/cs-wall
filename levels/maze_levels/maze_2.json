@@ -1,22 +1,41 @@
 {
 	"BACKGROUND":  "image/map.png",
+<<<<<<< HEAD
 	"DIRECTION":  "EAST",
 	"BOUNDARY":{
 		"BOUNDARY_X" : 7,
 		"BOUNDARY_Y" : 7
+=======
+	"DIRECTION":  "NORTH",
+	"BOUNDARY":{
+		"BOUNDARY_X" : 5,
+		"BOUNDARY_Y" : 5
+>>>>>>> develop
 	},
 	"START":{
 		"START_X" : 0,
 		"START_Y" : 0
 	},
 	"GOAL":{
+<<<<<<< HEAD
 		"GOAL_X" : 4,
+=======
+		"GOAL_X" : 0,
+>>>>>>> develop
 		"GOAL_Y" : 5
 	},
 	"OBSTACLES":[
 		{
 			"OBSTACLE_X": 0,
+<<<<<<< HEAD
 			"OBSTACLE_Y": 2
+=======
+			"OBSTACLE_Y": 1
+		},
+		{
+			"OBSTACLE_X": 1,
+			"OBSTACLE_Y": 1
+>>>>>>> develop
 		},
 		{
 			"OBSTACLE_X": 1,
@@ -24,6 +43,7 @@
 		},
 		{
 			"OBSTACLE_X": 2,
+<<<<<<< HEAD
 			"OBSTACLE_Y": 4
 		},
 		{
@@ -40,10 +60,21 @@
 		},
 		{
 			"OBSTACLE_X": 2,
+=======
+			"OBSTACLE_Y": 3
+		},
+		{
+			"OBSTACLE_X": 3,
+			"OBSTACLE_Y": 2
+		},
+		{
+			"OBSTACLE_X": 3,
+>>>>>>> develop
 			"OBSTACLE_Y": 1
 		},
 		{
 			"OBSTACLE_X": 3,
+<<<<<<< HEAD
 			"OBSTACLE_Y": 2
 		},
 		{
@@ -57,6 +88,13 @@
 		{
 			"OBSTACLE_X": 6,
 			"OBSTACLE_Y": 5
+=======
+			"OBSTACLE_Y": 0
+		},
+		{
+			"OBSTACLE_X": 4,
+			"OBSTACLE_Y": 4
+>>>>>>> develop
 		}
 	]
 }

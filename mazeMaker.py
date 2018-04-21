@@ -2,7 +2,7 @@ import json
 import Globals as g
 
 
-class MapMaker():
+class MazeMaker():
     """Object class for making levels for Wall from JSON files
 
        Contains the keywords for parsing a level JSON into

@@ -10,7 +10,11 @@
 		"START_Y" : 1
 	},
 	"GOAL":{
+<<<<<<< HEAD
 		"GOAL_X" : 3,
+=======
+		"GOAL_X" : 4,
+>>>>>>> develop
 		"GOAL_Y" : 3
 	},
 	"ENEMIES":[
