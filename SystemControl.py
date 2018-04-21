@@ -232,7 +232,6 @@ class SystemControl:
                 return False
             if self.reset_flag:
                 print("RESET")
-                self.start_flag = False
                 return False
         return goal
 
