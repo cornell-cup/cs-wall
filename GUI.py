@@ -12,8 +12,8 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-import RPi.GPIO as GPIO
-import a4988
+# import RPi.GPIO as GPIO
+# import a4988
 
 
 class Gui:
@@ -258,7 +258,7 @@ class Gui:
 
         def start():
             """runs the given file of rfid's"""
-            a4988.init()
+            # a4988.init()
             p = Parser()
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
@@ -287,79 +287,8 @@ class Gui:
 
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
-
-        start_button = 6
-        reset_button = 5
-        scanner_top_pin = 21
-        scanner_bottom_pin = 26
-        horizontal_top_pin = 16
-        horizontal_bottom_pin = 20
-        vertical_top_pin = 13
-        vertical_bottom_pin=19
-
-        def reset(reset_button):
-            if not self.control.reset_flag:
-                print ('reset')
-                self.control.reset_flag = True
-                tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-                self.control.reset()
-                self.OBS = self.init_OBS
-                self.start_flag = False
-                self.dead_flag = True
-                self.control.reset_flag = False
-
-        def start(start_button):
-            if not self.thread_started:
-                self.t = threading.Thread(target=start)
-                self.thread_started = True
-                self.start_flag = True
-            else:
-                if self.dead_flag:
-                    self.t = None
-                    self.t = threading.Thread(target=start)
-                    self.start_flag = True
-                    self.dead_flag = False
-
-        def stop1(scanner_top_pin):
-            print(' scanner, hit top')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveScannerDown(25)
-
-        def stop2(scanner_bottom_pin):
-            print('scanner, hit bottom')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveScannerUp(25)
-
-        def stop3(horizontal_top_pin):
-            print('horizontal , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveHorizontalDown(25)
-
-        def stop4(horizontal_bottom_pin):
-            print('horizontal , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveHorizontalUp(25)
-
-        def stop5(vertical_top_pin):
-            print('vertical , hit top bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveVerticalDown(25)
-
-        def stop6(vertical_bottom_pin):
-            print('vertical , hit bottom bound')
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-            a4988.moveVerticalUp(25)
-
-        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-        GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-        GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
  
-        #Motor Scanner Setup
+        # Motor Scanner Setup
         stepPin1 = 2
         dirPin1 = 3
         enablePin1 = 18
@@ -426,18 +355,29 @@ class Gui:
         GPIO.setup(horizontal_bottom_pin, GPIO.IN)
         GPIO.setup(vertical_top_pin, GPIO.IN)
         GPIO.setup(vertical_bottom_pin, GPIO.IN)
-        
 
         def reset(reset_button):
             if not self.control.reset_flag:
-                print('reset')
+                print ('reset')
                 self.control.reset_flag = True
                 tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                 self.control.reset()
                 self.OBS = self.init_OBS
+                self.start_flag = False
+                self.dead_flag = True
+                self.control.reset_flag = False
 
         def start(start_button):
-            self.start_flag = True
+            if not self.thread_started:
+                self.t = threading.Thread(target=start)
+                self.thread_started = True
+                self.start_flag = True
+            else:
+                if self.dead_flag:
+                    self.t = None
+                    self.t = threading.Thread(target=start)
+                    self.start_flag = True
+                    self.dead_flag = False
 
         def stop1(scanner_top_pin):
             print(' scanner, hit top')
