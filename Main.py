@@ -14,6 +14,7 @@ class Main:
 
         while True:
             g = Gui()
+            g.make_GUI()
 
 
 m = Main()
