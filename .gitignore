@@ -5,5 +5,12 @@
 *.iml
 .idea/cs-wall.iml
 /venv
+<<<<<<< HEAD
+=======
 
+>>>>>>> develop
 *.DS_Store
+
+.idea/cs-wall.iml
+
+.idea/cs-wall.iml

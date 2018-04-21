@@ -6,7 +6,7 @@ class Main:
 
     # initializes the Main object
     def __init__(self):
-        print("Link Start! XD")
+        print("Main Function Initialized")
 
     # creates GUI object and runs it infinitely
     def main_function(self):
@@ -14,12 +14,7 @@ class Main:
 
         while True:
             g = Gui()
-
-            # while a level is chosen and not passed, the player will remain on that level forever
-            while not g.goal_status:
-                g.make_game()
-
-            # Once the player finishes that level, he can choose another one!
+            g.make_GUI()
 
 
 m = Main()

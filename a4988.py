@@ -260,4 +260,3 @@ def resetReader():
 	sleep(10)                    # wait 10s  
 
 
-
