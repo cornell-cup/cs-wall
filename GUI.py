@@ -12,8 +12,8 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-# import RPi.GPIO as GPIO
-# import a4988
+import RPi.GPIO as GPIO
+import a4988
 
 
 class Gui:
@@ -32,6 +32,7 @@ class Gui:
     OBS = []
     level = 1
     game = -1
+    game_name = ""
     version = -1
     TWO_D = 0
     MINIBOT = 1
@@ -61,10 +62,6 @@ class Gui:
 
     def __init__(self):
         self.start_flag = False
-
-    def make_GUI(self):
-        """makes the GUI"""
-
         game_disp = Tk()
         game_disp.title("Game Chooser")
         listbox = Listbox(game_disp)
@@ -83,16 +80,43 @@ class Gui:
         game_button.grid(row=1, column=0)
         game_disp.mainloop()
 
-        game_name = ""
         if self.game == self.MAZE:
-            game_name = "maze"
+            self.game_name = "maze"
         elif self.game == self.PIRATES:
-            game_name = "pirate"
+            self.game_name = "pirate"
         else:
             temp1 = Tk()
             temp1.withdraw()
             tkMessageBox.showerror("Error", "Please choose a game.")
 
+        # making a choice box here to choose system (2D or minibot)
+        version_disp = Tk()
+        version_disp.title("Version Chooser")
+        listbox = Listbox(version_disp)
+        listbox.pack()
+        listbox.insert(0, "2D System")
+        listbox.insert(1, "Minibot")
+        listbox.grid(row=0, column=0)
+
+        def store2():
+            """storing the user's choice of system to local variable"""
+            self.version = listbox.curselection()[0]
+            version_disp.destroy()
+
+        version_button = Button(text="ENTER", command=store2)
+        version_button.grid(row=1, column=0)
+        version_disp.mainloop()
+
+        if self.version == self.TWO_D:
+            self.control = SystemControl()
+        elif self.version == self.MINIBOT:
+            self.control = moveRobot()
+        else:
+            temp = Tk()
+            temp.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a version.")
+
+        # allows the player to choose a level from a spinbox (need to change to buttons in the future)
         level_disp = Tk()
         level_disp.title("Level Chooser")
         w = Spinbox(level_disp, from_=1, to=10)
@@ -107,12 +131,16 @@ class Gui:
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
+    def make_GUI(self):
+        """makes the GUI"""
+
         # after level is chosen, variables related to the game level are stored below
         game_data = {}
 
         if self.game == self.MAZE:
             map_data = MapMaker()
-            game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
+            game_data = map_data.parseMap("levels/" + self.game_name + "_levels/" + self.game_name + "_" +
+                                          str(self.level))
             # game_data = map_data.parseMap("input/sample_map")
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
             self.init_OBS = []
@@ -130,7 +158,8 @@ class Gui:
 
         elif self.game == self.PIRATES:
             map_data = PirateMapMaker()
-            game_data = map_data.parseMap("levels/" + game_name + "_levels/" + game_name + "_" + str(self.level))
+            game_data = map_data.parseMap("levels/" + self.game_name + "_levels/" + self.game_name + "_" +
+                                          str(self.level))
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
             self.init_OBS = []
             self.OBS = []
@@ -153,34 +182,6 @@ class Gui:
         self.START_Y = game_data.get("GAME_START")[1]
         self.direction = game_data.get("GAME_START_DIRECTION")
         self.BACKGROUND = game_data.get("GAME_BACKGROUND")
-
-        # making a choice box here to choose system (2D or minibot)
-        version_disp = Tk()
-        version_disp.title("Version Chooser")
-        listbox = Listbox(version_disp)
-        listbox.pack()
-        listbox.insert(0, "2D System")
-        listbox.insert(1, "Minibot")
-        listbox.grid(row=0, column=0)
-
-        def store2():
-            """storing the user's choice of system to local variable"""
-            self.version = listbox.curselection()[0]
-            version_disp.destroy()
-
-        version_button = Button(text="ENTER", command=store2)
-        #  version_button.pack()
-        version_button.grid(row=1, column=0)
-        version_disp.mainloop()
-
-        if self.version == self.TWO_D:
-            self.control = SystemControl()
-        elif self.version == self.MINIBOT:
-            self.control = moveRobot()
-        else:
-            temp = Tk()
-            temp.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a version.")
 
         # storing the map data from mapMaker to the class variables of control
         self.control.startX = self.START_X
@@ -250,7 +251,9 @@ class Gui:
                     self.control.reset_flag = True
                     tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                     self.control.reset()
+                    self.control.time_step = 0
                     self.OBS = self.init_OBS
+                    self.control.OBS = self.init_OBS
                     self.start_flag = False
                     self.dead_flag = True
                     self.control.reset_flag = False
@@ -263,7 +266,7 @@ class Gui:
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
-                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
+                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached! Please proceed to the next level.")
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
                     self.control.reset()
@@ -303,7 +306,6 @@ class Gui:
         GPIO.output(sleepPin1, GPIO.LOW)
         GPIO.output(dirPin1, GPIO.HIGH)
 
-
         #Motor Vertical
         stepPin2 = 27
         dirPin2 = 22
@@ -318,7 +320,6 @@ class Gui:
         GPIO.output(enablePin2, GPIO.LOW)
         GPIO.output(sleepPin2, GPIO.LOW)
         GPIO.output(dirPin2, GPIO.HIGH)
-
 
         #Motor Horizontal
         stepPin3 = 9
@@ -335,8 +336,6 @@ class Gui:
         GPIO.output(sleepPin3, GPIO.LOW)
         GPIO.output(dirPin3, GPIO.HIGH)
 
-
-
         start_button = 6
         reset_button = 5
         scanner_top_pin = 21
@@ -345,7 +344,6 @@ class Gui:
         horizontal_bottom_pin = 20
         vertical_top_pin = 13
         vertical_bottom_pin=19
-
 
         GPIO.setup(start_button, GPIO.IN)
         GPIO.setup(reset_button, GPIO.IN)
@@ -362,7 +360,9 @@ class Gui:
                 self.control.reset_flag = True
                 tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
                 self.control.reset()
+                self.control.time_step = 0
                 self.OBS = self.init_OBS
+                self.control.OBS = self.init_OBS
                 self.start_flag = False
                 self.dead_flag = True
                 self.control.reset_flag = False
@@ -433,7 +433,6 @@ class Gui:
 
             root.after(1000, check_status)
 
-        # frame.pack()
         frame.grid(row=2, columnspan=4)
         update()
         check_status()
@@ -474,7 +473,7 @@ class Gui:
     def hang_path(self, array, block_length, x1, y1, x2, y2):
         """hangs the designated object on the GUI (either the target or the obstacle(s))"""
         if x1 == x2:
-        # horizontal
+            # horizontal
             if y1 < y2:
                 filename = self.path2_file
             else:
@@ -487,7 +486,7 @@ class Gui:
             finy = y1 * block_length + (block_length / 4) + (2 * block_length / 4) + (block_length / 2)
             array[startx:finx, starty:finy, :] = scipy.misc.imresize(target, (block_length / 2 / 10, block_length / 2))
         else:
-        # vertical
+            # vertical
             if x1 < x2:
                 filename = self.path4_file
             else:
