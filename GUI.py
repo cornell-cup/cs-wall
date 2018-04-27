@@ -21,6 +21,7 @@ class Gui:
     Throws notifications when designated goal is reached, goal is not reached, and when user fails to provide
     the information needed (i.e. the system the GUI is running on)"""
 
+    # basic stats
     direction = 1
     BACKGROUND = ""
     BOUNDARY = 0
@@ -39,16 +40,24 @@ class Gui:
     MAZE = 0
     PIRATES = 1
 
+    # conditional stats
+    dead_pirates = []
+
+    # conditional objects
     control = None
+    t = None
+
+    # flags
     start_flag = False
     thread_started = False
     dead_flag = False
-    t = None
 
+    # file paths
     rfid_file = "input/rfid_pirate_3.txt"
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
+    dead_pirates_file = "image/dead_pirate.png"
     path1_file = "image/path1.png"
     path2_file = "image/path2.png"
     path3_file = "image/path3.png"
@@ -57,7 +66,6 @@ class Gui:
     bot1_file = "image/robot1.png"
     bot2_file = "image/robot2.png"
     bot3_file = "image/robot3.png"
-
     temp_image = ""
 
     def __init__(self):
@@ -259,6 +267,8 @@ class Gui:
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
                     self.control.OBS = self.init_OBS
+                    self.dead_pirates = []
+                    self.control.dead_pirates = []
                     self.start_flag = False
                     self.dead_flag = True
                     self.control.reset_flag = False
@@ -270,7 +280,7 @@ class Gui:
             p = Parser()
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
-                if self.control.run(codeblock, self.OBS):
+                if self.control.run(codeblock, self.OBS, self.dead_pirates):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
@@ -284,6 +294,8 @@ class Gui:
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
                     self.control.OBS = self.init_OBS
+                    self.dead_pirates = []
+                    self.control.dead_pirates = []
                     self.make_grid()
                     self.temp_image = self.outfile
                     tempim = PhotoImage(file=self.temp_image)
@@ -465,10 +477,17 @@ class Gui:
 
         # hanging the target
         self.hang_square_object(data, block_length, self.target_file, self.GOAL_X, self.GOAL_Y)
+
         # hanging the obstacles
         for i in range(len(self.OBS)):
             self.hang_square_object(data, block_length, self.obstacle_file, self.OBS[i].location[0],
                                     self.OBS[i].location[1])
+
+        # hanging the killed obstacles
+        for i in range(len(self.dead_pirates)):
+            self.hang_square_object(data, block_length, self.dead_pirates_file, self.dead_pirates[i][0],
+                                    self.dead_pirates[i][1])
+
         # path added to the graph
         for i in range(len(self.OBS)):
             temp_obs = self.OBS[i]
