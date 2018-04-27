@@ -1,0 +1,38 @@
+{
+    "BACKGROUND": "image/map.png",
+    "DIRECTION": "EAST",
+    "BOUNDARY":{
+		"BOUNDARY_X" : 5,
+		"BOUNDARY_Y" : 5
+	},
+	"START":{
+		"START_X" : 1,
+		"START_Y" : 0
+	},
+	"GOAL":{
+		"GOAL_X" : 2,
+		"GOAL_Y" : 2
+	},
+	"ENEMIES":[
+		{
+			"ENEMY_DIRECTION" : "EAST",
+			"ENEMY_PATH" : [
+				[1, 2],
+				[1, 1],
+                [2, 1],
+                [1, 1],
+                [1, 2]
+			]
+		},
+		{
+			"ENEMY_DIRECTION" : "NORTH",
+			"ENEMY_PATH" : [
+				[3, 2],
+                [3, 3],
+                [2, 3],
+                [3, 3],
+                [3, 2]
+			]
+		}
+	]
+}

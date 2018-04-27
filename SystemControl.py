@@ -1,6 +1,6 @@
 import time
 import Globals as G
-import a4988
+# import a4988
 
 
 class SystemControl:
@@ -53,7 +53,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            a4988.moveVerticalUp(10)
+            # a4988.moveVerticalUp(10)
             print('moved')
         if code == "Backward":
             if self.direction == G.SOUTH:
