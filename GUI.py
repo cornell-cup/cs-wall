@@ -61,6 +61,8 @@ class Gui:
     temp_image = ""
 
     def __init__(self):
+        """initializes the GUI status to the following: start status to False, prompts for game version, system
+        version, and level. """
         self.start_flag = False
         game_disp = Tk()
         game_disp.title("Game Chooser")
@@ -131,10 +133,8 @@ class Gui:
         level_button.grid(row=1, column=0)
         level_disp.mainloop()
 
-    def make_GUI(self):
-        """makes the GUI"""
-
-        # after level is chosen, variables related to the game level are stored below
+    def store_game_data(self):
+        """after level is chosen, variables related to the game level are stored below"""
         game_data = {}
 
         if self.game == self.MAZE:
@@ -195,6 +195,10 @@ class Gui:
         self.control.direction = self.control.start_dir
         self.control.OBS = self.OBS
 
+    def make_GUI(self):
+        """makes the GUI"""
+        self.store_game_data()
+
         self.make_grid()
         """Constructs the grid according to defined dimensions and displays it on the GUI"""
         root = Tk()
@@ -231,7 +235,8 @@ class Gui:
                 k = key.char  # single-char keys
             except:
                 k = key.name  # other keys
-            if key == keyboard.Key.esc: return False  # stop listener
+            if key == keyboard.Key.esc:
+                return False  # stop listener
             if k in ['ctrl']:  # keys interested
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
@@ -261,12 +266,15 @@ class Gui:
 
         def start():
             """runs the given file of rfid's"""
-            # a4988.init()
+            a4988.init()
             p = Parser()
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS):
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached! Please proceed to the next level.")
+                    self.level += 1
+                    self.store_game_data()
+                    self.dead_flag = True
                 elif not self.control.reset_flag:
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
                     self.control.reset()
