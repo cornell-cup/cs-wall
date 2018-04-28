@@ -53,6 +53,7 @@ class Gui:
     dead_flag = False
 
     # file paths
+    # TODO change to "rfidAttack1.txt" later.
     rfid_file = "input/rfid_pirate_3.txt"
     target_file = "image/target.png"
     outfile = "image/outfile.gif"

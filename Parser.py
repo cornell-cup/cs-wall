@@ -8,7 +8,7 @@ class Parser:
     robotX = 0
     robotY = 0
     result = ""
-    dict_file = "input/codeBlock.txt"
+    dict_file = "input/codeBlock1.txt"
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
@@ -37,12 +37,13 @@ class Parser:
         # open file of RFID tag and use the blockmap to translate it to block syntax
         while rfids:
             rfids = rfids.replace("\n", "")
+            rfids = rfids.replace("\r", "")
             if blockmap.get(rfids) in ['FOR', 'SET', 'IF', 'WHILE', 'END', 'Forward', 'Backward', 'TurnLeft',
                                        'TurnRight', 'Attack']:
                 result += "\n"
             if blockmap.get(rfids) in ['DO']:
                 result += " "
-            result += blockmap.get(rfids)
+            result += str(blockmap.get(rfids))
             if blockmap.get(rfids) in ['FOR', 'SET', 'IF', 'WHILE']:
                 result += " "
             rfids = file1.readline()
