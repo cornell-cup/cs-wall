@@ -251,6 +251,11 @@ while(1):
         elif(direction==1): moveHorizontalUp(2000)
         elif(direction==2): moveVerticalDown(2000)
         else: moveHorizontalDown(2000)
+	
+	# Write to a text file
+f = open( 'file.py', 'w' )
+f.write( 'dict = ' + repr(dict) + '\n' )
+f.close()
 		
 	"""	
 def resetReader():

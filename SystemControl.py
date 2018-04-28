@@ -1,6 +1,6 @@
 import time
 import Globals as G
-import a4988
+# import a4988
 
 
 class SystemControl:
@@ -19,6 +19,7 @@ class SystemControl:
     GoalY = 4
     dimX = 5
     OBS = []
+    dead_pirates = []
     attack_range = 2
 
     def __init__(self):
@@ -53,7 +54,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            a4988.moveVerticalUp(10)
+            # a4988.moveVerticalUp(10)
             print('moved')
         if code == "Backward":
             if self.direction == G.SOUTH:
@@ -102,6 +103,7 @@ class SystemControl:
                     break
                 elif check:
                     self.OBS.remove(obs)
+                    self.dead_pirates.append([x, y])
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
@@ -207,7 +209,7 @@ class SystemControl:
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
 
-    def run(self, code, obs):
+    def run(self, code, obs, ded_obs):
         """runs the actions on the 2D system"""
         action_list = code.split("\n")
         length = len(action_list)
@@ -222,6 +224,8 @@ class SystemControl:
             print("robotY")
             print(self.robotY)
             obs = self.OBS
+            for j in range(len(self.dead_pirates)):
+                ded_obs.append(self.dead_pirates[j])
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:
