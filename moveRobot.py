@@ -8,6 +8,7 @@ class moveRobot:
     its movement as class variables. """
 
     reset_flag = False
+    time_step = 0
     start_dir = 1
     robotX = 0
     robotY = 0
@@ -19,7 +20,7 @@ class moveRobot:
     startX = 0
     startY = 0
     OBS = []
-
+    dead_pirates = []
     attack_range = 2
 
     def __init__(self):
@@ -98,6 +99,8 @@ class moveRobot:
                     break
                 elif check:
                     self.OBS.remove(obs)
+                    self.dead_pirates = []
+                    self.dead_pirates.append([x, y])
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
@@ -131,7 +134,7 @@ class moveRobot:
                 return True, temp
         return False, None
 
-    def run(self, code, obs):
+    def run(self, code, obs, ded_obs):
         """returns the finalized SCRIPT string to send to minibot"""
         s = ""
         list = code.split("\n")
@@ -139,8 +142,11 @@ class moveRobot:
         for i in range(0, length):
             if not self.reset_flag:
                 code = list[i]
-
+                self.time_step += 1
+                self.move_obs()
                 temp, goal = self.moveRobot(code)
+                for j in range(len(self.dead_pirates)):
+                    ded_obs.append(self.dead_pirates[j])
                 obs = self.OBS
                 if self.checkBounds(self.robotX, self.robotY):
                     break
@@ -226,6 +232,16 @@ class moveRobot:
             s += "TurnLeft\n"
             s += self.revert_dir(self.start_dir)
         self.rerun(s)
+
+    def move_obs(self):
+        """Moves the obstacles according to designated path"""
+        for i in range(len(self.OBS)):
+            temp_obs = self.OBS[i]
+            if not temp_obs.movable:
+                continue
+            path = temp_obs.path
+            movement_serial = self.time_step % len(path)
+            self.OBS[i].location = path[movement_serial]
 
     def check_goal(self):
         """checks whether goal is reached by comparing goal to current location. (used in GUI)"""
