@@ -224,8 +224,7 @@ class SystemControl:
             print("robotY")
             print(self.robotY)
             obs = self.OBS
-            for j in range(len(self.dead_pirates)):
-                ded_obs.append(self.dead_pirates[j])
+            ded_obs.append(self.dead_pirates[0])
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:

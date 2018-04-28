@@ -145,8 +145,7 @@ class moveRobot:
                 self.time_step += 1
                 self.move_obs()
                 temp, goal = self.moveRobot(code)
-                for j in range(len(self.dead_pirates)):
-                    ded_obs.append(self.dead_pirates[j])
+                ded_obs.append(self.dead_pirates[0])
                 obs = self.OBS
                 if self.checkBounds(self.robotX, self.robotY):
                     break
