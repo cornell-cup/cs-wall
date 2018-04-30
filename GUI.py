@@ -54,7 +54,7 @@ class Gui:
 
     # file paths
     # TODO change to "rfidAttack1.txt" later.
-    rfid_file = "input/rfid_pirate_3.txt"
+    rfid_file = "input/rfidAttack.txt"
     target_file = "image/target.png"
     outfile = "image/outfile.gif"
     obstacle_file = "image/Pirate_Hat.png"
