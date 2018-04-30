@@ -285,6 +285,8 @@ class Gui:
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
+                        self.dead_pirates = []
+                        self.control.dead_pirates = []
                         self.store_game_data()
                         self.dead_flag = True
                     else:
