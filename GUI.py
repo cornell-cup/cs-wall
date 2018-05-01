@@ -51,6 +51,7 @@ class Gui:
     start_flag = False
     thread_started = False
     dead_flag = False
+    choice_flag = True
 
     # file paths
     # TODO change to "rfidAttack1.txt" later.
@@ -70,77 +71,8 @@ class Gui:
     temp_image = ""
 
     def __init__(self):
-        """initializes the GUI status to the following: start status to False, prompts for game version, system
-        version, and level. """
+        """initializes the GUI"""
         self.start_flag = False
-        game_disp = Tk()
-        game_disp.title("Game Chooser")
-        listbox = Listbox(game_disp)
-        listbox.pack()
-        listbox.insert(0, "Maze")
-        listbox.insert(1, "Pirates")
-        listbox.grid(row=0, column=0)
-
-        def store3():
-            """storing the user's choice of system to local variable"""
-            self.game = listbox.curselection()[0]
-            game_disp.destroy()
-
-        # stores the type of game in a string (maze/pirates)
-        game_button = Button(text="ENTER", command=store3)
-        game_button.grid(row=1, column=0)
-        game_disp.mainloop()
-
-        if self.game == self.MAZE:
-            self.game_name = "maze"
-        elif self.game == self.PIRATES:
-            self.game_name = "pirate"
-        else:
-            temp1 = Tk()
-            temp1.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a game.")
-
-        # making a choice box here to choose system (2D or minibot)
-        version_disp = Tk()
-        version_disp.title("Version Chooser")
-        listbox = Listbox(version_disp)
-        listbox.pack()
-        listbox.insert(0, "2D System")
-        listbox.insert(1, "Minibot")
-        listbox.grid(row=0, column=0)
-
-        def store2():
-            """storing the user's choice of system to local variable"""
-            self.version = listbox.curselection()[0]
-            version_disp.destroy()
-
-        version_button = Button(text="ENTER", command=store2)
-        version_button.grid(row=1, column=0)
-        version_disp.mainloop()
-
-        if self.version == self.TWO_D:
-            self.control = SystemControl()
-        elif self.version == self.MINIBOT:
-            self.control = moveRobot()
-        else:
-            temp = Tk()
-            temp.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a version.")
-
-        # allows the player to choose a level from a spinbox (need to change to buttons in the future)
-        level_disp = Tk()
-        level_disp.title("Level Chooser")
-        w = Spinbox(level_disp, from_=1, to=10)
-        w.grid(row=0, column=0)
-
-        def store():
-            """storing the chosen level to local variable"""
-            self.level = int(w.get())
-            level_disp.destroy()
-
-        level_button = Button(text="ENTER", command=store)
-        level_button.grid(row=1, column=0)
-        level_disp.mainloop()
 
     def store_game_data(self):
         """after level is chosen, variables related to the game level are stored below"""
@@ -206,6 +138,83 @@ class Gui:
 
     def make_GUI(self):
         """makes the GUI"""
+        game_disp = Tk()
+        game_disp.title("Game Chooser")
+        listbox = Listbox(game_disp)
+        listbox.pack()
+        listbox.insert(0, "Maze")
+        listbox.insert(1, "Pirates")
+        # automatically focuses on one item in the listbox, can change selection by using up and down arrows
+        listbox.selection_set(0)
+        listbox.focus_set()
+        listbox.grid(row=0, column=0)
+
+        # TODO instead of an enter button, we can do a countdown
+        def store3():
+            """storing the user's choice of system to local variable"""
+            self.game = listbox.curselection()[0]
+            game_disp.destroy()
+
+        # stores the type of game in a string (maze/pirates)
+        game_button = Button(text="ENTER", command=store3)
+        game_button.focus_set()
+        game_button.grid(row=1, column=0)
+        game_disp.mainloop()
+
+        if self.game == self.MAZE:
+            self.game_name = "maze"
+        elif self.game == self.PIRATES:
+            self.game_name = "pirate"
+        else:
+            temp1 = Tk()
+            temp1.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a game.")
+
+        # making a choice box here to choose system (2D or minibot)
+        version_disp = Tk()
+        version_disp.title("Version Chooser")
+        listbox = Listbox(version_disp)
+        listbox.pack()
+        listbox.insert(0, "2D System")
+        listbox.insert(1, "Minibot")
+        listbox.selection_set(0)
+        listbox.focus_set()
+        listbox.grid(row=0, column=0)
+
+        def store2():
+            """storing the user's choice of system to local variable"""
+            self.version = listbox.curselection()[0]
+            version_disp.destroy()
+
+        version_button = Button(text="ENTER", command=store2)
+        version_button.grid(row=1, column=0)
+        version_disp.mainloop()
+
+        if self.version == self.TWO_D:
+            self.control = SystemControl()
+        elif self.version == self.MINIBOT:
+            self.control = moveRobot()
+        else:
+            temp = Tk()
+            temp.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a version.")
+
+        # allows the player to choose a level from a spinbox (need to change to buttons in the future)
+        level_disp = Tk()
+        level_disp.title("Level Chooser")
+        w = Spinbox(level_disp, from_=1, to=10)
+        w.focus_set()
+        w.grid(row=0, column=0)
+
+        def store():
+            """storing the chosen level to local variable"""
+            self.level = int(w.get())
+            level_disp.destroy()
+
+        level_button = Button(text="ENTER", command=store)
+        level_button.grid(row=1, column=0)
+        level_disp.mainloop()
+
         self.store_game_data()
 
         self.make_grid()
@@ -275,6 +284,9 @@ class Gui:
                     self.control.reset_flag = False
                 # return False
 
+        lis = keyboard.Listener(on_press=on_press)
+        lis.start()
+
         def start():
             """runs the given file of rfid's"""
             # a4988.init()
@@ -333,9 +345,6 @@ class Gui:
                     im_label.image = tempim
                     im_label.pack()
                     self.dead_flag = True
-
-        lis = keyboard.Listener(on_press=on_press)
-        lis.start()
  
         #  # Motor Scanner Setup
         #  stepPin1 = 2
