@@ -46,6 +46,9 @@ class Gui:
     # conditional objects
     control = None
     t = None
+    temp_disp = None
+    temp_box = None
+    choice_serial = 1
 
     # flags
     start_flag = False
@@ -138,113 +141,26 @@ class Gui:
 
     def make_GUI(self):
         """makes the GUI"""
-        game_disp = Tk()
-        game_disp.title("Game Chooser")
-        listbox = Listbox(game_disp)
-        listbox.pack()
-        listbox.insert(0, "Maze")
-        listbox.insert(1, "Pirates")
+
+        self.temp_disp = Tk()
+        self.temp_disp.title("Game Chooser")
+        self.temp_box = Listbox(self.temp_disp)
+        self.temp_box.pack()
+        self.temp_box.insert(0, "Maze")
+        self.temp_box.insert(1, "Pirates")
         # automatically focuses on one item in the listbox, can change selection by using up and down arrows
-        listbox.selection_set(0)
-        listbox.focus_set()
-        listbox.grid(row=0, column=0)
+        self.temp_box.selection_set(0)
+        self.temp_box.focus_set()
+        self.temp_box.grid(row=0, column=0)
 
-        # TODO instead of an enter button, we can do a countdown
-        def store3():
-            """storing the user's choice of system to local variable"""
-            self.game = listbox.curselection()[0]
-            game_disp.destroy()
+        # def store3():
+        #     """storing the user's choice of system to local variable"""
+        #     self.game = listbox.curselection()[0]
+        #     game_disp.destroy()
 
-        # stores the type of game in a string (maze/pirates)
-        game_button = Button(text="ENTER", command=store3)
-        game_button.focus_set()
-        game_button.grid(row=1, column=0)
-        game_disp.mainloop()
-
-        if self.game == self.MAZE:
-            self.game_name = "maze"
-        elif self.game == self.PIRATES:
-            self.game_name = "pirate"
-        else:
-            temp1 = Tk()
-            temp1.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a game.")
-
-        # making a choice box here to choose system (2D or minibot)
-        version_disp = Tk()
-        version_disp.title("Version Chooser")
-        listbox = Listbox(version_disp)
-        listbox.pack()
-        listbox.insert(0, "2D System")
-        listbox.insert(1, "Minibot")
-        listbox.selection_set(0)
-        listbox.focus_set()
-        listbox.grid(row=0, column=0)
-
-        def store2():
-            """storing the user's choice of system to local variable"""
-            self.version = listbox.curselection()[0]
-            version_disp.destroy()
-
-        version_button = Button(text="ENTER", command=store2)
-        version_button.grid(row=1, column=0)
-        version_disp.mainloop()
-
-        if self.version == self.TWO_D:
-            self.control = SystemControl()
-        elif self.version == self.MINIBOT:
-            self.control = moveRobot()
-        else:
-            temp = Tk()
-            temp.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a version.")
-
-        # allows the player to choose a level from a spinbox (need to change to buttons in the future)
-        level_disp = Tk()
-        level_disp.title("Level Chooser")
-        w = Spinbox(level_disp, from_=1, to=10)
-        w.focus_set()
-        w.grid(row=0, column=0)
-
-        def store():
-            """storing the chosen level to local variable"""
-            self.level = int(w.get())
-            level_disp.destroy()
-
-        level_button = Button(text="ENTER", command=store)
-        level_button.grid(row=1, column=0)
-        level_disp.mainloop()
-
-        self.store_game_data()
-
-        self.make_grid()
-        """Constructs the grid according to defined dimensions and displays it on the GUI"""
-        root = Tk()
-        root.title("WALL")
-        label = Label(root, text="Level " + str(self.level))
-        label.grid(row=0, column=1)
-        frame = Frame(root)
-        self.temp_image = self.outfile
-        im = PhotoImage(file=self.temp_image)
-        im_label = Label(frame, image=im)
-        im_label.pack()
-
-        step_label = Label(root, text="Time Step: " + str(self.control.time_step))
-        step_label.grid(row=0, column=2)
-
-        def update():
-            """updates the grid according to the robot's current location/direction"""
-            self.make_grid()
-            step_label.config(text="Time Step: " + str(self.control.time_step))
-            self.temp_image = self.outfile
-            tempim = PhotoImage(file=self.temp_image)
-            # changes image here
-            im_label.config(image=tempim)
-            im_label.image = tempim
-            im_label.pack()
-
-            # updates display every 1 second
-            root.after(1000, update)
+        # game_button = Button(text="ENTER", command=store3)
+        # game_button.focus_set()
+        # game_button.grid(row=1, column=0)
 
         def on_press(key):
             """defines what the key listener does
@@ -258,21 +174,34 @@ class Gui:
             if k in ['ctrl']:  # keys interested
                 # self.keys.append(k) # store it in global-like variable
                 print('Key pressed: ' + k)
-                if not self.thread_started:
-                    self.t = threading.Thread(target=start)
-                    self.thread_started = True
-                    self.start_flag = True
+                if self.choice_flag:
+                    if self.choice_serial == 1:
+                        self.game = self.temp_box.curselection()[0]
+                        self.temp_disp.destroy()
+                        self.choice_serial += 1
+                    elif self.choice_serial == 2:
+                        self.version = self.temp_box.curselection()[0]
+                        self.temp_disp.destroy()
+                        self.choice_serial += 1
+                    elif self.choice_serial == 3:
+                        self.level = int(self.temp_box.get())
+                        self.temp_disp.destroy()
                 else:
-                    if self.dead_flag:
-                        self.t = None
+                    if not self.thread_started:
                         self.t = threading.Thread(target=start)
+                        self.thread_started = True
                         self.start_flag = True
-                        self.dead_flag = False
+                    else:
+                        if self.dead_flag:
+                            self.t = None
+                            self.t = threading.Thread(target=start)
+                            self.start_flag = True
+                            self.dead_flag = False
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
                     self.control.reset_flag = True
-                    tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+                    tkMessageBox.showinfo("Notification", "Resetting, please confirm.", parent=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
@@ -287,6 +216,138 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
 
+        self.temp_disp.mainloop()
+
+        if self.game == self.MAZE:
+            self.game_name = "maze"
+        elif self.game == self.PIRATES:
+            self.game_name = "pirate"
+        else:
+            temp1 = Tk()
+            temp1.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a game.")
+
+        # making a choice box here to choose system (2D or minibot)
+        self.temp_disp = Tk()
+        self.temp_disp.title("Version Chooser")
+        self.temp_box = Listbox(self.temp_disp)
+        self.temp_box.pack()
+        self.temp_box.insert(0, "2D System")
+        self.temp_box.insert(1, "Minibot")
+        self.temp_box.selection_set(0)
+        self.temp_box.focus_set()
+        self.temp_box.grid(row=0, column=0)
+
+        # def store2():
+        #     """storing the user's choice of system to local variable"""
+        #     self.version = self.temp_box.curselection()[0]
+        #     self.temp_disp.destroy()
+
+        # version_button = Button(text="ENTER", command=store2)
+        # version_button.grid(row=1, column=0)
+        self.temp_disp.mainloop()
+
+        if self.version == self.TWO_D:
+            self.control = SystemControl()
+        elif self.version == self.MINIBOT:
+            self.control = moveRobot()
+        else:
+            temp = Tk()
+            temp.withdraw()
+            tkMessageBox.showerror("Error", "Please choose a version.")
+
+        # allows the player to choose a level from a spinbox (need to change to buttons in the future)
+        self.temp_disp = Tk()
+        self.temp_disp.title("Level Chooser")
+        self.temp_box = Spinbox(self.temp_disp, from_=1, to=G.MAX_LEVEL)
+        self.temp_box.focus_set()
+        self.temp_box.grid(row=0, column=0)
+
+        # def store():
+        #     """storing the chosen level to local variable"""
+        #     self.level = int(self.temp_box.get())
+        #     self.temp_disp.destroy()
+        #
+        # level_button = Button(text="ENTER", command=store)
+        # level_button.grid(row=1, column=0)
+
+        self.temp_disp.mainloop()
+
+        self.store_game_data()
+
+        self.choice_flag = False
+
+        self.make_grid()
+
+        """Constructs the grid according to defined dimensions and displays it on the GUI"""
+        root = Tk()
+        root.title("WALL")
+        label = Label(root, text="Level " + str(self.level))
+        label.grid(row=0, column=1)
+        frame = Frame(root)
+        self.temp_image = self.outfile
+        im = PhotoImage(file=self.temp_image, master=root)
+        im_label = Label(frame, image=im)
+        im_label.pack()
+
+        step_label = Label(root, text="Time Step: " + str(self.control.time_step))
+        step_label.grid(row=0, column=2)
+
+        def update():
+            """updates the grid according to the robot's current location/direction"""
+            self.make_grid()
+            step_label.config(text="Time Step: " + str(self.control.time_step))
+            self.temp_image = self.outfile
+            tempim = PhotoImage(file=self.temp_image, master=root)
+            # changes image here
+            im_label.config(image=tempim)
+            im_label.image = tempim
+            im_label.pack()
+
+            # updates display every 1 second
+            root.after(1000, update)
+
+        # def on_press(key):
+        #     """defines what the key listener does
+        #     NOTE: Now the ECE end does not have to call a method, they need to simulate key presses."""
+        #     try:
+        #         k = key.char  # single-char keys
+        #     except:
+        #         k = key.name  # other keys
+        #     if key == keyboard.Key.esc:
+        #         return False  # stop listener
+        #     if k in ['ctrl']:  # keys interested
+        #         # self.keys.append(k) # store it in global-like variable
+        #         print('Key pressed: ' + k)
+        #         if not self.thread_started:
+        #             self.t = threading.Thread(target=start)
+        #             self.thread_started = True
+        #             self.start_flag = True
+        #         else:
+        #             if self.dead_flag:
+        #                 self.t = None
+        #                 self.t = threading.Thread(target=start)
+        #                 self.start_flag = True
+        #                 self.dead_flag = False
+        #     if k in ['shift']:
+        #         print('Key pressed: ' + k)
+        #         if not self.control.reset_flag:
+        #             self.control.reset_flag = True
+        #             tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
+        #             self.control.reset()
+        #             self.control.time_step = 0
+        #             self.OBS = self.init_OBS
+        #             self.control.OBS = self.init_OBS
+        #             self.dead_pirates = []
+        #             self.control.dead_pirates = []
+        #             self.start_flag = False
+        #             self.dead_flag = True
+        #             self.control.reset_flag = False
+        #         # return False
+        #
+        # lis = keyboard.Listener(on_press=on_press)
+        # lis.start()
+
         def start():
             """runs the given file of rfid's"""
             # a4988.init()
@@ -294,26 +355,27 @@ class Gui:
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
-                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
+                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", parent=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.dead_pirates = []
                         self.control.dead_pirates = []
                         self.store_game_data()
+                        self.control.time_step = 0
                         self.dead_flag = True
                     else:
-                        tkMessageBox.showinfo("Notification", "All levels cleared")
+                        tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
                 elif not self.control.reset_flag:
-                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
+                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", parent=root)
+                    self.dead_pirates = []
+                    self.control.dead_pirates = []
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
                     self.control.OBS = self.init_OBS
-                    self.dead_pirates = []
-                    self.control.dead_pirates = []
                     self.make_grid()
                     self.temp_image = self.outfile
-                    tempim = PhotoImage(file=self.temp_image)
+                    tempim = PhotoImage(file=self.temp_image, master=root)
                     # changes image here
                     im_label.config(image=tempim)
                     im_label.image = tempim
@@ -322,15 +384,15 @@ class Gui:
             else:
                 self.control.run(codeblock)
                 if self.control.check_goal():
-                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!")
+                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", master=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.store_game_data()
                         self.dead_flag = True
                     else:
-                        tkMessageBox.showinfo("Notification", "All levels cleared")
+                        tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
                 elif not self.control.reset_flag:
-                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.")
+                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", master=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
@@ -339,7 +401,7 @@ class Gui:
                     self.control.dead_pirates = []
                     self.make_grid()
                     self.temp_image = self.outfile
-                    tempim = PhotoImage(file=self.temp_image)
+                    tempim = PhotoImage(file=self.temp_image, master=root)
                     # changes image here
                     im_label.config(image=tempim)
                     im_label.image = tempim
