@@ -186,6 +186,11 @@ class Gui:
                     elif self.choice_serial == 3:
                         self.level = int(self.temp_box.get())
                         self.temp_disp.destroy()
+                        self.choice_serial += 1
+                    else:
+                        # TODO simulate key press "return"
+                        print ("LOL")
+                        self.choice_flag = False
                 else:
                     if not self.thread_started:
                         self.t = threading.Thread(target=start)
@@ -201,6 +206,12 @@ class Gui:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
                     self.control.reset_flag = True
+                    self.choice_flag = True
+
+                    """theoretically this should work with the ece's code but it doesn't work here
+                    because 'ctrl' and 'shift' are in the same listener. This could be fixed by separating this
+                    into two different listeners, again, theoretically."""
+
                     tkMessageBox.showinfo("Notification", "Resetting, please confirm.", parent=root)
                     self.control.reset()
                     self.control.time_step = 0
@@ -279,7 +290,7 @@ class Gui:
 
         self.make_grid()
 
-        """Constructs the grid according to defined dimensions and displays it on the GUI"""
+        # Constructs the grid according to defined dimensions and displays it on the GUI
         root = Tk()
         root.title("WALL")
         label = Label(root, text="Level " + str(self.level))
@@ -307,47 +318,6 @@ class Gui:
             # updates display every 1 second
             root.after(1000, update)
 
-        # def on_press(key):
-        #     """defines what the key listener does
-        #     NOTE: Now the ECE end does not have to call a method, they need to simulate key presses."""
-        #     try:
-        #         k = key.char  # single-char keys
-        #     except:
-        #         k = key.name  # other keys
-        #     if key == keyboard.Key.esc:
-        #         return False  # stop listener
-        #     if k in ['ctrl']:  # keys interested
-        #         # self.keys.append(k) # store it in global-like variable
-        #         print('Key pressed: ' + k)
-        #         if not self.thread_started:
-        #             self.t = threading.Thread(target=start)
-        #             self.thread_started = True
-        #             self.start_flag = True
-        #         else:
-        #             if self.dead_flag:
-        #                 self.t = None
-        #                 self.t = threading.Thread(target=start)
-        #                 self.start_flag = True
-        #                 self.dead_flag = False
-        #     if k in ['shift']:
-        #         print('Key pressed: ' + k)
-        #         if not self.control.reset_flag:
-        #             self.control.reset_flag = True
-        #             tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        #             self.control.reset()
-        #             self.control.time_step = 0
-        #             self.OBS = self.init_OBS
-        #             self.control.OBS = self.init_OBS
-        #             self.dead_pirates = []
-        #             self.control.dead_pirates = []
-        #             self.start_flag = False
-        #             self.dead_flag = True
-        #             self.control.reset_flag = False
-        #         # return False
-        #
-        # lis = keyboard.Listener(on_press=on_press)
-        # lis.start()
-
         def start():
             """runs the given file of rfid's"""
             # a4988.init()
@@ -355,6 +325,7 @@ class Gui:
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
+                    self.choice_flag = True
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", parent=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
@@ -364,8 +335,10 @@ class Gui:
                         self.control.time_step = 0
                         self.dead_flag = True
                     else:
+                        self.choice_flag = True
                         tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
                 elif not self.control.reset_flag:
+                    self.choice_flag = True
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", parent=root)
                     self.dead_pirates = []
                     self.control.dead_pirates = []
@@ -384,14 +357,17 @@ class Gui:
             else:
                 self.control.run(codeblock)
                 if self.control.check_goal():
+                    self.choice_flag = True
                     tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", master=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.store_game_data()
                         self.dead_flag = True
                     else:
+                        self.choice_flag = True
                         tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
                 elif not self.control.reset_flag:
+                    self.choice_flag = True
                     tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", master=root)
                     self.control.reset()
                     self.control.time_step = 0
