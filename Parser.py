@@ -12,7 +12,7 @@ class Parser:
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
-        self.VariableMap = defaultdict(list)
+        self.VariableMap = {'initialize': 0}
         self.robotX = 0
         self.robotY = 0
         self.result = ""
@@ -115,13 +115,13 @@ class Parser:
             return self.VariableMap.get(s)
         else:
             # s is just a int value
-            self.innerInt(s)
+            return self.innerInt(s)
 
 
     def runCode(self, inputCode):
         """main function that receives the string of inputCode to output minibot movement"""
-
         # split the code by lines
+        print inputCode
         codeLines = inputCode.split("\n")
         movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight', 'Attack']
         while len(codeLines) > 0:
@@ -151,7 +151,7 @@ class Parser:
                 continue
             # the code starts with IF statement
             if code.split(" ")[0] == "IF":
-                logic = code[3:code.find("DO")].replace(" ", "")
+                logic = code[3:].replace(" ", "")
                 IfCode = ""
                 temp = codeLines.pop(0)
                 # record code in IF clause until END statement
@@ -163,7 +163,7 @@ class Parser:
                 continue
             # the code starts with WHILE statement
             if code.split(" ")[0] == "WHILE":
-                logic = code[6:code.find("DO")].replace(" ", "")
+                logic = code[6:].replace(" ", "")
                 WhileCode = ""
                 temp = codeLines.pop(0)
                 # record code in WHILE loop until END statement
@@ -204,6 +204,5 @@ class Parser:
         return 0
 
 
-# p = Parser()
-# print (p.parseValue("1+2a"))
-# print p.runCode(p.translateRFID("rfidFOR.txt"))
+p = Parser()
+print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
