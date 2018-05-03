@@ -4,7 +4,6 @@ from Parser import Parser
 from mazeMaker import MapMaker
 from SystemControl import SystemControl
 from Tkinter import Tk, Label, Frame, PhotoImage, Spinbox, Listbox, Toplevel
-import tkMessageBox
 import scipy.misc
 import threading
 from moveRobot import moveRobot
@@ -49,12 +48,14 @@ class Gui:
     temp_disp = None
     temp_box = None
     choice_serial = 1
+    level_label = None
 
     # flags
     start_flag = False
     thread_started = False
     dead_flag = False
     choice_flag = True
+    level_lock = True
 
     # file paths
     # TODO change to "rfidAttack1.txt" later.
@@ -184,7 +185,8 @@ class Gui:
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     elif self.choice_serial == 3:
-                        self.level = int(self.temp_box.get())
+                        # self.level = int(self.temp_box.get())
+                        self.level_lock = True
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     else:
@@ -204,8 +206,14 @@ class Gui:
             # TODO fix this lol
             if k in ['Up']:
                 print ("up")
+                if not self.level_lock:
+                    self.level += 1
+                    self.level_label.config(text="Please choose your beginning level: " + str(self.level))
             if k in ['Down']:
                 print ("down")
+                if not self.level_lock:
+                    self.level -= 1
+                    self.level_label.config(text="Please choose your beginning level: " + str(self.level))
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -220,7 +228,6 @@ class Gui:
                     w = Label(self.temp_disp, text="Resetting, please confirm.")
                     w.pack()
                     self.temp_disp.grab_set()
-                    # tkMessageBox.showinfo("Notification", "Resetting, please confirm.", parent=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
@@ -241,10 +248,10 @@ class Gui:
             self.game_name = "maze"
         elif self.game == self.PIRATES:
             self.game_name = "pirate"
-        else:
-            temp1 = Tk()
-            temp1.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a game.")
+        # else:
+        #     temp1 = Tk()
+        #     temp1.withdraw()
+        #     tkMessageBox.showerror("Error", "Please choose a game.")
 
         # making a choice box here to choose system (2D or minibot)
         self.temp_disp = Tk()
@@ -257,39 +264,24 @@ class Gui:
         self.temp_box.focus_set()
         self.temp_box.grid(row=0, column=0)
 
-        # def store2():
-        #     """storing the user's choice of system to local variable"""
-        #     self.version = self.temp_box.curselection()[0]
-        #     self.temp_disp.destroy()
-
-        # version_button = Button(text="ENTER", command=store2)
-        # version_button.grid(row=1, column=0)
         self.temp_disp.mainloop()
 
         if self.version == self.TWO_D:
             self.control = SystemControl()
         elif self.version == self.MINIBOT:
             self.control = moveRobot()
-        else:
-            temp = Tk()
-            temp.withdraw()
-            tkMessageBox.showerror("Error", "Please choose a version.")
+        # else:
+        #     temp = Tk()
+        #     temp.withdraw()
+        #     tkMessageBox.showerror("Error", "Please choose a version.")
 
         # allows the player to choose a level from a spinbox (need to change to buttons in the future)
         self.temp_disp = Tk()
         self.temp_disp.title("Level Chooser")
-        self.temp_box = Spinbox(self.temp_disp, from_=1, to=G.MAX_LEVEL)
-        self.temp_box.focus_set()
-        self.temp_box.grid(row=0, column=0)
-
-        # def store():
-        #     """storing the chosen level to local variable"""
-        #     self.level = int(self.temp_box.get())
-        #     self.temp_disp.destroy()
-        #
-        # level_button = Button(text="ENTER", command=store)
-        # level_button.grid(row=1, column=0)
-
+        self.level_label = Label(self.temp_disp, text="Please choose your beginning level: " + str(self.level))
+        self.level_label.grid(row=0, column=0, columnspan=3)
+        # self.temp_box = Spinbox(self.temp_disp, from_=1, to=G.MAX_LEVEL)
+        self.level_lock = False
         self.temp_disp.mainloop()
 
         self.store_game_data()
