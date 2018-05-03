@@ -3,7 +3,7 @@ from PIL import Image
 from Parser import Parser
 from mazeMaker import MapMaker
 from SystemControl import SystemControl
-from Tkinter import Tk, Label, Frame, PhotoImage, Spinbox, Listbox, Toplevel
+from Tkinter import Tk, Label, Frame, PhotoImage, Toplevel
 import scipy.misc
 import threading
 from moveRobot import moveRobot
@@ -31,9 +31,9 @@ class Gui:
     init_OBS = []
     OBS = []
     level = 1
-    game = -1
+    game = 0
     game_name = ""
-    version = -1
+    version = 0
     TWO_D = 0
     MINIBOT = 1
     MAZE = 0
@@ -49,13 +49,17 @@ class Gui:
     temp_box = None
     choice_serial = 1
     level_label = None
+    game_label1 = None
+    game_label2 = None
+    version_label1 = None
+    version_label2 = None
 
     # flags
     start_flag = False
     thread_started = False
     dead_flag = False
     choice_flag = True
-    level_lock = True
+    choice_lock = True
 
     # file paths
     # TODO change to "rfidAttack1.txt" later.
@@ -145,14 +149,21 @@ class Gui:
 
         self.temp_disp = Tk()
         self.temp_disp.title("Game Chooser")
-        self.temp_box = Listbox(self.temp_disp)
-        self.temp_box.pack()
-        self.temp_box.insert(0, "Maze")
-        self.temp_box.insert(1, "Pirates")
-        # automatically focuses on one item in the listbox, can change selection by using up and down arrows
-        self.temp_box.selection_set(0)
-        self.temp_box.focus_set()
-        self.temp_box.grid(row=0, column=0)
+        text_label = Label(text="Please select game version: use up/down arrows")
+        self.game_label1 = Label(text="MAZE", bg="light blue")
+        self.game_label2 = Label(text="PIRATES")
+        text_label.grid(row=0, column=0)
+        self.game_label1.grid(row=1, column=0)
+        self.game_label2.grid(row=2, column=0)
+        self.choice_lock = False
+        # self.temp_box = Listbox(self.temp_disp)
+        # self.temp_box.pack()
+        # self.temp_box.insert(0, "Maze")
+        # self.temp_box.insert(1, "Pirates")
+        # # automatically focuses on one item in the listbox, can change selection by using up and down arrows
+        # self.temp_box.selection_set(0)
+        # self.temp_box.focus_set()
+        # self.temp_box.grid(row=0, column=0)
 
         # def store3():
         #     """storing the user's choice of system to local variable"""
@@ -169,6 +180,7 @@ class Gui:
             try:
                 k = key.char  # single-char keys
             except:
+                # print('Except: ' + key.name)
                 k = key.name  # other keys
             if key == keyboard.Key.esc:
                 return False  # stop listener
@@ -177,16 +189,18 @@ class Gui:
                 print('Key pressed: ' + k)
                 if self.choice_flag:
                     if self.choice_serial == 1:
-                        self.game = self.temp_box.curselection()[0]
+                        # self.game = self.temp_box.curselection()[0]
+                        self.choice_lock = True
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     elif self.choice_serial == 2:
-                        self.version = self.temp_box.curselection()[0]
+                        # self.version = self.temp_box.curselection()[0]
+                        self.choice_lock = True
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     elif self.choice_serial == 3:
                         # self.level = int(self.temp_box.get())
-                        self.level_lock = True
+                        self.choice_lock = True
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     else:
@@ -203,17 +217,38 @@ class Gui:
                             self.t = threading.Thread(target=start)
                             self.start_flag = True
                             self.dead_flag = False
-            # TODO fix this lol
-            if k in ['Up']:
-                print ("up")
-                if not self.level_lock:
-                    self.level += 1
-                    self.level_label.config(text="Please choose your beginning level: " + str(self.level))
-            if k in ['Down']:
-                print ("down")
-                if not self.level_lock:
-                    self.level -= 1
-                    self.level_label.config(text="Please choose your beginning level: " + str(self.level))
+            if k in ['alt_l']:
+                # the up key
+                if self.choice_serial == 1:
+                    if not self.choice_lock and self.game == 1:
+                        self.game -= 1
+                        self.game_label1.config(text="MAZE", bg="light blue")
+                        self.game_label2.config(text="PIRATES", bg="white")
+                elif self.choice_serial == 2:
+                    if not self.choice_lock and self.version == 1:
+                        self.version -= 1
+                        self.version_label1.config(text="2D System", bg="light blue")
+                        self.version_label2.config(text="Minibot", bg="white")
+                elif self.choice_serial == 3:
+                    if not self.choice_lock and self.level < G.MAX_LEVEL:
+                        self.level += 1
+                        self.level_label.config(text="Please choose your beginning level: " + str(self.level))
+            if k in ['alt_r']:
+                # the down key
+                if self.choice_serial == 1:
+                    if not self.choice_lock and self.game == 0:
+                        self.game += 1
+                        self.game_label1.config(text="MAZE", bg="white")
+                        self.game_label2.config(text="PIRATES", bg="light blue")
+                elif self.choice_serial == 2:
+                    if not self.choice_lock and self.version == 0:
+                        self.version += 1
+                        self.version_label1.config(text="2D System", bg="white")
+                        self.version_label2.config(text="Minibot", bg="light blue")
+                elif self.choice_serial == 3:
+                    if not self.choice_lock and self.level > 1:
+                        self.level -= 1
+                        self.level_label.config(text="Please choose your beginning level: " + str(self.level))
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -256,13 +291,20 @@ class Gui:
         # making a choice box here to choose system (2D or minibot)
         self.temp_disp = Tk()
         self.temp_disp.title("Version Chooser")
-        self.temp_box = Listbox(self.temp_disp)
-        self.temp_box.pack()
-        self.temp_box.insert(0, "2D System")
-        self.temp_box.insert(1, "Minibot")
-        self.temp_box.selection_set(0)
-        self.temp_box.focus_set()
-        self.temp_box.grid(row=0, column=0)
+        text_label1 = Label(text="Please select system version: use up/down arrows", master=self.temp_disp)
+        self.version_label1 = Label(text="2D System", bg="light blue", master=self.temp_disp)
+        self.version_label2 = Label(text="Minibot", master=self.temp_disp)
+        text_label1.grid(row=0, column=0)
+        self.version_label1.grid(row=1, column=0)
+        self.version_label2.grid(row=2, column=0)
+        self.choice_lock = False
+        # self.temp_box = Listbox(self.temp_disp)
+        # self.temp_box.pack()
+        # self.temp_box.insert(0, "2D System")
+        # self.temp_box.insert(1, "Minibot")
+        # self.temp_box.selection_set(0)
+        # self.temp_box.focus_set()
+        # self.temp_box.grid(row=0, column=0)
 
         self.temp_disp.mainloop()
 
@@ -281,7 +323,7 @@ class Gui:
         self.level_label = Label(self.temp_disp, text="Please choose your beginning level: " + str(self.level))
         self.level_label.grid(row=0, column=0, columnspan=3)
         # self.temp_box = Spinbox(self.temp_disp, from_=1, to=G.MAX_LEVEL)
-        self.level_lock = False
+        self.choice_lock = False
         self.temp_disp.mainloop()
 
         self.store_game_data()
