@@ -6,3 +6,7 @@
 .idea/cs-wall.iml
 /venv
 *.DS_Store
+
+.idea/libraries/R_User_Library.xml
+
+image/outfile.gif
