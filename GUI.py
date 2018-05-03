@@ -3,7 +3,7 @@ from PIL import Image
 from Parser import Parser
 from mazeMaker import MapMaker
 from SystemControl import SystemControl
-from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
+from Tkinter import Tk, Label, Frame, PhotoImage, Spinbox, Listbox, Toplevel
 import tkMessageBox
 import scipy.misc
 import threading
@@ -188,8 +188,7 @@ class Gui:
                         self.temp_disp.destroy()
                         self.choice_serial += 1
                     else:
-                        # TODO simulate key press "return"
-                        print ("LOL")
+                        self.temp_disp.withdraw()
                         self.choice_flag = False
                 else:
                     if not self.thread_started:
@@ -202,6 +201,11 @@ class Gui:
                             self.t = threading.Thread(target=start)
                             self.start_flag = True
                             self.dead_flag = False
+            # TODO fix this lol
+            if k in ['Up']:
+                print ("up")
+            if k in ['Down']:
+                print ("down")
             if k in ['shift']:
                 print('Key pressed: ' + k)
                 if not self.control.reset_flag:
@@ -212,7 +216,11 @@ class Gui:
                     because 'ctrl' and 'shift' are in the same listener. This could be fixed by separating this
                     into two different listeners, again, theoretically."""
 
-                    tkMessageBox.showinfo("Notification", "Resetting, please confirm.", parent=root)
+                    self.temp_disp = Toplevel(root)
+                    w = Label(self.temp_disp, text="Resetting, please confirm.")
+                    w.pack()
+                    self.temp_disp.grab_set()
+                    # tkMessageBox.showinfo("Notification", "Resetting, please confirm.", parent=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
@@ -326,7 +334,11 @@ class Gui:
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
                     self.choice_flag = True
-                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", parent=root)
+                    self.temp_disp = Toplevel(root)
+                    w = Label(self.temp_disp, text="Congrats! Goal reached!")
+                    w.pack()
+                    self.temp_disp.grab_set()
+                    # tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", parent=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.dead_pirates = []
@@ -336,10 +348,18 @@ class Gui:
                         self.dead_flag = True
                     else:
                         self.choice_flag = True
-                        tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
+                        self.temp_disp = Toplevel(root)
+                        w = Label(self.temp_disp, text="All levels cleared")
+                        w.pack()
+                        self.temp_disp.grab_set()
+                        # tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
-                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", parent=root)
+                    self.temp_disp = Toplevel(root)
+                    w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
+                    w.pack()
+                    self.temp_disp.grab_set()
+                    # tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", parent=root)
                     self.dead_pirates = []
                     self.control.dead_pirates = []
                     self.control.reset()
@@ -358,17 +378,29 @@ class Gui:
                 self.control.run(codeblock)
                 if self.control.check_goal():
                     self.choice_flag = True
-                    tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", master=root)
+                    self.temp_disp = Toplevel(root)
+                    w = Label(self.temp_disp, text="Congrats! Goal reached!")
+                    w.pack()
+                    self.temp_disp.grab_set()
+                    # tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", master=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.store_game_data()
                         self.dead_flag = True
                     else:
                         self.choice_flag = True
-                        tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
+                        self.temp_disp = Toplevel(root)
+                        w = Label(self.temp_disp, text="All levels cleared")
+                        w.pack()
+                        self.temp_disp.grab_set()
+                        # tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
-                    tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", master=root)
+                    self.temp_disp = Toplevel(root)
+                    w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
+                    w.pack()
+                    self.temp_disp.grab_set()
+                    # tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", master=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
