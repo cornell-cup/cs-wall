@@ -151,7 +151,7 @@ class Parser:
                 continue
             # the code starts with IF statement
             if code.split(" ")[0] == "IF":
-                logic = code[3:code.find("DO")].replace(" ", "")
+                logic = code[3:].replace(" ", "")
                 IfCode = ""
                 temp = codeLines.pop(0)
                 # record code in IF clause until END statement
@@ -163,7 +163,7 @@ class Parser:
                 continue
             # the code starts with WHILE statement
             if code.split(" ")[0] == "WHILE":
-                logic = code[6:code.find("DO")].replace(" ", "")
+                logic = code[6:].replace(" ", "")
                 WhileCode = ""
                 temp = codeLines.pop(0)
                 # record code in WHILE loop until END statement
@@ -204,6 +204,7 @@ class Parser:
         return 0
 
 
-# p = Parser()
+p = Parser()
+p.runCode("")
 # print (p.parseValue("1+2a"))
 # print p.runCode(p.translateRFID("rfidFOR.txt"))
