@@ -7,6 +7,7 @@ from Tkinter import Tk, Label, Frame, PhotoImage, Button, Spinbox, Listbox
 import tkMessageBox
 import scipy.misc
 import threading
+import keyboard
 from moveRobot import moveRobot
 import Globals as G
 from pynput import keyboard
@@ -189,6 +190,7 @@ class Gui:
                         self.choice_serial += 1
                     else:
                         # TODO simulate key press "return"
+                        keyboard.press_and_release('enter')
                         print ("LOL")
                         self.choice_flag = False
                 else:
