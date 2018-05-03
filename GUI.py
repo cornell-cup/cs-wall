@@ -53,6 +53,7 @@ class Gui:
     game_label2 = None
     version_label1 = None
     version_label2 = None
+    root = None
 
     # flags
     start_flag = False
@@ -206,6 +207,7 @@ class Gui:
                     else:
                         self.temp_disp.withdraw()
                         self.choice_flag = False
+                        self.root.focus_set()
                 else:
                     if not self.thread_started:
                         self.t = threading.Thread(target=start)
@@ -259,7 +261,7 @@ class Gui:
                     because 'ctrl' and 'shift' are in the same listener. This could be fixed by separating this
                     into two different listeners, again, theoretically."""
 
-                    self.temp_disp = Toplevel(root)
+                    self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Resetting, please confirm.")
                     w.pack()
                     self.temp_disp.grab_set()
@@ -333,17 +335,17 @@ class Gui:
         self.make_grid()
 
         # Constructs the grid according to defined dimensions and displays it on the GUI
-        root = Tk()
-        root.title("WALL")
-        label = Label(root, text="Level " + str(self.level))
+        self.root = Tk()
+        self.root.title("WALL")
+        label = Label(self.root, text="Level " + str(self.level))
         label.grid(row=0, column=1)
-        frame = Frame(root)
+        frame = Frame(self.root)
         self.temp_image = self.outfile
-        im = PhotoImage(file=self.temp_image, master=root)
+        im = PhotoImage(file=self.temp_image, master=self.root)
         im_label = Label(frame, image=im)
         im_label.pack()
 
-        step_label = Label(root, text="Time Step: " + str(self.control.time_step))
+        step_label = Label(self.root, text="Time Step: " + str(self.control.time_step))
         step_label.grid(row=0, column=2)
 
         def update():
@@ -351,14 +353,14 @@ class Gui:
             self.make_grid()
             step_label.config(text="Time Step: " + str(self.control.time_step))
             self.temp_image = self.outfile
-            tempim = PhotoImage(file=self.temp_image, master=root)
+            tempim = PhotoImage(file=self.temp_image, master=self.root)
             # changes image here
             im_label.config(image=tempim)
             im_label.image = tempim
             im_label.pack()
 
             # updates display every 1 second
-            root.after(1000, update)
+            self.root.after(1000, update)
 
         def start():
             """runs the given file of rfid's"""
@@ -368,7 +370,7 @@ class Gui:
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
                     self.choice_flag = True
-                    self.temp_disp = Toplevel(root)
+                    self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Congrats! Goal reached!")
                     w.pack()
                     self.temp_disp.grab_set()
@@ -382,14 +384,14 @@ class Gui:
                         self.dead_flag = True
                     else:
                         self.choice_flag = True
-                        self.temp_disp = Toplevel(root)
+                        self.temp_disp = Toplevel(self.root)
                         w = Label(self.temp_disp, text="All levels cleared")
                         w.pack()
                         self.temp_disp.grab_set()
                         # tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
-                    self.temp_disp = Toplevel(root)
+                    self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
                     w.pack()
                     self.temp_disp.grab_set()
@@ -402,7 +404,7 @@ class Gui:
                     self.control.OBS = self.init_OBS
                     self.make_grid()
                     self.temp_image = self.outfile
-                    tempim = PhotoImage(file=self.temp_image, master=root)
+                    tempim = PhotoImage(file=self.temp_image, master=self.root)
                     # changes image here
                     im_label.config(image=tempim)
                     im_label.image = tempim
@@ -412,7 +414,7 @@ class Gui:
                 self.control.run(codeblock)
                 if self.control.check_goal():
                     self.choice_flag = True
-                    self.temp_disp = Toplevel(root)
+                    self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Congrats! Goal reached!")
                     w.pack()
                     self.temp_disp.grab_set()
@@ -423,14 +425,14 @@ class Gui:
                         self.dead_flag = True
                     else:
                         self.choice_flag = True
-                        self.temp_disp = Toplevel(root)
+                        self.temp_disp = Toplevel(self.root)
                         w = Label(self.temp_disp, text="All levels cleared")
                         w.pack()
                         self.temp_disp.grab_set()
                         # tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
-                    self.temp_disp = Toplevel(root)
+                    self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
                     w.pack()
                     self.temp_disp.grab_set()
@@ -443,7 +445,7 @@ class Gui:
                     self.control.dead_pirates = []
                     self.make_grid()
                     self.temp_image = self.outfile
-                    tempim = PhotoImage(file=self.temp_image, master=root)
+                    tempim = PhotoImage(file=self.temp_image, master=self.root)
                     # changes image here
                     im_label.config(image=tempim)
                     im_label.image = tempim
@@ -592,12 +594,12 @@ class Gui:
                     self.t.start()
                     self.start_flag = False
 
-            root.after(1000, check_status)
+            self.root.after(1000, check_status)
 
         frame.grid(row=2, columnspan=4)
         update()
         check_status()
-        root.mainloop()
+        self.root.mainloop()
 
     def make_grid(self):
         """divides the given background image into given number of blocks, saves the image to outfile.gif
