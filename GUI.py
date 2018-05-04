@@ -157,23 +157,6 @@ class Gui:
         self.game_label1.grid(row=1, column=0)
         self.game_label2.grid(row=2, column=0)
         self.choice_lock = False
-        # self.temp_box = Listbox(self.temp_disp)
-        # self.temp_box.pack()
-        # self.temp_box.insert(0, "Maze")
-        # self.temp_box.insert(1, "Pirates")
-        # # automatically focuses on one item in the listbox, can change selection by using up and down arrows
-        # self.temp_box.selection_set(0)
-        # self.temp_box.focus_set()
-        # self.temp_box.grid(row=0, column=0)
-
-        # def store3():
-        #     """storing the user's choice of system to local variable"""
-        #     self.game = listbox.curselection()[0]
-        #     game_disp.destroy()
-
-        # game_button = Button(text="ENTER", command=store3)
-        # game_button.focus_set()
-        # game_button.grid(row=1, column=0)
 
         def on_press(key):
             """defines what the key listener does
@@ -279,6 +262,165 @@ class Gui:
         lis = keyboard.Listener(on_press=on_press)
         lis.start()
 
+        #  # Motor Scanner Setup
+        #  stepPin1 = 2
+        #  dirPin1 = 3
+        #  enablePin1 = 18
+        #  sleepPin1 = 4
+        #
+        #  GPIO.setup(stepPin1, GPIO.OUT)
+        #  GPIO.setup(dirPin1, GPIO.OUT)
+        #  GPIO.setup(enablePin1, GPIO.OUT)
+        #  GPIO.setup(sleepPin1, GPIO.OUT)
+        #
+        #  GPIO.output(enablePin1, GPIO.LOW)
+        #  GPIO.output(sleepPin1, GPIO.LOW)
+        #  GPIO.output(dirPin1, GPIO.HIGH)
+        #
+        #  #Motor Vertical
+        #  stepPin2 = 27
+        #  dirPin2 = 22
+        #  enablePin2 = 23
+        #  sleepPin2 = 17
+        #
+        #  GPIO.setup(stepPin2, GPIO.OUT)
+        #  GPIO.setup(dirPin2, GPIO.OUT)
+        #  GPIO.setup(enablePin2, GPIO.OUT)
+        #  GPIO.setup(sleepPin2, GPIO.OUT)
+        #
+        #  GPIO.output(enablePin2, GPIO.LOW)
+        #  GPIO.output(sleepPin2, GPIO.LOW)
+        #  GPIO.output(dirPin2, GPIO.HIGH)
+        #
+        #  #Motor Horizontal
+        #  stepPin3 = 9
+        #  dirPin3 = 11
+        #  enablePin3 = 24
+        #  sleepPin3 = 10
+        #
+        #  GPIO.setup(stepPin3, GPIO.OUT)
+        #  GPIO.setup(dirPin3, GPIO.OUT)
+        #  GPIO.setup(enablePin3, GPIO.OUT)
+        #  GPIO.setup(sleepPin3, GPIO.OUT)
+        #
+        #  GPIO.output(enablePin3, GPIO.LOW)
+        #  GPIO.output(sleepPin3, GPIO.LOW)
+        #  GPIO.output(dirPin3, GPIO.HIGH)
+        #
+        #  start_button = 6
+        #  reset_button = 5
+        #  scanner_top_pin = 21
+        #  scanner_bottom_pin = 26
+        #  horizontal_top_pin = 16
+        #  horizontal_bottom_pin = 20
+        #  vertical_top_pin = 13
+        #  vertical_bottom_pin=19
+        #
+        #  GPIO.setup(start_button, GPIO.IN)
+        #  GPIO.setup(reset_button, GPIO.IN)
+        #  GPIO.setup(scanner_top_pin, GPIO.IN)
+        #  GPIO.setup(scanner_bottom_pin, GPIO.IN)
+        #  GPIO.setup(horizontal_top_pin, GPIO.IN)
+        #  GPIO.setup(horizontal_bottom_pin, GPIO.IN)
+        #  GPIO.setup(vertical_top_pin, GPIO.IN)
+        #  GPIO.setup(vertical_bottom_pin, GPIO.IN)
+        #
+        # def reset(reset_button):
+        #     if not self.control.reset_flag:
+        #         self.control.reset_flag = True
+        #         self.choice_flag = True
+        #         self.temp_disp = Toplevel(self.root)
+        #         w = Label(self.temp_disp, text="Resetting, please confirm.")
+        #         w.pack()
+        #         self.temp_disp.grab_set()
+        #         self.control.reset()
+        #         self.control.time_step = 0
+        #         self.OBS = self.init_OBS
+        #         self.control.OBS = self.init_OBS
+        #         self.dead_pirates = []
+        #         self.control.dead_pirates = []
+        #         self.start_flag = False
+        #         self.dead_flag = True
+        #         self.control.reset_flag = False
+        #
+        # def start(start_button):
+        #     if self.choice_flag:
+        #         if self.choice_serial == 1:
+        #             # self.game = self.temp_box.curselection()[0]
+        #             self.choice_lock = True
+        #             self.temp_disp.destroy()
+        #             self.choice_serial += 1
+        #         elif self.choice_serial == 2:
+        #             # self.version = self.temp_box.curselection()[0]
+        #             self.choice_lock = True
+        #             self.temp_disp.destroy()
+        #             self.choice_serial += 1
+        #         elif self.choice_serial == 3:
+        #             # self.level = int(self.temp_box.get())
+        #             self.choice_lock = True
+        #             self.temp_disp.destroy()
+        #             self.choice_serial += 1
+        #         else:
+        #             self.temp_disp.withdraw()
+        #             self.choice_flag = False
+        #             self.root.focus_set()
+        #     else:
+        #         if not self.thread_started:
+        #             self.t = threading.Thread(target=start)
+        #             self.thread_started = True
+        #             self.start_flag = True
+        #         else:
+        #             if self.dead_flag:
+        #                 self.t = None
+        #                 self.t = threading.Thread(target=start)
+        #                 self.start_flag = True
+        #                 self.dead_flag = False
+        #
+        #  def stop1(scanner_top_pin):
+        #      print(' scanner, hit top')
+        #      a4988.moveScannerDown(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  def stop2(scanner_bottom_pin):
+        #      print('scanner, hit bottom')
+        #      a4988.moveScannerUp(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  def stop3(horizontal_top_pin):
+        #      print('horizontal , hit top bound')
+        #      a4988.moveHorizontalDown(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  def stop4(horizontal_bottom_pin):
+        #      print('horizontal , hit bottom bound')
+        #      a4988.moveHorizontalUp(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  def stop5(vertical_top_pin):
+        #      print('vertical , hit top bound')
+        #      a4988.moveVerticalDown(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  def stop6(vertical_bottom_pin):
+        #      print('vertical , hit bottom bound')
+        #      a4988.moveVerticalUp(25)
+        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+        #
+        #
+        #  GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        #  GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
+        # # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        #  GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
+        #  GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
+        #  GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
+        #  GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
+        #  GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
+
         self.temp_disp.mainloop()
 
         if self.game == self.MAZE:
@@ -300,13 +442,6 @@ class Gui:
         self.version_label1.grid(row=1, column=0)
         self.version_label2.grid(row=2, column=0)
         self.choice_lock = False
-        # self.temp_box = Listbox(self.temp_disp)
-        # self.temp_box.pack()
-        # self.temp_box.insert(0, "2D System")
-        # self.temp_box.insert(1, "Minibot")
-        # self.temp_box.selection_set(0)
-        # self.temp_box.focus_set()
-        # self.temp_box.grid(row=0, column=0)
 
         self.temp_disp.mainloop()
 
@@ -451,141 +586,6 @@ class Gui:
                     im_label.image = tempim
                     im_label.pack()
                     self.dead_flag = True
- 
-        #  # Motor Scanner Setup
-        #  stepPin1 = 2
-        #  dirPin1 = 3
-        #  enablePin1 = 18
-        #  sleepPin1 = 4
-        #
-        #  GPIO.setup(stepPin1, GPIO.OUT)
-        #  GPIO.setup(dirPin1, GPIO.OUT)
-        #  GPIO.setup(enablePin1, GPIO.OUT)
-        #  GPIO.setup(sleepPin1, GPIO.OUT)
-        #
-        #  GPIO.output(enablePin1, GPIO.LOW)
-        #  GPIO.output(sleepPin1, GPIO.LOW)
-        #  GPIO.output(dirPin1, GPIO.HIGH)
-        #
-        #  #Motor Vertical
-        #  stepPin2 = 27
-        #  dirPin2 = 22
-        #  enablePin2 = 23
-        #  sleepPin2 = 17
-        #
-        #  GPIO.setup(stepPin2, GPIO.OUT)
-        #  GPIO.setup(dirPin2, GPIO.OUT)
-        #  GPIO.setup(enablePin2, GPIO.OUT)
-        #  GPIO.setup(sleepPin2, GPIO.OUT)
-        #
-        #  GPIO.output(enablePin2, GPIO.LOW)
-        #  GPIO.output(sleepPin2, GPIO.LOW)
-        #  GPIO.output(dirPin2, GPIO.HIGH)
-        #
-        #  #Motor Horizontal
-        #  stepPin3 = 9
-        #  dirPin3 = 11
-        #  enablePin3 = 24
-        #  sleepPin3 = 10
-        #
-        #  GPIO.setup(stepPin3, GPIO.OUT)
-        #  GPIO.setup(dirPin3, GPIO.OUT)
-        #  GPIO.setup(enablePin3, GPIO.OUT)
-        #  GPIO.setup(sleepPin3, GPIO.OUT)
-        #
-        #  GPIO.output(enablePin3, GPIO.LOW)
-        #  GPIO.output(sleepPin3, GPIO.LOW)
-        #  GPIO.output(dirPin3, GPIO.HIGH)
-        #
-        #  start_button = 6
-        #  reset_button = 5
-        #  scanner_top_pin = 21
-        #  scanner_bottom_pin = 26
-        #  horizontal_top_pin = 16
-        #  horizontal_bottom_pin = 20
-        #  vertical_top_pin = 13
-        #  vertical_bottom_pin=19
-        #
-        #  GPIO.setup(start_button, GPIO.IN)
-        #  GPIO.setup(reset_button, GPIO.IN)
-        #  GPIO.setup(scanner_top_pin, GPIO.IN)
-        #  GPIO.setup(scanner_bottom_pin, GPIO.IN)
-        #  GPIO.setup(horizontal_top_pin, GPIO.IN)
-        #  GPIO.setup(horizontal_bottom_pin, GPIO.IN)
-        #  GPIO.setup(vertical_top_pin, GPIO.IN)
-        #  GPIO.setup(vertical_bottom_pin, GPIO.IN)
-        #
-        # def reset(reset_button):
-        #     if not self.control.reset_flag:
-        #         print ('reset')
-        #         self.control.reset_flag = True
-        #         tkMessageBox.showinfo("Notification", "Resetting, please confirm.")
-        #         self.control.reset()
-        #         self.control.time_step = 0
-        #         self.OBS = self.init_OBS
-        #         self.control.OBS = self.init_OBS
-        #         self.dead_pirates = []
-        #         self.control.dead_pirates = []
-        #          self.start_flag = False
-        #          self.dead_flag = True
-        #          self.control.reset_flag = False
-        #
-        #  def start(start_button):
-        #      if not self.thread_started:
-        #          self.t = threading.Thread(target=start)
-        #          self.thread_started = True
-        #          self.start_flag = True
-        #      else:
-        #          if self.dead_flag:
-        #              self.t = None
-        #              self.t = threading.Thread(target=start)
-        #              self.start_flag = True
-        #              self.dead_flag = False
-        #
-        #  def stop1(scanner_top_pin):
-        #      print(' scanner, hit top')
-        #      a4988.moveScannerDown(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  def stop2(scanner_bottom_pin):
-        #      print('scanner, hit bottom')
-        #      a4988.moveScannerUp(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  def stop3(horizontal_top_pin):
-        #      print('horizontal , hit top bound')
-        #      a4988.moveHorizontalDown(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  def stop4(horizontal_bottom_pin):
-        #      print('horizontal , hit bottom bound')
-        #      a4988.moveHorizontalUp(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  def stop5(vertical_top_pin):
-        #      print('vertical , hit top bound')
-        #      a4988.moveVerticalDown(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  def stop6(vertical_bottom_pin):
-        #      print('vertical , hit bottom bound')
-        #      a4988.moveVerticalUp(25)
-        #      GPIO.output(enablePin1, GPIO.HIGH) #disable driver
-        #
-        #
-        #  GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-        #  GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        # # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        #  GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-        #  GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-        #  GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-        #  GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-        #  GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 
         def check_status():
             """checks every second whether the start button has been pressed"""
