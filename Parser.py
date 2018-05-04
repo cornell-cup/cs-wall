@@ -17,6 +17,10 @@ class Parser:
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
         self.VariableMap = {'initialize': 0}
+        self.result = ""
+
+    def initializeMap(game_map, self):
+        self.map = game_map
         self.robotX = map["GAME_START"][0]
         self.robotY = map["GAME_START"][1]
         self.destinationX = map["GOAL_X"]
@@ -29,7 +33,6 @@ class Parser:
             self.direction = 2
         elif map["DIRECTION"] == "WEST":
             self.direction = 3
-        self.result = ""
 
     def translateRFID(self, rfidfile):
         """translate the RFID file to the blocks"""

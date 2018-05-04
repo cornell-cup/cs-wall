@@ -78,6 +78,7 @@ class Gui:
     bot2_file = "image/robot2.png"
     bot3_file = "image/robot3.png"
     temp_image = ""
+    game_map_for_parser = {}
 
     def __init__(self):
         """initializes the GUI"""
@@ -91,6 +92,7 @@ class Gui:
             map_data = MapMaker()
             game_data = map_data.parseMap("levels/" + self.game_name + "_levels/" + self.game_name + "_" +
                                           str(self.level))
+            self.game_map_for_parser = game_data
             # game_data = map_data.parseMap("input/sample_map")
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
             self.init_OBS = []
@@ -501,6 +503,7 @@ class Gui:
             """runs the given file of rfid's"""
             # a4988.init()
             p = Parser()
+            p.initializeMap(self.game_map_for_parser)
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
