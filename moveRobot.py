@@ -101,9 +101,11 @@ class moveRobot:
                     self.OBS.remove(obs)
                     self.dead_pirates = []
                     self.dead_pirates.append([x, y])
+                    # TODO does "attack" translate to minibot movement???
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
+            print("HERE"+s)
         return s, goal_reached
 
     def checkBounds(self, x, y):
@@ -145,11 +147,13 @@ class moveRobot:
                 self.time_step += 1
                 self.move_obs()
                 temp, goal = self.moveRobot(code)
-                ded_obs.append(self.dead_pirates[0])
+                if not len(self.dead_pirates) == 0:
+                    ded_obs.append(self.dead_pirates[0])
                 obs = self.OBS
                 if self.checkBounds(self.robotX, self.robotY):
                     break
-                if self.check_obstacles(self.robotX, self.robotY):
+                obs1, obs2 = self.check_obstacles(self.robotX, self.robotY)
+                if obs1:
                     break
                 if temp != "":
                     s += temp
@@ -181,7 +185,6 @@ class moveRobot:
             temp, goal = self.moveRobot(code)
             if temp != "":
                 s += temp
-            print temp
             # time.sleep(1)
         return s
 

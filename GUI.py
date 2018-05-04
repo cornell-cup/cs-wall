@@ -509,7 +509,6 @@ class Gui:
                     w = Label(self.temp_disp, text="Congrats! Goal reached!")
                     w.pack()
                     self.temp_disp.grab_set()
-                    # tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", parent=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.dead_pirates = []
@@ -523,14 +522,12 @@ class Gui:
                         w = Label(self.temp_disp, text="All levels cleared")
                         w.pack()
                         self.temp_disp.grab_set()
-                        # tkMessageBox.showinfo("Notification", "All levels cleared", parent=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
                     self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
                     w.pack()
                     self.temp_disp.grab_set()
-                    # tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", parent=root)
                     self.dead_pirates = []
                     self.control.dead_pirates = []
                     self.control.reset()
@@ -546,14 +543,13 @@ class Gui:
                     im_label.pack()
                     self.dead_flag = True
             else:
-                self.control.run(codeblock)
+                self.control.run(codeblock, self.OBS, self.dead_pirates)
                 if self.control.check_goal():
                     self.choice_flag = True
                     self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Congrats! Goal reached!")
                     w.pack()
                     self.temp_disp.grab_set()
-                    # tkMessageBox.showinfo("Notification", "Congrats! Goal reached!", master=root)
                     self.level += 1
                     if not self.level > G.MAX_LEVEL:
                         self.store_game_data()
@@ -564,14 +560,12 @@ class Gui:
                         w = Label(self.temp_disp, text="All levels cleared")
                         w.pack()
                         self.temp_disp.grab_set()
-                        # tkMessageBox.showinfo("Notification", "All levels cleared", master=root)
                 elif not self.control.reset_flag:
                     self.choice_flag = True
                     self.temp_disp = Toplevel(self.root)
                     w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
                     w.pack()
                     self.temp_disp.grab_set()
-                    # tkMessageBox.showinfo("Notification", "Sorry, incorrect code. Please try again.", master=root)
                     self.control.reset()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
