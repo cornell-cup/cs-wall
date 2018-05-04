@@ -7,14 +7,28 @@ class Parser:
     VariableMap = defaultdict(list)
     robotX = 0
     robotY = 0
+    destinationX = 0
+    destinationY = 0
+    direction = 0
     result = ""
     dict_file = "input/codeBlock1.txt"
+    map = {}
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
         self.VariableMap = {'initialize': 0}
-        self.robotX = 0
-        self.robotY = 0
+        self.robotX = map["GAME_START"][0]
+        self.robotY = map["GAME_START"][1]
+        self.destinationX = map["GOAL_X"]
+        self.destinationY = map["GOAL_Y"]
+        if map["DIRECTION"] == "NORTH":
+            self.direction = 0
+        elif map["DIRECTION"] == "EAST":
+            self.direction = 1
+        elif map["DIRECTION"] == "SOUTH":
+            self.direction = 2
+        elif map["DIRECTION"] == "WEST":
+            self.direction = 3
         self.result = ""
 
     def translateRFID(self, rfidfile):
@@ -177,10 +191,9 @@ class Parser:
 
     def parseLogic(self, s):
         """receives the string s and output value it corresponding to"""
-
         if "Destination" in s:
             s.split("Destination")
-            return self.robotX != 3 & self.robotY != 3
+            return self.robotX != self.destinationX & self.robotY != self.destinationY
         elif ">" in s:
             # logic is >
             temp = s.split(">")
@@ -193,6 +206,9 @@ class Parser:
             # logic is =
             temp = s.split("=")
             return self.parseValue(temp[0]) == self.parseValue(temp[1])
+        elif "PiratesAhead" in s:
+            # TODO
+            return True
         else:
             return False
 
@@ -201,7 +217,28 @@ class Parser:
         """receives the string of code to output minibot movement
         the input in the code contains Forward, Backward, TurnLeft, TurnRight"""
         print(code)
-        return 0
+        if code == "Forward":
+            if self.direction == 0:
+                self.robotY += 1
+            elif self.direction == 1:
+                self.robotX += 1
+            elif self.direction == 2:
+                self.robotY -= 1
+            elif self.direction == 3:
+                self.robotX -= 1
+        elif code == "Backward":
+            if self.direction == 0:
+                self.robotY -= 1
+            elif self.direction == 1:
+                self.robotX -= 1
+            elif self.direction == 2:
+                self.robotY += 1
+            elif self.direction == 3:
+                self.robotX += 1
+        elif code == "TurnLeft":
+            self.direction = (self.direction + 1) % 4
+        elif code == "TurnRight":
+            self.direction = (self.direction + 3) % 4
 
 
 p = Parser()
