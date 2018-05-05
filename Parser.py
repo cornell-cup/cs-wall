@@ -35,7 +35,7 @@ class Parser:
             self.direction = 2
         elif self.map.get("DIRECTION") == "WEST":
             self.direction = 3
-        pirates = orbs
+        self.pirates = orbs
 
     def translateRFID(self, rfidfile):
         """translate the RFID file to the blocks"""
@@ -54,6 +54,7 @@ class Parser:
         file2.close()
         result = ""
         rfids = file1.readline()
+        print blockmap
         # open file of RFID tag and use the blockmap to translate it to block syntax
         while rfids:
             rfids = rfids.replace("\n", "")
@@ -149,6 +150,7 @@ class Parser:
             # the code starts with movement statement
             if code in movement:
                 self.result += code+"\n"
+                self.moveRobot(code)
                 continue
             # the code starts with FOR statement
             if code.split(" ")[0] == "FOR":
@@ -213,11 +215,17 @@ class Parser:
             temp = s.split("=")
             return self.parseValue(temp[0]) == self.parseValue(temp[1])
         elif "PiratesAhead" in s:
-            # TODO
             ahead = False
-            for i in range(len(self.OBS)):
-                ahead = False
-            return True
+            for i in range(len(self.pirates)):
+                if self.direction == 0:
+                    ahead = ahead | ((self.robotX - 1 == self.pirates[i].location[0]) & self.robotY == self.pirates[i].location[1])
+                if self.direction == 1:
+                    ahead = ahead | ((self.robotY + 1 == self.pirates[i].location[1]) & self.robotX == self.pirates[i].location[0])
+                if self.direction == 2:
+                    ahead = ahead | ((self.robotX + 1 == self.pirates[i].location[0]) & self.robotY == self.pirates[i].location[1])
+                if self.direction == 3:
+                    ahead = ahead | ((self.robotY - 1 == self.pirates[i].location[1]) & self.robotX == self.pirates[i].location[0])
+            return ahead
         else:
             return False
 
@@ -226,24 +234,25 @@ class Parser:
         """receives the string of code to output minibot movement
         the input in the code contains Forward, Backward, TurnLeft, TurnRight"""
         self.time_step = self.time_step + 1
+        self.move_obs()
         if code == "Forward":
             if self.direction == 0:
-                self.robotY += 1
-            elif self.direction == 1:
-                self.robotX += 1
-            elif self.direction == 2:
-                self.robotY -= 1
-            elif self.direction == 3:
                 self.robotX -= 1
+            elif self.direction == 1:
+                self.robotY += 1
+            elif self.direction == 2:
+                self.robotX += 1
+            elif self.direction == 3:
+                self.robotY -= 1
         elif code == "Backward":
             if self.direction == 0:
-                self.robotY -= 1
-            elif self.direction == 1:
-                self.robotX -= 1
-            elif self.direction == 2:
-                self.robotY += 1
-            elif self.direction == 3:
                 self.robotX += 1
+            elif self.direction == 1:
+                self.robotY -= 1
+            elif self.direction == 2:
+                self.robotX -= 1
+            elif self.direction == 3:
+                self.robotY += 1
         elif code == "TurnLeft":
             self.direction = (self.direction + 1) % 4
         elif code == "TurnRight":
@@ -251,13 +260,13 @@ class Parser:
 
     def move_obs(self):
         """Moves the obstacles according to designated path"""
-        for i in range(len(self.OBS)):
-            temp_obs = self.OBS[i]
+        for i in range(len(self.pirates)):
+            temp_obs = self.pirates[i]
             if not temp_obs.movable:
                 continue
             path = temp_obs.path
             movement_serial = self.time_step % len(path)
-            self.OBS[i].location = path[movement_serial]
+            self.pirates[i].location = path[movement_serial]
 
-p = Parser()
-print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
+# p = Parser()
+# print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
