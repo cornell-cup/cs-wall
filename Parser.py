@@ -19,19 +19,20 @@ class Parser:
         self.VariableMap = {'initialize': 0}
         self.result = ""
 
-    def initializeMap(game_map, self):
+    def initializeMap(self, game_map):
         self.map = game_map
-        self.robotX = map["GAME_START"][0]
-        self.robotY = map["GAME_START"][1]
-        self.destinationX = map["GOAL_X"]
-        self.destinationY = map["GOAL_Y"]
-        if map["DIRECTION"] == "NORTH":
+        print game_map
+        self.robotX = self.map.get('GAME_START')[0]
+        self.robotY = self.map.get('GAME_START')[1]
+        self.destinationX = self.map.get("GOAL_X")
+        self.destinationY = self.map.get("GOAL_Y")
+        if self.map.get("DIRECTION") == "NORTH":
             self.direction = 0
-        elif map["DIRECTION"] == "EAST":
+        elif self.map.get("DIRECTION") == "EAST":
             self.direction = 1
-        elif map["DIRECTION"] == "SOUTH":
+        elif self.map.get("DIRECTION") == "SOUTH":
             self.direction = 2
-        elif map["DIRECTION"] == "WEST":
+        elif self.map.get("DIRECTION") == "WEST":
             self.direction = 3
 
     def translateRFID(self, rfidfile):
