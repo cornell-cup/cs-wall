@@ -13,15 +13,16 @@ class Parser:
     result = ""
     dict_file = "input/codeBlock1.txt"
     map = {}
+    pirates = []
+    time_step = 0
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
         self.VariableMap = {'initialize': 0}
         self.result = ""
 
-    def initializeMap(self, game_map):
+    def initializeMap(self, game_map, orbs):
         self.map = game_map
-        print game_map
         self.robotX = self.map.get('GAME_START')[0]
         self.robotY = self.map.get('GAME_START')[1]
         self.destinationX = self.map.get("GOAL_X")
@@ -34,6 +35,7 @@ class Parser:
             self.direction = 2
         elif self.map.get("DIRECTION") == "WEST":
             self.direction = 3
+        pirates = orbs
 
     def translateRFID(self, rfidfile):
         """translate the RFID file to the blocks"""
@@ -212,6 +214,9 @@ class Parser:
             return self.parseValue(temp[0]) == self.parseValue(temp[1])
         elif "PiratesAhead" in s:
             # TODO
+            ahead = False
+            for i in range(len(self.OBS)):
+                ahead = False
             return True
         else:
             return False
@@ -220,7 +225,7 @@ class Parser:
     def moveRobot(self, code):
         """receives the string of code to output minibot movement
         the input in the code contains Forward, Backward, TurnLeft, TurnRight"""
-        print(code)
+        self.time_step = self.time_step + 1
         if code == "Forward":
             if self.direction == 0:
                 self.robotY += 1
@@ -244,6 +249,15 @@ class Parser:
         elif code == "TurnRight":
             self.direction = (self.direction + 3) % 4
 
+    def move_obs(self):
+        """Moves the obstacles according to designated path"""
+        for i in range(len(self.OBS)):
+            temp_obs = self.OBS[i]
+            if not temp_obs.movable:
+                continue
+            path = temp_obs.path
+            movement_serial = self.time_step % len(path)
+            self.OBS[i].location = path[movement_serial]
 
 p = Parser()
 print p.runCode(p.translateRFID("input/rfidWHILE.txt"))

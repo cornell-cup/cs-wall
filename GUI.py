@@ -503,7 +503,7 @@ class Gui:
             """runs the given file of rfid's"""
             # a4988.init()
             p = Parser()
-            p.initializeMap(self.game_map_for_parser)
+            p.initializeMap(self.game_map_for_parser, self.OBS)
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
             if self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
