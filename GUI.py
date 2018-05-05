@@ -112,6 +112,7 @@ class Gui:
             map_data = PirateMapMaker()
             game_data = map_data.parseMap("levels/" + self.game_name + "_levels/" + self.game_name + "_" +
                                           str(self.level))
+            self.game_map_for_parser = game_data
             self.BOUNDARY = len(game_data.get("GAME_MAP"))
             self.init_OBS = []
             self.OBS = []
