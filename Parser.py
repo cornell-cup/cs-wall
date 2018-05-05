@@ -54,7 +54,6 @@ class Parser:
         file2.close()
         result = ""
         rfids = file1.readline()
-        print blockmap
         # open file of RFID tag and use the blockmap to translate it to block syntax
         while rfids:
             rfids = rfids.replace("\n", "")
@@ -142,7 +141,6 @@ class Parser:
     def runCode(self, inputCode):
         """main function that receives the string of inputCode to output minibot movement"""
         # split the code by lines
-        print inputCode
         codeLines = inputCode.split("\n")
         movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight', 'Attack']
         while len(codeLines) > 0:
