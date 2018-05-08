@@ -38,8 +38,8 @@ GPIO.setup(vertical_top_pin, GPIO.IN)
 GPIO.setup(vertical_bottom_pin, GPIO.IN)
 
 #Motor Scanner Setup
-stepPin1 = 2
-dirPin1 = 3
+stepPin1 = 3
+dirPin1 = 2
 enablePin1 = 18
 sleepPin1 = 4
 
@@ -55,9 +55,9 @@ GPIO.output(dirPin1, GPIO.HIGH)
 
 #Motor Horizontal
 stepPin2 = 27
-dirPin2 = 22
+dirPin2 = 17
 enablePin2 = 23
-sleepPin2 = 17
+sleepPin2 = 22
 
 GPIO.setup(stepPin2, GPIO.OUT)
 GPIO.setup(dirPin2, GPIO.OUT)
@@ -71,9 +71,9 @@ GPIO.output(dirPin2, GPIO.HIGH)
 
 #Motor Vertical
 stepPin3 = 9
-dirPin3 = 11
+dirPin3 = 10
 enablePin3 = 24
-sleepPin3 = 10
+sleepPin3 = 11
 
 GPIO.setup(stepPin3, GPIO.OUT)
 GPIO.setup(dirPin3, GPIO.OUT)
