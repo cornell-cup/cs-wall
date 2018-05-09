@@ -39,22 +39,22 @@ GPIO.setup(horizontal_bottom_pin, GPIO.IN)
 GPIO.setup(vertical_top_pin, GPIO.IN)
 GPIO.setup(vertical_bottom_pin, GPIO.IN)'''
 #scaenner
-stepPin1 = 2
-dirPin1 = 3
+stepPin1 = 3
+dirPin1 = 2
 enablePin1 = 18
 sleepPin1 = 4
 
 #Motor Horizontal
 stepPin2 = 27
-dirPin2 = 22
+dirPin2 = 17
 enablePin2 = 23
-sleepPin2 = 17
+sleepPin2 = 22
 
 #Motor Vertical
 stepPin3 = 9
-dirPin3 = 11
+dirPin3 = 10
 enablePin3 = 24
-sleepPin3 = 10
+sleepPin3 = 11
 
 def init():
         #Motor Scanner Setup
