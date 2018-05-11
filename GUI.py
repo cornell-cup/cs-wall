@@ -53,6 +53,7 @@ class Gui:
     game_label2 = None
     version_label1 = None
     version_label2 = None
+    level_disp_label = None
     root = None
 
     # flags
@@ -475,8 +476,8 @@ class Gui:
         # Constructs the grid according to defined dimensions and displays it on the GUI
         self.root = Tk()
         self.root.title("WALL")
-        label = Label(self.root, text="Level " + str(self.level))
-        label.grid(row=0, column=1)
+        self.level_disp_label = Label(self.root, text="Level " + str(self.level))
+        self.level_disp_label.grid(row=0, column=1)
         frame = Frame(self.root)
         self.temp_image = self.outfile
         im = PhotoImage(file=self.temp_image, master=self.root)
@@ -514,6 +515,7 @@ class Gui:
                     w.pack()
                     self.temp_disp.grab_set()
                     self.level += 1
+                    self.level_disp_label.config(text="Level " + str(self.level))
                     if not self.level > G.MAX_LEVEL:
                         self.dead_pirates = []
                         self.control.dead_pirates = []
@@ -555,6 +557,7 @@ class Gui:
                     w.pack()
                     self.temp_disp.grab_set()
                     self.level += 1
+                    self.level_disp_label.config(text="Level " + str(self.level))
                     if not self.level > G.MAX_LEVEL:
                         self.store_game_data()
                         self.dead_flag = True
