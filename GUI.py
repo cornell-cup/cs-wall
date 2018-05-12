@@ -12,8 +12,8 @@ from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
 from minibotConnector import minibotConnector
-import RPi.GPIO as GPIO
-import a4988
+# import RPi.GPIO as GPIO
+# import a4988
 
 
 class Gui:
@@ -39,10 +39,12 @@ class Gui:
     MINIBOT = 1
     MAZE = 0
     PIRATES = 1
+    minibot_index = 0
     minibot_address = ""
 
     # conditional stats
     dead_pirates = []
+    list_of_minibot_ip = []
 
     # conditional objects
     control = None
@@ -194,10 +196,9 @@ class Gui:
                         else:
                             self.choice_serial += 1
                     elif self.choice_serial == 3:
-                        # TODO
                         self.choice_lock = True
                         self.temp_disp.destroy()
-
+                        self.choice_serial += 1
                     elif self.choice_serial == 4:
                         # self.level = int(self.temp_box.get())
                         self.choice_lock = True
@@ -232,8 +233,11 @@ class Gui:
                         self.version_label1.config(text="2D System", bg="light blue")
                         self.version_label2.config(text="Minibot", bg="white")
                 elif self.choice_serial == 3:
-                    # TODO
-
+                    if not self.choice_lock and self.minibot_index < len(self.list_of_minibot_ip) - 2:
+                        self.minibot_index += 1
+                        self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
+                        self.minibot_ip_label.config(text="Please select MiniBot IP: use up/down arrows: " +
+                                                          self.minibot_address)
                 elif self.choice_serial == 4:
                     if not self.choice_lock and self.level < G.MAX_LEVEL:
                         self.level += 1
@@ -251,8 +255,11 @@ class Gui:
                         self.version_label1.config(text="2D System", bg="white")
                         self.version_label2.config(text="Minibot", bg="light blue")
                 elif self.choice_serial == 3:
-                # TODO
-
+                    if not self.choice_lock and self.minibot_index > 0:
+                        self.minibot_index -= 1
+                        self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
+                        self.minibot_ip_label.config(text="Please select MiniBot IP: use up/down arrows: " +
+                                                          self.minibot_address)
                 elif self.choice_serial == 4:
                     if not self.choice_lock and self.level > 1:
                         self.level -= 1
@@ -476,12 +483,25 @@ class Gui:
             self.control = SystemControl()
         elif self.version == self.MINIBOT:
             self.control = moveRobot()
+            self.minibot_con.start()
+            self.list_of_minibot_ip = self.minibot_con.get_addresses()
+            if len(self.list_of_minibot_ip) > 0:
+                self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
             self.temp_disp = Tk()
+
+            def update_ip():
+                """updates the grid according to the robot's current location/direction"""
+                self.list_of_minibot_ip = self.minibot_con.get_addresses()
+
+                # updates display every 1 second
+                self.temp_disp.after(1000, update_ip)
+
             self.temp_disp.title("MiniBot Chooser")
             self.minibot_ip_label = Label(self.temp_disp, text="Please select MiniBot IP: use up/down arrows: "
                                                                + self.minibot_address)
             self.minibot_ip_label.grid(row=0, column=0, columnspan=3)
             self.choice_lock = False
+            update_ip()
             self.temp_disp.mainloop()
         # else:
         #     temp = Tk()
