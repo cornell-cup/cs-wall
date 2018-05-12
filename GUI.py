@@ -620,7 +620,10 @@ class Gui:
                     self.level += 1
                     self.level_disp_label.config(text="Level " + str(self.level))
                     if not self.level > G.MAX_LEVEL:
+                        self.dead_pirates = []
+                        self.control.dead_pirates = []
                         self.store_game_data()
+                        self.control.time_step = 0
                         self.dead_flag = True
                     else:
                         self.choice_flag = True
