@@ -507,7 +507,17 @@ class Gui:
             p = Parser()
             p.initializeMap(self.game_map_for_parser, self.OBS)
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
-            if self.version == self.TWO_D:
+            if "Error at Line" in codeblock:
+                s1, s2 = codeblock.split('\n')
+                self.choice_flag = True
+                self.temp_disp = Toplevel(self.root)
+                w1 = Label(self.temp_disp, text=s1)
+                w1.grid(row=0, column=0)
+                w2 = Label(self.temp_disp, text=s2)
+                w2.grid(row=1, column=0)
+                self.temp_disp.grab_set()
+                self.dead_flag = True
+            elif self.version == self.TWO_D:
                 if self.control.run(codeblock, self.OBS, self.dead_pirates):
                     self.choice_flag = True
                     self.temp_disp = Toplevel(self.root)
