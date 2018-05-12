@@ -492,6 +492,7 @@ class Gui:
             def update_ip():
                 """updates the grid according to the robot's current location/direction"""
                 self.list_of_minibot_ip = self.minibot_con.get_addresses()
+                print(self.list_of_minibot_ip)
 
                 # updates display every 1 second
                 self.temp_disp.after(1000, update_ip)
