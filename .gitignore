@@ -3,6 +3,7 @@
 
 # Idea
 *.iml
+.idea/
 .idea/cs-wall.iml
 /venv
 *.DS_Store

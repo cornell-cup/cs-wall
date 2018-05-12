@@ -11,8 +11,9 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
-import RPi.GPIO as GPIO
-import a4988
+from minibotConnector import minibotConnector
+# import RPi.GPIO as GPIO
+# import a4988
 
 
 class Gui:
@@ -84,13 +85,14 @@ class Gui:
     def __init__(self):
         """initializes the GUI"""
         self.start_flag = False
+        self.minibot_con = minibotConnector()
 
     def store_game_data(self):
         """after level is chosen, variables related to the game level are stored below"""
         game_data = {}
 
         if self.game == self.MAZE:
-            map_data = MapMaker()
+            map_data = MazeMaker()
             game_data = map_data.parseMap("levels/" + self.game_name + "_levels/" + self.game_name + "_" +
                                           str(self.level))
             self.game_map_for_parser = game_data
@@ -272,14 +274,14 @@ class Gui:
         enablePin1 = 18
         sleepPin1 = 4
         
-        GPIO.setup(stepPin1, GPIO.OUT)
-        GPIO.setup(dirPin1, GPIO.OUT)
-        GPIO.setup(enablePin1, GPIO.OUT)
-        GPIO.setup(sleepPin1, GPIO.OUT)
+        # GPIO.setup(stepPin1, GPIO.OUT)
+        # GPIO.setup(dirPin1, GPIO.OUT)
+        # GPIO.setup(enablePin1, GPIO.OUT)
+        # GPIO.setup(sleepPin1, GPIO.OUT)
         
-        GPIO.output(enablePin1, GPIO.LOW)
-        GPIO.output(sleepPin1, GPIO.LOW)
-        GPIO.output(dirPin1, GPIO.HIGH)
+        # GPIO.output(enablePin1, GPIO.LOW)
+        # GPIO.output(sleepPin1, GPIO.LOW)
+        # GPIO.output(dirPin1, GPIO.HIGH)
 
         #Motor Vertical
         stepPin2 = 27
@@ -288,14 +290,14 @@ class Gui:
 
         sleepPin2 = 22
         
-        GPIO.setup(stepPin2, GPIO.OUT)
-        GPIO.setup(dirPin2, GPIO.OUT)
-        GPIO.setup(enablePin2, GPIO.OUT)
-        GPIO.setup(sleepPin2, GPIO.OUT)
+        # GPIO.setup(stepPin2, GPIO.OUT)
+        # GPIO.setup(dirPin2, GPIO.OUT)
+        # GPIO.setup(enablePin2, GPIO.OUT)
+        # GPIO.setup(sleepPin2, GPIO.OUT)
         
-        GPIO.output(enablePin2, GPIO.LOW)
-        GPIO.output(sleepPin2, GPIO.LOW)
-        GPIO.output(dirPin2, GPIO.HIGH)
+        # GPIO.output(enablePin2, GPIO.LOW)
+        # GPIO.output(sleepPin2, GPIO.LOW)
+        # GPIO.output(dirPin2, GPIO.HIGH)
         #
 
         #Motor Horizontal
@@ -305,14 +307,14 @@ class Gui:
 
         sleepPin3 = 11
         #
-        GPIO.setup(stepPin3, GPIO.OUT)
-        GPIO.setup(dirPin3, GPIO.OUT)
-        GPIO.setup(enablePin3, GPIO.OUT)
-        GPIO.setup(sleepPin3, GPIO.OUT)
+        # GPIO.setup(stepPin3, GPIO.OUT)
+        # GPIO.setup(dirPin3, GPIO.OUT)
+        # GPIO.setup(enablePin3, GPIO.OUT)
+        # GPIO.setup(sleepPin3, GPIO.OUT)
         
-        GPIO.output(enablePin3, GPIO.LOW)
-        GPIO.output(sleepPin3, GPIO.LOW)
-        GPIO.output(dirPin3, GPIO.HIGH)
+        # GPIO.output(enablePin3, GPIO.LOW)
+        # GPIO.output(sleepPin3, GPIO.LOW)
+        # GPIO.output(dirPin3, GPIO.HIGH)
 
         start_button = 6
         reset_button = 5
@@ -323,14 +325,14 @@ class Gui:
         vertical_top_pin = 13
         vertical_bottom_pin=19
         
-        GPIO.setup(start_button, GPIO.IN)
-        GPIO.setup(reset_button, GPIO.IN)
-        GPIO.setup(scanner_top_pin, GPIO.IN)
-        GPIO.setup(scanner_bottom_pin, GPIO.IN)
-        GPIO.setup(horizontal_top_pin, GPIO.IN)
-        GPIO.setup(horizontal_bottom_pin, GPIO.IN)
-        GPIO.setup(vertical_top_pin, GPIO.IN)
-        GPIO.setup(vertical_bottom_pin, GPIO.IN)
+        # GPIO.setup(start_button, GPIO.IN)
+        # GPIO.setup(reset_button, GPIO.IN)
+        # GPIO.setup(scanner_top_pin, GPIO.IN)
+        # GPIO.setup(scanner_bottom_pin, GPIO.IN)
+        # GPIO.setup(horizontal_top_pin, GPIO.IN)
+        # GPIO.setup(horizontal_bottom_pin, GPIO.IN)
+        # GPIO.setup(vertical_top_pin, GPIO.IN)
+        # GPIO.setup(vertical_bottom_pin, GPIO.IN)
 
         def reset(reset_button):
             if not self.control.reset_flag:
@@ -385,48 +387,48 @@ class Gui:
         
         def stop1(scanner_top_pin):
              print(' scanner, hit top')
-             a4988.moveScannerDown(25)
-             GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+             # a4988.moveScannerDown(25)
+             # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
         def stop2(scanner_bottom_pin):
              print('scanner, hit bottom')
-             a4988.moveScannerUp(25)
-             GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+             # a4988.moveScannerUp(25)
+             # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
         def stop3(horizontal_top_pin):
              print('horizontal , hit top bound')
-             a4988.moveHorizontalDown(25)
-             GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+             # a4988.moveHorizontalDown(25)
+             # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
         def stop4(horizontal_bottom_pin):
              print('horizontal , hit bottom bound')
-             a4988.moveHorizontalUp(25)
-             GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+             # a4988.moveHorizontalUp(25)
+             # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
         def stop5(vertical_top_pin):
             print('vertical , hit top bound')
-            a4988.moveVerticalDown(25)
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            # a4988.moveVerticalDown(25)
+            # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
         def stop6(vertical_bottom_pin):
             print('vertical , hit bottom bound')
-            a4988.moveVerticalUp(25)
-            GPIO.output(enablePin1, GPIO.HIGH) #disable driver
+            # a4988.moveVerticalUp(25)
+            # GPIO.output(enablePin1, GPIO.HIGH) #disable driver
         
         
-        GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
-        GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
-        # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
-        GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
-        GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
-        GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
-        GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
+        # GPIO.add_event_detect(start_button, GPIO.FALLING, callback=start, bouncetime=2000)
+        # GPIO.add_event_detect(reset_button, GPIO.FALLING, callback=reset, bouncetime=2000)
+        # # GPIO.add_event_detect(scanner_bottom_pin, GPIO.FALLING, callback=stop1, bouncetime=2000)
+        # GPIO.add_event_detect(scanner_top_pin, GPIO.FALLING, callback=stop2, bouncetime=2000)
+        # GPIO.add_event_detect(horizontal_top_pin, GPIO.FALLING, callback=stop3, bouncetime=2000)
+        # GPIO.add_event_detect(horizontal_bottom_pin, GPIO.FALLING, callback=stop4, bouncetime=2000)
+        # GPIO.add_event_detect(vertical_top_pin, GPIO.FALLING, callback=stop5, bouncetime=2000)
+        # GPIO.add_event_detect(vertical_bottom_pin, GPIO.FALLING, callback=stop6, bouncetime=2000)
 
         self.temp_disp.mainloop()
 
@@ -456,6 +458,9 @@ class Gui:
             self.control = SystemControl()
         elif self.version == self.MINIBOT:
             self.control = moveRobot()
+
+            ## Additional window to search for an select Minibots hereh
+
         # else:
         #     temp = Tk()
         #     temp.withdraw()
@@ -506,7 +511,7 @@ class Gui:
 
         def start():
             """runs the given file of rfid's"""
-            # a4988.init()
+#             # a4988.init()
             p = Parser()
             p.initializeMap(self.game_map_for_parser, self.OBS)
             codeblock = p.runCode(p.translateRFID(self.rfid_file))
