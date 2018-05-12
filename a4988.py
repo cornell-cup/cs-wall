@@ -56,6 +56,9 @@ dirPin3 = 10
 enablePin3 = 24
 sleepPin3 = 11
 
+delay = 0.0005 
+delayScanner = 0.0005
+
 def init():
         #Motor Scanner Setup
 
@@ -90,7 +93,7 @@ def init():
     GPIO.output(sleepPin3, GPIO.LOW)
     GPIO.output(dirPin3, GPIO.HIGH)
 
-delay = .0005
+
 
 
 #Moving Scanner Motor
@@ -107,6 +110,7 @@ def moveScannerUp(num):
     GPIO.output(sleepPin1, GPIO.LOW)
 
 def moveScannerDown(num):
+    print('in scanner ')
     #step_count = input("Enter number of steps: ")
     step_count = num
     GPIO.output(dirPin1, GPIO.HIGH)
@@ -115,9 +119,9 @@ def moveScannerDown(num):
     for x in range(step_count):
         #readRFID()
         GPIO.output(stepPin1, GPIO.HIGH)
-        sleep(delay) 
+        sleep(delayScanner) 
         GPIO.output(stepPin1, GPIO.LOW)
-        sleep(delay)
+        sleep(delayScanner)
     GPIO.output(sleepPin1, GPIO.LOW)
     
     
@@ -205,7 +209,6 @@ def moveVerticalUp(num):
     step_count = num
     GPIO.output(dirPin3, GPIO.LOW)
     GPIO.output(sleepPin3, GPIO.HIGH)
-    f = open('rfidAttack.txt', 'w')
     for x in range(step_count):
         
         GPIO.output(stepPin3, GPIO.HIGH)

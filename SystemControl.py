@@ -1,6 +1,6 @@
 import time
 import Globals as G
-# import a4988
+import a4988
 
 
 class SystemControl:
@@ -38,15 +38,21 @@ class SystemControl:
         out = False
         on_obstacle = False
 
+        step = 5000
+
         if code == "Forward":
             if self.direction == G.SOUTH:
                 self.robotX += 1
+                a4988.moveHorizontalUp(step)
             elif self.direction == G.EAST:
                 self.robotY += 1
+                a4988.moveVerticalUp(step)
             elif self.direction == G.NORTH:
                 self.robotX -= 1
+                a4988.moveHorizontalDown(step)
             elif self.direction == G.WEST:
                 self.robotY -= 1
+                a4988.moveVerticalDown(step)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
@@ -54,16 +60,20 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            # a4988.moveVerticalUp(10)
+            
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
+                a4988.moveHorizontalDown(step)
             elif self.direction == G.EAST:
                 self.robotY -= 1
+                a4988.moveVerticalDown(step)
             elif self.direction == G.NORTH:
                 self.robotX += 1
+                a4988.moveHorizontalUp(step)
             elif self.direction == G.WEST:
                 self.robotY += 1
+                a4988.moveHorizontalUp(step)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
