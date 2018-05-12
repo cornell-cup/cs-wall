@@ -2,7 +2,6 @@ import time
 import Globals as G
 #import a4988
 
-
 class SystemControl:
     """Receives the translated RFID's from Wall through Parser and calls the 2D system movements accordingly.
     In addition, records the current position of the bot during its movement as class variables. """
@@ -19,6 +18,7 @@ class SystemControl:
     GoalY = 4
     dimX = 5
     OBS = []
+    dead_pirates = []
     attack_range = 2
 
     def __init__(self):
@@ -53,8 +53,7 @@ class SystemControl:
             if check:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
-            a4988.moveVerticalUp(10)
-            print('moved')
+            # a4988.moveVerticalUp(10)
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -102,6 +101,8 @@ class SystemControl:
                     break
                 elif check:
                     self.OBS.remove(obs)
+                    self.dead_pirates = []
+                    self.dead_pirates.append([x, y])
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
@@ -207,7 +208,7 @@ class SystemControl:
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
 
-    def run(self, code, obs):
+    def run(self, code, obs, ded_obs):
         """runs the actions on the 2D system"""
         action_list = code.split("\n")
         length = len(action_list)
@@ -222,6 +223,8 @@ class SystemControl:
             print("robotY")
             print(self.robotY)
             obs = self.OBS
+            if not len(self.dead_pirates) == 0:
+                ded_obs.append(self.dead_pirates[0])
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:

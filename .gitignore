@@ -5,12 +5,8 @@
 *.iml
 .idea/cs-wall.iml
 /venv
-<<<<<<< HEAD
-=======
-
->>>>>>> develop
 *.DS_Store
 
-.idea/cs-wall.iml
+.idea/libraries/R_User_Library.xml
 
-.idea/cs-wall.iml
+image/outfile.gif
