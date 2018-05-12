@@ -11,6 +11,7 @@ import Globals as G
 from pynput import keyboard
 from pirate import Pirate
 from pirateMapMaker import PirateMapMaker
+from minibotConnector import minibotConnector
 import RPi.GPIO as GPIO
 import a4988
 
@@ -84,6 +85,7 @@ class Gui:
     def __init__(self):
         """initializes the GUI"""
         self.start_flag = False
+        self.minibot_con = minibotConnector()
 
     def store_game_data(self):
         """after level is chosen, variables related to the game level are stored below"""
