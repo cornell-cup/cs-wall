@@ -15,13 +15,14 @@ class Parser:
     map = {}
     pirates = []
     time_step = 0
+    line_of_code_processed = 0
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
         self.VariableMap = {'initialize': 0}
         self.result = ""
 
-    def initializeMap(self, game_map, orbs):
+    def tr(self, game_map, orbs):
         self.map = game_map
         self.robotX = self.map.get('GAME_START')[0]
         self.robotY = self.map.get('GAME_START')[1]
@@ -144,6 +145,7 @@ class Parser:
         codeLines = inputCode.split("\n")
         movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight', 'Attack']
         while len(codeLines) > 0:
+            self.line_of_code_processed += 1
             code = codeLines.pop(0)
             # the code starts with movement statement
             if code in movement:
@@ -152,48 +154,66 @@ class Parser:
                 continue
             # the code starts with FOR statement
             if code.split(" ")[0] == "FOR":
-                ForCode = ""
-                temp = codeLines.pop(0)
-                # record code in FOR loop until END statement
-                while temp != "END":
-                    ForCode += temp + "\n"
+
+                try:
+                    ForCode = ""
                     temp = codeLines.pop(0)
-                loopNum = int(code.split(" ")[1].split("x")[0]);
-                for i in range(0, loopNum) :
-                    self.runCode(ForCode)
-                continue
+                    # record code in FOR loop until END statement
+                    while temp != "END":
+                        ForCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    loopNum = int(code.split(" ")[1].split("x")[0]);
+                    for i in range(0, loopNum) :
+                        self.runCode(ForCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for FOR"
             # the code starts with SET statement
             if code.split(" ")[0] == "SET":
-                # find first and second statement in SET
-                one, two = code[4:].split("=")
-                # replace first statement's value in Variable Map to the value evaluated by second statement
-                self.VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
-                continue
+                try:
+                    # find first and second statement in SET
+                    one, two = code[4:].split("=")
+                    # replace first statement's value in Variable Map to the value evaluated by second statement
+                    self.VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
+                    continue
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you SET a variable with error"
             # the code starts with IF statement
             if code.split(" ")[0] == "IF":
-                logic = code[3:].replace(" ", "")
-                IfCode = ""
-                temp = codeLines.pop(0)
-                # record code in IF clause until END statement
-                while temp != "END":
-                    IfCode += temp + "\n"
+                try:
+                    logic = code[3:].replace(" ", "")
+                    IfCode = ""
                     temp = codeLines.pop(0)
-                if self.parseLogic(logic):
-                    self.runCode(IfCode)
-                continue
+                    # record code in IF clause until END statement
+                    while temp != "END":
+                        IfCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    if self.parseLogic(logic):
+                        self.runCode(IfCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for IF"
+
             # the code starts with WHILE statement
             if code.split(" ")[0] == "WHILE":
-                logic = code[6:].replace(" ", "")
-                WhileCode = ""
-                temp = codeLines.pop(0)
-                # record code in WHILE loop until END statement
-                while temp != "END":
-                    WhileCode += temp + "\n"
+                try:
+                    logic = code[6:].replace(" ", "")
+                    WhileCode = ""
                     temp = codeLines.pop(0)
-                while self.parseLogic(logic):
-                    self.runCode(WhileCode)
-                continue
+                    # record code in WHILE loop until END statement
+                    while temp != "END":
+                        WhileCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    while self.parseLogic(logic):
+                        self.runCode(WhileCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for WHILE"
         return self.result
+
 
     def parseLogic(self, s):
         """receives the string s and output value it corresponding to"""
@@ -266,5 +286,5 @@ class Parser:
             movement_serial = self.time_step % len(path)
             self.pirates[i].location = path[movement_serial]
 
-# p = Parser()
-# print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
+p = Parser()
+print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
