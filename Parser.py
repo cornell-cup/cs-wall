@@ -22,7 +22,7 @@ class Parser:
         self.VariableMap = {'initialize': 0}
         self.result = ""
 
-    def tr(self, game_map, orbs):
+    def initializeMap(self, game_map, orbs):
         self.map = game_map
         self.robotX = self.map.get('GAME_START')[0]
         self.robotY = self.map.get('GAME_START')[1]
@@ -286,5 +286,5 @@ class Parser:
             movement_serial = self.time_step % len(path)
             self.pirates[i].location = path[movement_serial]
 
-p = Parser()
-print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
+# p = Parser()
+# print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
