@@ -233,7 +233,7 @@ class Gui:
                         self.version_label1.config(text="2D System", bg="light blue")
                         self.version_label2.config(text="Minibot", bg="white")
                 elif self.choice_serial == 3:
-                    if not self.choice_lock and self.minibot_index < len(self.list_of_minibot_ip) - 2:
+                    if not self.choice_lock and self.minibot_index < len(self.list_of_minibot_ip) - 1:
                         self.minibot_index += 1
                         self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
                         self.minibot_ip_label.config(text="Please select MiniBot IP: use up/down arrows: " +
@@ -385,8 +385,15 @@ class Gui:
         #             # self.version = self.temp_box.curselection()[0]
         #             self.choice_lock = True
         #             self.temp_disp.destroy()
-        #             self.choice_serial += 1
+        #             if self.version == self.TWO_D:
+        #                 self.choice_serial += 2
+        #             else:
+        #                 self.choice_serial += 1
         #         elif self.choice_serial == 3:
+        #             self.choice_lock = True
+        #             self.temp_disp.destroy()
+        #             self.choice_serial += 1
+        #         elif self.choice_serial == 4:
         #             # self.level = int(self.temp_box.get())
         #             self.choice_lock = True
         #             self.temp_disp.destroy()
@@ -485,6 +492,7 @@ class Gui:
             self.control = moveRobot()
             self.minibot_con.start()
             self.list_of_minibot_ip = self.minibot_con.get_addresses()
+            # self.list_of_minibot_ip = ["192.168.10.10", "192.168.8080", "192.0.0"]
             if len(self.list_of_minibot_ip) > 0:
                 self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
             self.temp_disp = Tk()
