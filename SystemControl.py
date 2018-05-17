@@ -223,7 +223,7 @@ class SystemControl:
         
         length = len(action_list)
         goal = False
-        a4988.moveScannerDown(2500)
+        # a4988.moveScannerDown(2500)
         for i in range(0, length-1):
             code = action_list[i]
             self.time_step += 1
