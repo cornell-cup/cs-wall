@@ -97,8 +97,8 @@ class Gui:
         """initializes the GUI"""
         self.start_flag = False
         self.minibot_con = minibotConnector()
-        file = open("output/minibot_script.txt", "w")
-        file.write("")
+        clear_file = open("output/minibot_script.txt", "w")
+        clear_file.write("")
 
     def store_game_data(self):
         """after level is chosen, variables related to the game level are stored below"""
