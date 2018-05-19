@@ -47,12 +47,9 @@ class Gui:
     MINIBOT = 1
     MAZE = 0
     PIRATES = 1
-    minibot_index = 0
-    minibot_address = ""
 
     # conditional stats
     dead_pirates = []
-    list_of_minibot_ip = []
 
     # conditional objects
     control = None
@@ -61,7 +58,6 @@ class Gui:
     temp_box = None
     choice_serial = 1
     level_label = None
-    minibot_ip_label = None
     game_label1 = None
     game_label2 = None
     version_label1 = None
@@ -96,7 +92,7 @@ class Gui:
     def __init__(self):
         """initializes the GUI"""
         self.start_flag = False
-        self.minibot_con = minibotConnector()
+        # self.minibot_con = minibotConnector()
         clear_file = open("output/minibot_script.txt", "w")
         clear_file.write("")
 
@@ -206,10 +202,6 @@ class Gui:
                         else:
                             self.choice_serial += 1
                     elif self.choice_serial == 3:
-                        self.choice_lock = True
-                        self.temp_disp.destroy()
-                        self.choice_serial += 1
-                    elif self.choice_serial == 4:
                         # self.level = int(self.temp_box.get())
                         self.choice_lock = True
                         self.temp_disp.destroy()
@@ -244,12 +236,6 @@ class Gui:
                         self.version_label1.config(text="2D System", bg="light blue")
                         self.version_label2.config(text="Minibot", bg="white")
                 elif self.choice_serial == 3:
-                    if not self.choice_lock and self.minibot_index < len(self.list_of_minibot_ip) - 1:
-                        self.minibot_index += 1
-                        self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
-                        self.minibot_ip_label.config(text="Please select MiniBot IP: use up/down arrows: " +
-                                                          self.minibot_address)
-                elif self.choice_serial == 4:
                     if not self.choice_lock and self.level < G.MAX_LEVEL:
                         self.level += 1
                         self.level_label.config(text="Please choose your beginning level: " + str(self.level))
@@ -266,12 +252,6 @@ class Gui:
                         self.version_label1.config(text="2D System", bg="white")
                         self.version_label2.config(text="Minibot", bg="light blue")
                 elif self.choice_serial == 3:
-                    if not self.choice_lock and self.minibot_index > 0:
-                        self.minibot_index -= 1
-                        self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
-                        self.minibot_ip_label.config(text="Please select MiniBot IP: use up/down arrows: " +
-                                                          self.minibot_address)
-                elif self.choice_serial == 4:
                     if not self.choice_lock and self.level > 1:
                         self.level -= 1
                         self.level_label.config(text="Please choose your beginning level: " + str(self.level))
@@ -501,28 +481,8 @@ class Gui:
             self.control = SystemControl()
         elif self.version == self.MINIBOT:
             self.control = moveRobot()
-            self.minibot_con.start()
-            self.list_of_minibot_ip = self.minibot_con.get_addresses()
-            # self.list_of_minibot_ip = ["192.168.10.10", "192.168.8080", "192.0.0"]
-            if len(self.list_of_minibot_ip) > 0:
-                self.minibot_address = self.list_of_minibot_ip[self.minibot_index]
-            self.temp_disp = Tk()
+            # self.minibot_con.start()
 
-            def update_ip():
-                """updates the grid according to the robot's current location/direction"""
-                self.list_of_minibot_ip = self.minibot_con.get_addresses()
-                print(self.list_of_minibot_ip)
-
-                # updates display every 1 second
-                self.temp_disp.after(1000, update_ip)
-
-            self.temp_disp.title("MiniBot Chooser")
-            self.minibot_ip_label = Label(self.temp_disp, text="Please select MiniBot IP: use up/down arrows: "
-                                                               + self.minibot_address)
-            self.minibot_ip_label.grid(row=0, column=0, columnspan=3)
-            self.choice_lock = False
-            update_ip()
-            self.temp_disp.mainloop()
         # else:
         #     temp = Tk()
         #     temp.withdraw()
@@ -636,6 +596,7 @@ class Gui:
             else:
                 script = self.control.run(codeblock, self.OBS, self.dead_pirates)
                 file_obj = open("output/minibot_script.txt", "a")
+                file_obj.write("****************************EXECUTING****************************\n")
                 file_obj.write(script)
                 file_obj.write("********************************************************\n")
                 if self.control.check_goal():
@@ -665,6 +626,7 @@ class Gui:
                     w.pack()
                     self.temp_disp.grab_set()
                     reset_script = self.control.reset()
+                    file_obj.write("****************************RESETTING****************************\n")
                     file_obj.write(reset_script)
                     file_obj.write("********************************************************\n")
                     # file_obj.close()
