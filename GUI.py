@@ -197,15 +197,13 @@ class Gui:
                         # self.version = self.temp_box.curselection()[0]
                         self.choice_lock = True
                         self.temp_disp.destroy()
-                        if self.version == self.TWO_D:
-                            self.choice_serial += 2
-                        else:
-                            self.choice_serial += 1
+                        self.choice_serial += 1
                     elif self.choice_serial == 3:
                         # self.level = int(self.temp_box.get())
                         self.choice_lock = True
                         self.temp_disp.destroy()
                         self.choice_serial += 1
+                        print(self.choice_serial)
                     else:
                         self.temp_disp.withdraw()
                         self.choice_flag = False
