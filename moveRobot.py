@@ -1,5 +1,6 @@
 import Globals as G
 import time
+import httplib
 
 
 class moveRobot:
@@ -23,6 +24,8 @@ class moveRobot:
     dead_pirates = []
     attack_range = 2
 
+    # conn = httplib.HTTPConnection("192.168.4.71:8080")
+
     def __init__(self):
         self.startX = 3
         self.startY = 1
@@ -40,7 +43,7 @@ class moveRobot:
         # TODO change "dummy" to actual power level
         # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
         MOVE_POWER = 50
-        TURN_POWER = 50
+        TURN_POWER = 10
         # TODO Figure out how long it takes to turn 90 degrees
         TURN_TIME = 3
         if code == "Forward":
@@ -52,9 +55,9 @@ class moveRobot:
                 self.robotX -= 1
             elif self.direction == G.WEST:
                 self.robotY -= 1
-            s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER)
+            s += "bot.move_forward {}\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait {}\n".format(time) + "\n"
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -64,17 +67,17 @@ class moveRobot:
                 self.robotX += 1
             elif self.direction == G.WEST:
                 self.robotY += 1
-            s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER)
+            s += "bot.move_backward {}\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait {}\n".format(time) + "\n"
         if code == "TurnLeft":
             self.direction = (self.direction + 1) % 4
-            s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "bot.move_counter_clockwise {}\n".format(TURN_POWER)
+            s += "bot.wait {}\n".format(TURN_TIME) + "\n"
         if code == "TurnRight":
             self.direction = (self.direction + 3) % 4
-            s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "bot.move_clockwise {}\n".format(TURN_POWER)
+            s += "bot.wait {}\n".format(TURN_TIME) + "\n"
         if code == "Attack":
             in_range = []
             if self.direction == G.SOUTH:
@@ -138,6 +141,7 @@ class moveRobot:
 
     def run(self, code, obs, ded_obs):
         """returns the finalized SCRIPT string to send to minibot"""
+
         s = ""
         list = code.split("\n")
         length = len(list)
@@ -162,6 +166,8 @@ class moveRobot:
             else:
                 s += self.reset()
                 break
+        conn = httplib.HTTPConnection("192.168.4.71:8080")
+        conn.request("POST", "/script", s)
         return s
 
     def check_dir(self):
@@ -233,7 +239,10 @@ class moveRobot:
                 s += "Forward\n"
             s += "TurnLeft\n"
             s += self.revert_dir(self.start_dir)
-        return self.rerun(s)
+        temp = self.rerun(s)
+        conn = httplib.HTTPConnection("192.168.4.71:8080")
+        conn.request("POST", "/script", temp)
+        return temp
 
     def move_obs(self):
         """Moves the obstacles according to designated path"""

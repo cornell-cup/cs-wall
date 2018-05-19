@@ -1,96 +1,32 @@
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
 ********************************************************
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
-********************************************************
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-********************************************************
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
-********************************************************
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-********************************************************
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_counter_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_forward(50)
-bot.wait(2)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
-<<<<SCRIPT,bot.move_clockwise(50)
-bot.wait(3)
->>>>
+bot.move_counter_clockwise 10
+bot.wait 3
+
+bot.move_counter_clockwise 10
+bot.wait 3
+
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
+bot.move_clockwise 10
+bot.wait 3
+
+bot.move_clockwise 10
+bot.wait 3
+
 ********************************************************
