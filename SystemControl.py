@@ -1,6 +1,6 @@
 import time
 import Globals as G
-import a4988
+# import a4988
 
 
 class SystemControl:
@@ -41,16 +41,16 @@ class SystemControl:
         if code == "Forward":
             if self.direction == G.SOUTH:
                 self.robotX += 1
-                a4988.moveVerticalDown(500)
+                # a4988.moveVerticalDown(500)
             elif self.direction == G.EAST:
                 self.robotY += 1
-                a4988.moveVerticalUp(500)
+                # a4988.moveVerticalUp(500)
             elif self.direction == G.NORTH:
                 self.robotX -= 1
-                a4988.moveVerticalUp(500)
+                # a4988.moveVerticalUp(500)
             elif self.direction == G.WEST:
                 self.robotY -= 1
-                self.moveHorizontalDown(500)
+                # self.moveHorizontalDown(500)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
@@ -62,16 +62,16 @@ class SystemControl:
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
-                a4988.moveHorizontalDown(500)
+                # a4988.moveHorizontalDown(500)
             elif self.direction == G.EAST:
                 self.robotY -= 1
-                self.moveVerticalDown(500)
+                # self.moveVerticalDown(500)
             elif self.direction == G.NORTH:
                 self.robotX += 1
-                a4988.moveHorizontalUp(500)
+                # a4988.moveHorizontalUp(500)
             elif self.direction == G.WEST:
                 self.robotY += 1
-                a4988.moveVerticalUp(500)
+                # a4988.moveVerticalUp(500)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
