@@ -105,7 +105,7 @@ class moveRobot:
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
-            print("HERE"+s)
+            # print("HERE"+s)
         return s, goal_reached
 
     def checkBounds(self, x, y):
@@ -233,7 +233,7 @@ class moveRobot:
                 s += "Forward\n"
             s += "TurnLeft\n"
             s += self.revert_dir(self.start_dir)
-        self.rerun(s)
+        return self.rerun(s)
 
     def move_obs(self):
         """Moves the obstacles according to designated path"""

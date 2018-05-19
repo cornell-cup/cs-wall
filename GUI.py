@@ -97,6 +97,8 @@ class Gui:
         """initializes the GUI"""
         self.start_flag = False
         self.minibot_con = minibotConnector()
+        file = open("output/minibot_script.txt", "w")
+        file.write("")
 
     def store_game_data(self):
         """after level is chosen, variables related to the game level are stored below"""
@@ -627,7 +629,11 @@ class Gui:
                     im_label.pack()
                     self.dead_flag = True
             else:
-                self.control.run(codeblock, self.OBS, self.dead_pirates)
+                script = self.control.run(codeblock, self.OBS, self.dead_pirates)
+                file_obj = open("output/minibot_script.txt", "a")
+                file_obj.write(script)
+                file_obj.write("********************************************************\n")
+                # file_obj.close()
                 if self.control.check_goal():
                     self.choice_flag = True
                     self.temp_disp = Toplevel(self.root)
@@ -654,7 +660,10 @@ class Gui:
                     w = Label(self.temp_disp, text="Sorry, incorrect code. Please try again.")
                     w.pack()
                     self.temp_disp.grab_set()
-                    self.control.reset()
+                    reset_script = self.control.reset()
+                    file_obj.write(reset_script)
+                    file_obj.write("********************************************************\n")
+                    # file_obj.close()
                     self.control.time_step = 0
                     self.OBS = self.init_OBS
                     self.control.OBS = self.init_OBS
