@@ -1,0 +1,10 @@
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
+bot.move_forward 50
+bot.wait 2
+
+********************************************************

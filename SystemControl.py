@@ -41,12 +41,16 @@ class SystemControl:
         if code == "Forward":
             if self.direction == G.SOUTH:
                 self.robotX += 1
+                # a4988.moveVerticalDown(500)
             elif self.direction == G.EAST:
                 self.robotY += 1
+                # a4988.moveVerticalUp(500)
             elif self.direction == G.NORTH:
                 self.robotX -= 1
+                # a4988.moveVerticalUp(500)
             elif self.direction == G.WEST:
                 self.robotY -= 1
+                # self.moveHorizontalDown(500)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
@@ -55,16 +59,19 @@ class SystemControl:
                 on_obstacle = True
                 return goal_reached, out, on_obstacle
             # a4988.moveVerticalUp(10)
-            print('moved')
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
+                # a4988.moveHorizontalDown(500)
             elif self.direction == G.EAST:
                 self.robotY -= 1
+                # self.moveVerticalDown(500)
             elif self.direction == G.NORTH:
                 self.robotX += 1
+                # a4988.moveHorizontalUp(500)
             elif self.direction == G.WEST:
                 self.robotY += 1
+                # a4988.moveVerticalUp(500)
             check, obs = self.check_obstacles(self.robotX, self.robotY)
             if self.checkBounds(self.robotX, self.robotY):
                 out = True
@@ -103,6 +110,7 @@ class SystemControl:
                     break
                 elif check:
                     self.OBS.remove(obs)
+                    self.dead_pirates = []
                     self.dead_pirates.append([x, y])
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
@@ -212,8 +220,10 @@ class SystemControl:
     def run(self, code, obs, ded_obs):
         """runs the actions on the 2D system"""
         action_list = code.split("\n")
+        
         length = len(action_list)
         goal = False
+
         for i in range(0, length-1):
             code = action_list[i]
             self.time_step += 1
@@ -224,8 +234,8 @@ class SystemControl:
             print("robotY")
             print(self.robotY)
             obs = self.OBS
-            for j in range(len(self.dead_pirates)):
-                ded_obs.append(self.dead_pirates[j])
+            if not len(self.dead_pirates) == 0:
+                ded_obs.append(self.dead_pirates[0])
             # TODO sleep time probably needs to correlate to 2D system move time.
             time.sleep(2)
             if out:

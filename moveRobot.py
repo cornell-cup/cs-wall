@@ -1,5 +1,6 @@
 import Globals as G
 import time
+import httplib
 
 
 class moveRobot:
@@ -8,6 +9,7 @@ class moveRobot:
     its movement as class variables. """
 
     reset_flag = False
+    time_step = 0
     start_dir = 1
     robotX = 0
     robotY = 0
@@ -19,8 +21,10 @@ class moveRobot:
     startX = 0
     startY = 0
     OBS = []
-
+    dead_pirates = []
     attack_range = 2
+
+    # conn = httplib.HTTPConnection("192.168.4.71:8080")
 
     def __init__(self):
         self.startX = 3
@@ -39,7 +43,7 @@ class moveRobot:
         # TODO change "dummy" to actual power level
         # TODO "dummy" refers to the power needed for minibot to move 1 grid length OR turn
         MOVE_POWER = 50
-        TURN_POWER = 50
+        TURN_POWER = 10
         # TODO Figure out how long it takes to turn 90 degrees
         TURN_TIME = 3
         if code == "Forward":
@@ -51,9 +55,9 @@ class moveRobot:
                 self.robotX -= 1
             elif self.direction == G.WEST:
                 self.robotY -= 1
-            s += "<<<<SCRIPT," + "bot.move_forward({})\n".format(MOVE_POWER)
+            s += "bot.move_forward {}\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait {}\n".format(time) + "\n"
         if code == "Backward":
             if self.direction == G.SOUTH:
                 self.robotX -= 1
@@ -63,17 +67,17 @@ class moveRobot:
                 self.robotX += 1
             elif self.direction == G.WEST:
                 self.robotY += 1
-            s += "<<<<SCRIPT," + "bot.move_backward({})\n".format(MOVE_POWER)
+            s += "bot.move_backward {}\n".format(MOVE_POWER)
             time = self.calcTravelTime(1, MOVE_POWER)
-            s += "bot.wait({})\n".format(time) + ">>>>\n"
+            s += "bot.wait {}\n".format(time) + "\n"
         if code == "TurnLeft":
             self.direction = (self.direction + 1) % 4
-            s += "<<<<SCRIPT," + "bot.move_counter_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "bot.move_counter_clockwise {}\n".format(TURN_POWER)
+            s += "bot.wait {}\n".format(TURN_TIME) + "\n"
         if code == "TurnRight":
             self.direction = (self.direction + 3) % 4
-            s += "<<<<SCRIPT," + "bot.move_clockwise({})\n".format(TURN_POWER)
-            s += "bot.wait({})\n".format(TURN_TIME) + ">>>>\n"
+            s += "bot.move_clockwise {}\n".format(TURN_POWER)
+            s += "bot.wait {}\n".format(TURN_TIME) + "\n"
         if code == "Attack":
             in_range = []
             if self.direction == G.SOUTH:
@@ -98,9 +102,13 @@ class moveRobot:
                     break
                 elif check:
                     self.OBS.remove(obs)
+                    self.dead_pirates = []
+                    self.dead_pirates.append([x, y])
+                    # TODO does "attack" translate to minibot movement???
                     break
         if self.robotX == self.GoalX and self.robotY == self.GoalY:
             goal_reached = True
+            # print("HERE"+s)
         return s, goal_reached
 
     def checkBounds(self, x, y):
@@ -131,20 +139,25 @@ class moveRobot:
                 return True, temp
         return False, None
 
-    def run(self, code, obs):
+    def run(self, code, obs, ded_obs):
         """returns the finalized SCRIPT string to send to minibot"""
+
         s = ""
         list = code.split("\n")
         length = len(list)
         for i in range(0, length):
             if not self.reset_flag:
                 code = list[i]
-
+                self.time_step += 1
+                self.move_obs()
                 temp, goal = self.moveRobot(code)
+                if not len(self.dead_pirates) == 0:
+                    ded_obs.append(self.dead_pirates[0])
                 obs = self.OBS
                 if self.checkBounds(self.robotX, self.robotY):
                     break
-                if self.check_obstacles(self.robotX, self.robotY):
+                obs1, obs2 = self.check_obstacles(self.robotX, self.robotY)
+                if obs1:
                     break
                 if temp != "":
                     s += temp
@@ -153,6 +166,8 @@ class moveRobot:
             else:
                 s += self.reset()
                 break
+        conn = httplib.HTTPConnection("192.168.4.71:8080")
+        conn.request("POST", "/script", s)
         return s
 
     def check_dir(self):
@@ -176,7 +191,6 @@ class moveRobot:
             temp, goal = self.moveRobot(code)
             if temp != "":
                 s += temp
-            print temp
             # time.sleep(1)
         return s
 
@@ -225,7 +239,20 @@ class moveRobot:
                 s += "Forward\n"
             s += "TurnLeft\n"
             s += self.revert_dir(self.start_dir)
-        self.rerun(s)
+        temp = self.rerun(s)
+        conn = httplib.HTTPConnection("192.168.4.71:8080")
+        conn.request("POST", "/script", temp)
+        return temp
+
+    def move_obs(self):
+        """Moves the obstacles according to designated path"""
+        for i in range(len(self.OBS)):
+            temp_obs = self.OBS[i]
+            if not temp_obs.movable:
+                continue
+            path = temp_obs.path
+            movement_serial = self.time_step % len(path)
+            self.OBS[i].location = path[movement_serial]
 
     def check_goal(self):
         """checks whether goal is reached by comparing goal to current location. (used in GUI)"""

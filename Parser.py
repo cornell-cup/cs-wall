@@ -7,15 +7,36 @@ class Parser:
     VariableMap = defaultdict(list)
     robotX = 0
     robotY = 0
+    destinationX = 0
+    destinationY = 0
+    direction = 0
     result = ""
-    dict_file = "input/codeBlock.txt"
+    dict_file = "input/codeBlock1.txt"
+    map = {}
+    pirates = []
+    time_step = 0
+    line_of_code_processed = 0
 
     def __init__(self):
         """initialize the location of the robot and the variable map in the map"""
-        self.VariableMap = defaultdict(list)
-        self.robotX = 0
-        self.robotY = 0
+        self.VariableMap = {'initialize': 0}
         self.result = ""
+
+    def initializeMap(self, game_map, orbs):
+        self.map = game_map
+        self.robotX = self.map.get('GAME_START')[0]
+        self.robotY = self.map.get('GAME_START')[1]
+        self.destinationX = self.map.get("GOAL_X")
+        self.destinationY = self.map.get("GOAL_Y")
+        if self.map.get("DIRECTION") == "NORTH":
+            self.direction = 0
+        elif self.map.get("DIRECTION") == "EAST":
+            self.direction = 1
+        elif self.map.get("DIRECTION") == "SOUTH":
+            self.direction = 2
+        elif self.map.get("DIRECTION") == "WEST":
+            self.direction = 3
+        self.pirates = orbs
 
     def translateRFID(self, rfidfile):
         """translate the RFID file to the blocks"""
@@ -37,12 +58,13 @@ class Parser:
         # open file of RFID tag and use the blockmap to translate it to block syntax
         while rfids:
             rfids = rfids.replace("\n", "")
+            rfids = rfids.replace("\r", "")
             if blockmap.get(rfids) in ['FOR', 'SET', 'IF', 'WHILE', 'END', 'Forward', 'Backward', 'TurnLeft',
                                        'TurnRight', 'Attack']:
                 result += "\n"
             if blockmap.get(rfids) in ['DO']:
                 result += " "
-            result += blockmap.get(rfids)
+            result += str(blockmap.get(rfids))
             if blockmap.get(rfids) in ['FOR', 'SET', 'IF', 'WHILE']:
                 result += " "
             rfids = file1.readline()
@@ -114,72 +136,90 @@ class Parser:
             return self.VariableMap.get(s)
         else:
             # s is just a int value
-            self.innerInt(s)
+            return self.innerInt(s)
 
 
     def runCode(self, inputCode):
         """main function that receives the string of inputCode to output minibot movement"""
-
         # split the code by lines
         codeLines = inputCode.split("\n")
         movement = ['Forward', 'Backward', 'TurnLeft', 'TurnRight', 'Attack']
         while len(codeLines) > 0:
+            self.line_of_code_processed += 1
             code = codeLines.pop(0)
             # the code starts with movement statement
             if code in movement:
                 self.result += code+"\n"
+                self.moveRobot(code)
                 continue
             # the code starts with FOR statement
             if code.split(" ")[0] == "FOR":
-                ForCode = ""
-                temp = codeLines.pop(0)
-                # record code in FOR loop until END statement
-                while temp != "END":
-                    ForCode += temp + "\n"
+
+                try:
+                    ForCode = ""
                     temp = codeLines.pop(0)
-                loopNum = int(code.split(" ")[1].split("x")[0]);
-                for i in range(0, loopNum) :
-                    self.runCode(ForCode)
-                continue
+                    # record code in FOR loop until END statement
+                    while temp != "END":
+                        ForCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    loopNum = int(code.split(" ")[1].split("x")[0]);
+                    for i in range(0, loopNum) :
+                        self.runCode(ForCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for FOR"
             # the code starts with SET statement
             if code.split(" ")[0] == "SET":
-                # find first and second statement in SET
-                one, two = code[4:].split("=")
-                # replace first statement's value in Variable Map to the value evaluated by second statement
-                self.VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
-                continue
+                try:
+                    # find first and second statement in SET
+                    one, two = code[4:].split("=")
+                    # replace first statement's value in Variable Map to the value evaluated by second statement
+                    self.VariableMap[one.replace(" ", "")] = self.parseValue(two.replace(" ", ""))
+                    continue
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you SET a variable with error"
             # the code starts with IF statement
             if code.split(" ")[0] == "IF":
-                logic = code[3:code.find("DO")].replace(" ", "")
-                IfCode = ""
-                temp = codeLines.pop(0)
-                # record code in IF clause until END statement
-                while temp != "END":
-                    IfCode += temp + "\n"
+                try:
+                    logic = code[3:].replace(" ", "")
+                    IfCode = ""
                     temp = codeLines.pop(0)
-                if self.parseLogic(logic):
-                    self.runCode(IfCode)
-                continue
+                    # record code in IF clause until END statement
+                    while temp != "END":
+                        IfCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    if self.parseLogic(logic):
+                        self.runCode(IfCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for IF"
+
             # the code starts with WHILE statement
             if code.split(" ")[0] == "WHILE":
-                logic = code[6:code.find("DO")].replace(" ", "")
-                WhileCode = ""
-                temp = codeLines.pop(0)
-                # record code in WHILE loop until END statement
-                while temp != "END":
-                    WhileCode += temp + "\n"
+                try:
+                    logic = code[6:].replace(" ", "")
+                    WhileCode = ""
                     temp = codeLines.pop(0)
-                while self.parseLogic(logic):
-                    self.runCode(WhileCode)
-                continue
+                    # record code in WHILE loop until END statement
+                    while temp != "END":
+                        WhileCode += temp + "\n"
+                        temp = codeLines.pop(0)
+                    while self.parseLogic(logic):
+                        self.runCode(WhileCode)
+                    continue
+
+                except Exception as e:
+                    return "Error at Line " + str(self.line_of_code_processed) + "\nMaybe you missed END for WHILE"
         return self.result
+
 
     def parseLogic(self, s):
         """receives the string s and output value it corresponding to"""
-
         if "Destination" in s:
             s.split("Destination")
-            return self.robotX != 3 & self.robotY != 3
+            return self.robotX != self.destinationX & self.robotY != self.destinationY
         elif ">" in s:
             # logic is >
             temp = s.split(">")
@@ -192,6 +232,18 @@ class Parser:
             # logic is =
             temp = s.split("=")
             return self.parseValue(temp[0]) == self.parseValue(temp[1])
+        elif "PiratesAhead" in s:
+            ahead = False
+            for i in range(len(self.pirates)):
+                if self.direction == 0:
+                    ahead = ahead | ((self.robotX - 1 == self.pirates[i].location[0]) & self.robotY == self.pirates[i].location[1])
+                if self.direction == 1:
+                    ahead = ahead | ((self.robotY + 1 == self.pirates[i].location[1]) & self.robotX == self.pirates[i].location[0])
+                if self.direction == 2:
+                    ahead = ahead | ((self.robotX + 1 == self.pirates[i].location[0]) & self.robotY == self.pirates[i].location[1])
+                if self.direction == 3:
+                    ahead = ahead | ((self.robotY - 1 == self.pirates[i].location[1]) & self.robotX == self.pirates[i].location[0])
+            return ahead
         else:
             return False
 
@@ -199,10 +251,40 @@ class Parser:
     def moveRobot(self, code):
         """receives the string of code to output minibot movement
         the input in the code contains Forward, Backward, TurnLeft, TurnRight"""
-        print(code)
-        return 0
+        self.time_step = self.time_step + 1
+        self.move_obs()
+        if code == "Forward":
+            if self.direction == 0:
+                self.robotX -= 1
+            elif self.direction == 1:
+                self.robotY += 1
+            elif self.direction == 2:
+                self.robotX += 1
+            elif self.direction == 3:
+                self.robotY -= 1
+        elif code == "Backward":
+            if self.direction == 0:
+                self.robotX += 1
+            elif self.direction == 1:
+                self.robotY -= 1
+            elif self.direction == 2:
+                self.robotX -= 1
+            elif self.direction == 3:
+                self.robotY += 1
+        elif code == "TurnLeft":
+            self.direction = (self.direction + 1) % 4
+        elif code == "TurnRight":
+            self.direction = (self.direction + 3) % 4
 
+    def move_obs(self):
+        """Moves the obstacles according to designated path"""
+        for i in range(len(self.pirates)):
+            temp_obs = self.pirates[i]
+            if not temp_obs.movable:
+                continue
+            path = temp_obs.path
+            movement_serial = self.time_step % len(path)
+            self.pirates[i].location = path[movement_serial]
 
 # p = Parser()
-# print (p.parseValue("1+2a"))
-# print p.runCode(p.translateRFID("rfidFOR.txt"))
+# print p.runCode(p.translateRFID("input/rfidWHILE.txt"))
