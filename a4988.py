@@ -56,6 +56,7 @@ dirPin3 = 10
 enablePin3 = 24
 sleepPin3 = 11
 
+
 def init():
         #Motor Scanner Setup
 
@@ -124,15 +125,15 @@ def moveScannerDown(num):
     
 def readRFID():
     
-    """with open('/dev/ttyUSB0','r') as tty:
+    """  with open('/dev/ttyUSB0','r') as tty:
         RFID_input = tty.readline()
         print(RFID_input)
-        f = open( 'rfidAttack.txt', 'w' )
-        
-    """
+        f = open( 'rfidAttack1.txt', 'a' )
+    """   
     
     #with serial.Serial("/dev/ttyUSB0", 9600) as ser:
     with open('input/rfidAttack1.txt', 'w') as f:
+        print('before while')
         while(ser.in_waiting > 1):
             data = ser.readline()
             code = str(data);
@@ -202,7 +203,7 @@ def moveHorizontalDown(num):
 #Moving vertical Motor
 def moveVerticalUp(num):
     #step_count = input("Enter number of steps: ")
-    print('in a4988 move vertical up')
+##    print('in a4988 move vertical up')
     step_count = num
     GPIO.output(dirPin3, GPIO.LOW)
     GPIO.output(sleepPin3, GPIO.HIGH)
