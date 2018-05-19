@@ -2,25 +2,17 @@
 	"BACKGROUND":  "image/map.png",
 	"DIRECTION":  "SOUTH",
 	"BOUNDARY":{
-		"BOUNDARY_X" : 5,
-		"BOUNDARY_Y" : 5
+		"BOUNDARY_X" : 4,
+		"BOUNDARY_Y" : 4
 	},
 	"START":{
-		"START_X" : 1,
-		"START_Y" : 1
+		"START_X" : 0,
+		"START_Y" : 2
 	},
 	"GOAL":{
-		"GOAL_X" : 4,
-		"GOAL_Y" : 1
+		"GOAL_X" : 3,
+		"GOAL_Y" : 2
 	},
 	"OBSTACLES":[
-		{
-			"OBSTACLE_X": 1,
-			"OBSTACLE_Y": 3
-		},
-		{
-			"OBSTACLE_X": 3,
-			"OBSTACLE_Y": 1
-		}
 	]
 }
