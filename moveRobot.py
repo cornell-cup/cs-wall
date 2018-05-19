@@ -157,11 +157,11 @@ class moveRobot:
                 if self.checkBounds(self.robotX, self.robotY):
                     break
                 obs1, obs2 = self.check_obstacles(self.robotX, self.robotY)
-                if obs1:
-                    break
                 if temp != "":
                     s += temp
                 print temp
+                if obs1:
+                    break
                 time.sleep(1)
             else:
                 s += self.reset()
