@@ -4,6 +4,8 @@ Project Wall is a modular robotics game meant for children and students from age
 
 This repository is currently in development. For more information on Minibot see the [cs-minibot repo]{https://github.com/cornell-cup/cs-minibot}
 
+![](./wall.png)
+
 ## Classes in CS-wall
 ### Main function
 Runs the GUI in a non-ending while loop
